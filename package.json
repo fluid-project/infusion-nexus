@@ -1,0 +1,21 @@
+{
+    "name": "gpii-nexus",
+    "version": "0.1.0",
+    "author": "GPII",
+    "license": "BSD-3-Clause",
+    "scripts": {
+        "dedupe-infusion": "node -e \"require('dedupe-infusion')()\"",
+        "fullinstall": "npm install && npm run dedupe-infusion"
+    },
+    "dependencies": {
+        "dedupe-infusion": "1.0.0",
+        "infusion": "git://github.com/amb26/infusion.git#d9ab2cea604cc3108bdf028d70874d339df22720",
+        "kettle": "git://github.com/amb26/kettle.git#121c5dbc00c8e75ac1090222dbd02cba47fa6e08"
+    },
+    "devDependencies": {
+        "grunt": "^0.4.5",
+        "grunt-contrib-jshint": "~0.9.0",
+        "grunt-jsonlint": "1.0.4",
+        "node-jqunit": "1.1.0"
+    }
+}
