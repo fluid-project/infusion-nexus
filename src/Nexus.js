@@ -7,7 +7,7 @@ fluid.defaults("gpii.nexus", {
     gradeNames: ["kettle.app"],
     requestHandlers: {
         readDefaults: {
-            route: "/defaults/:globalName",
+            route: "/defaults/:gradeName",
             method: "get",
             type: "gpii.nexus.readDefaults.handler"
         }
@@ -19,12 +19,12 @@ fluid.defaults("gpii.nexus.readDefaults.handler", {
     invokers: {
         handleRequest: {
             funcName: "gpii.nexus.readDefaults.handleRequest",
-            args: ["{request}.req.params.globalName", "{request}.events"]
+            args: ["{request}.req.params.gradeName", "{request}.events"]
         }
     }
 });
 
-gpii.nexus.readDefaults.handleRequest = function (globalName, events) {
-    var defaults = fluid.defaults(globalName);
+gpii.nexus.readDefaults.handleRequest = function (gradeName, events) {
+    var defaults = fluid.defaults(gradeName);
     events.onSuccess.fire(defaults);
 };

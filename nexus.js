@@ -6,7 +6,7 @@ var fluid = require("infusion"),
 require("kettle");
 require("./src/Nexus.js");
 
-kettle.config.makeConfigLoader({
+kettle.config.loadConfig({
     configName: kettle.config.getNodeEnv("gpii.nexus.config"),
-    configPath: __dirname // TODO: kettle.config.getConfigPath() ||
+    configPath: kettle.config.getConfigPath(__dirname)
 });
