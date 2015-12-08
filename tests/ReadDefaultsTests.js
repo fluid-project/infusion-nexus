@@ -16,31 +16,12 @@ fluid.defaults("gpii.tests.nexus.testGrade", {
     gradeNames: ["fluid.component"]
 });
 
-gpii.tests.nexus.expectedTestGradeSpec = {
-    gradeNames: ["fluid.component", "gpii.tests.nexus.testGrade"],
-    initFunction: "fluid.initLittleComponent",
-    mergePolicy: {
-        members: {
-            noexpand: true
-        },
-        invokers: {
-            noexpand: true
-        },
-        transformOptions: "replace"
-    },
-    argumentMap: {
-        options: 0
-    },
-    events: {
-        onCreate: null,
-        onDestroy: null,
-        afterDestroy: null
-    }
-};
-
-gpii.tests.nexus.verifyReadDefaultsResponse = function (data, expectedGradeSpec) {
-    jqUnit.assertValue("Expected grade spec has a value", expectedGradeSpec);
-    jqUnit.assertDeepEq("Response matches expected grade spec", expectedGradeSpec, JSON.parse(data));
+gpii.tests.nexus.verifyReadDefaultsResponse = function (data, expectedGradeNames) {
+    var responseGradeSpec = JSON.parse(data);
+    fluid.each(expectedGradeNames, function (gradeName) {
+        jqUnit.assertTrue("Read Defaults response has grade " + gradeName,
+                          fluid.hasGrade(responseGradeSpec, gradeName));
+    });
 };
 
 gpii.tests.nexus.testDefs = [
@@ -72,10 +53,14 @@ gpii.tests.nexus.testDefs = [
             {
                 event: "{readDefaultsRequest}.events.onComplete",
                 listener: "gpii.tests.nexus.verifyReadDefaultsResponse",
-                args: ["{arguments}.0", gpii.tests.nexus.expectedTestGradeSpec]
+                args: ["{arguments}.0", ["fluid.component", "gpii.tests.nexus.testGrade"]]
             }
         ]
     }
 ];
+
+
+// TODO: Resubmit a read defaults response to the write defaults endpoint and verify idempotent
+
 
 kettle.test.bootstrapServer(gpii.tests.nexus.testDefs);
