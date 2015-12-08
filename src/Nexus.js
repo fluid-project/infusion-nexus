@@ -19,12 +19,19 @@ fluid.defaults("gpii.nexus.readDefaults.handler", {
     invokers: {
         handleRequest: {
             funcName: "gpii.nexus.readDefaults.handleRequest",
-            args: ["{request}.req.params.gradeName", "{request}.events"]
+            args: ["{request}.req.params.gradeName", "{request}"]
         }
     }
 });
 
-gpii.nexus.readDefaults.handleRequest = function (gradeName, events) {
+gpii.nexus.readDefaults.handleRequest = function (gradeName, request) {
     var defaults = fluid.defaults(gradeName);
-    events.onSuccess.fire(defaults);
+    if (defaults) {
+        request.events.onSuccess.fire(defaults);
+    } else {
+        request.events.onError.fire({
+            message: "Grade not found",
+            statusCode: 404
+        });
+    }
 };
