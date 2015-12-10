@@ -5,7 +5,7 @@ var fluid = require("infusion"),
     jqUnit = fluid.require("node-jqunit"),
     kettle = fluid.registerNamespace("kettle"),
     path = require("path"),
-    configPath = path.resolve(__dirname, "..");
+    configPath = path.resolve(__dirname, "../configs");
 
 require("kettle");
 require("../src/Nexus.js");
