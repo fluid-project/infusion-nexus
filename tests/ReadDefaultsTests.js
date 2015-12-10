@@ -12,20 +12,20 @@ require("../src/test/NexusTestUtils.js");
 
 kettle.loadTestingSupport();
 
-fluid.defaults("gpii.tests.nexus.testGrade", {
+fluid.defaults("gpii.tests.nexus.readDefaults.testGrade", {
     gradeNames: ["fluid.component"]
 });
 
-gpii.tests.nexus.testDefs = [
+gpii.tests.nexus.readDefaults.testDefs = [
     {
-        name: "Nexus Read Defaults for existing grade",
+        name: "Read Defaults for existing grade",
         gradeNames: "gpii.test.nexus.testCaseHolder",
         expect: 4,
         config: {
             configName: "gpii.nexus.config",
             configPath: configPath
         },
-        testGradeName: "gpii.tests.nexus.testGrade",
+        testGradeName: "gpii.tests.nexus.readDefaults.testGrade",
         sequence: [
             {
                 func: "{readDefaultsRequest}.send"
@@ -33,12 +33,12 @@ gpii.tests.nexus.testDefs = [
             {
                 event: "{readDefaultsRequest}.events.onComplete",
                 listener: "gpii.test.nexus.verifyReadDefaultsResponse",
-                args: ["{arguments}.0", "{readDefaultsRequest}", ["fluid.component", "gpii.tests.nexus.testGrade"]]
+                args: ["{arguments}.0", "{readDefaultsRequest}", ["fluid.component", "gpii.tests.nexus.readDefaults.testGrade"]]
             }
         ]
     },
     {
-        name: "Nexus Read Defaults for non-existing grade",
+        name: "Read Defaults for non-existing grade",
         gradeNames: "gpii.test.nexus.testCaseHolder",
         expect: 3,
         config: {
@@ -65,8 +65,4 @@ gpii.tests.nexus.testDefs = [
     }
 ];
 
-
-// TODO: Resubmit a read defaults response to the write defaults endpoint and verify idempotent
-
-
-kettle.test.bootstrapServer(gpii.tests.nexus.testDefs);
+kettle.test.bootstrapServer(gpii.tests.nexus.readDefaults.testDefs);

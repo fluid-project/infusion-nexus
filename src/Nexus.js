@@ -10,6 +10,11 @@ fluid.defaults("gpii.nexus", {
             route: "/defaults/:gradeName",
             method: "get",
             type: "gpii.nexus.readDefaults.handler"
+        },
+        writeDefaults: {
+            route: "/defaults/:gradeName",
+            method: "put",
+            type: "gpii.nexus.writeDefaults.handler"
         }
     }
 });
@@ -34,4 +39,19 @@ gpii.nexus.readDefaults.handleRequest = function (gradeName, request) {
             statusCode: 404
         });
     }
+};
+
+fluid.defaults("gpii.nexus.writeDefaults.handler", {
+    gradeNames: ["kettle.request.http"],
+    invokers: {
+        handleRequest: {
+            funcName: "gpii.nexus.writeDefaults.handleRequest",
+            args: ["{request}.req.params.gradeName", "{request}"]
+        }
+    }
+});
+
+gpii.nexus.writeDefaults.handleRequest = function (gradeName, request) {
+    fluid.defaults(gradeName, request.req.body);
+    request.events.onSuccess.fire();
 };
