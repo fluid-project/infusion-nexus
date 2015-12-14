@@ -20,7 +20,7 @@ gpii.tests.nexus.writeDefaults.newGradeOptions = {
 
 gpii.tests.nexus.writeDefaults.testDefs = [
     {
-        name: "Write Defaults",
+        name: "Write Defaults with good grade options",
         gradeNames: "gpii.test.nexus.testCaseHolder",
         expect: 8,
         config: {
@@ -71,6 +71,55 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                 event: "{readDefaultsAgainRequest}.events.onComplete",
                 listener: "gpii.test.nexus.verifyReadDefaultsResponse",
                 args: ["{arguments}.0", "{readDefaultsAgainRequest}", ["fluid.component", "gpii.tests.nexus.writeDefaults.newGrade"]]
+            }
+
+            // TODO: Update the grade definition and verify
+
+        ]
+    },
+    {
+        name: "Write Defaults with badly formed JSON",
+        gradeNames: "gpii.test.nexus.testCaseHolder",
+        expect: 3,
+        config: {
+            configName: "gpii.nexus.config",
+            configPath: configPath
+        },
+        testGradeName: "gpii.tests.nexus.writeDefaults.badlyFormedJson",
+        sequence: [
+            {
+                func: "{writeDefaultsRequest}.send",
+                args: [
+                    "{",
+                    {
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    }
+                ]
+            },
+            {
+                event: "{writeDefaultsRequest}.events.onComplete",
+                listener: "kettle.test.assertErrorResponse",
+                args: [{
+                    message: "Write Defaults returns 400 for badly formed JSON",
+
+                    // TODO: Maybe "Bad request" rather than "Unknown error"
+
+                    // The "Unknown error" default message is set in
+                    // kettle.request.http.errorHandler and I believe
+                    // that in this case, the error originates from
+                    // Express body-parser middleware
+                    // (body-parser/lib/read.js). Which, I think,
+                    // means that we would need some default messages
+                    // in kettle.request.http.errorHandler for
+                    // different status codes.
+
+                    errorTexts: "Unknown error",
+                    string: "{arguments}.0",
+                    request: "{writeDefaultsRequest}",
+                    statusCode: 400
+                }]
             }
         ]
     }
