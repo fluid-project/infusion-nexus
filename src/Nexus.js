@@ -80,14 +80,23 @@ gpii.nexus.construct.handleRequest = function (path, request) {
     request.events.onSuccess.fire();
 };
 
+// TODO: Remove the model change listener at handler onDestroy
+
 fluid.defaults("gpii.nexus.bindModel.handler", {
     gradeNames: ["kettle.request.ws"],
     members: {
-        boundComponent: null // TODO: Should this be a model property? Or a subcomponent?
+        // We store the targetComponent inside a container so that the
+        // component is isolated from IoC references. This will not be
+        // necessary in the future after upcoming framework changes
+        // are completed.
+        // See https://issues.fluidproject.org/browse/FLUID-4925
+        componentHolder: {
+            targetComponent: null // Will be set at onBindWs
+        }
     },
     invokers: {
-        boundModelChangeListener: {
-            funcName: "gpii.nexus.bindModel.boundModelChangeListener",
+        targetModelChangeListener: {
+            funcName: "gpii.nexus.bindModel.targetModelChangeListener",
             args: [
                 "{that}",
                 "{arguments}.0" // value
@@ -101,32 +110,37 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
                 "{that}",
                 "{request}.req.params.componentPath",
                 "{request}.req.params.modelPath",
-                "{that}.boundModelChangeListener"
+                "{that}.targetModelChangeListener"
             ]
         },
         onReceiveMessage: {
             funcName: "gpii.nexus.bindModel.receiveMessage",
             args: [
-                "{that}",
+                "{that}.componentHolder.targetComponent",
                 "{arguments}.1" // message
             ]
         }
     }
 });
 
-gpii.nexus.bindModel.bindWs = function (that, componentPath, modelPath, modelChangeListener) {
-    // that.boundComponent = fluid.componentForPath(componentPath);
-    that.boundComponent = fluid.globalInstantiator.pathToComponent[componentPath]; // TODO: ?
+// TODO: Support both string and array paths
+// TODO: Move gpii.nexus.componentForPath to infusion FluidIoC.js "BEGIN NEXUS METHODS"
+gpii.nexus.componentForPath = function (path) {
+    return fluid.globalInstantiator.pathToComponent[path];
+};
+
+gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, modelChangeListener) {
+    handler.componentHolder.targetComponent = gpii.nexus.componentForPath(componentPath);
     // TODO: Note that applier.modelchanged.addListener is different from https://wiki.gpii.net/w/Nexus_API
     //       Which says applier.addModelListener
-    that.boundComponent.applier.modelChanged.addListener(modelPath, modelChangeListener); // TODO: namespace?
+    handler.componentHolder.targetComponent.applier.modelChanged.addListener(modelPath, modelChangeListener); // TODO: namespace?
 };
 
-gpii.nexus.bindModel.boundModelChangeListener = function (that, value) {
-    that.sendMessage(value);
+gpii.nexus.bindModel.targetModelChangeListener = function (handler, value) {
+    handler.sendMessage(value);
 };
 
-gpii.nexus.bindModel.receiveMessage = function (that, message) {
-    // TODO: Rebase path, relative to the modelPath bound to
-    that.boundComponent.applier.change(message.path, message.value, message.type);
+gpii.nexus.bindModel.receiveMessage = function (component, message) {
+    // TODO: Rebase path, relative to the registered modelPath
+    component.applier.change(message.path, message.value, message.type);
 };
