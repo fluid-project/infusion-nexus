@@ -80,8 +80,6 @@ gpii.nexus.construct.handleRequest = function (path, request) {
     request.events.onSuccess.fire();
 };
 
-// TODO: Remove the model change listener at handler onDestroy
-
 fluid.defaults("gpii.nexus.bindModel.handler", {
     gradeNames: ["kettle.request.ws"],
     members: {
@@ -119,6 +117,11 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
                 "{that}.componentHolder.targetComponent",
                 "{arguments}.1" // message
             ]
+        },
+        onDestroy: {
+            "this": "{that}.componentHolder.targetComponent.applier.modelChanged",
+            method: "removeListener",
+            args: ["{that}.targetModelChangeListener"]
         }
     }
 });
