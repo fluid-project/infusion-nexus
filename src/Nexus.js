@@ -16,10 +16,10 @@ fluid.defaults("gpii.nexus", {
             method: "put",
             type: "gpii.nexus.writeDefaults.handler"
         },
-        construct: {
+        constructComponent: {
             route: "/components/:path",
             method: "post",
-            type: "gpii.nexus.construct.handler"
+            type: "gpii.nexus.constructComponent.handler"
         },
         bindModel: {
             route: "/bindModel/:componentPath/:modelPath",
@@ -65,17 +65,17 @@ gpii.nexus.writeDefaults.handleRequest = function (gradeName, request) {
     request.events.onSuccess.fire();
 };
 
-fluid.defaults("gpii.nexus.construct.handler", {
+fluid.defaults("gpii.nexus.constructComponent.handler", {
     gradeNames: ["kettle.request.http"],
     invokers: {
         handleRequest: {
-            funcName: "gpii.nexus.construct.handleRequest",
+            funcName: "gpii.nexus.constructComponent.handleRequest",
             args: ["{request}.req.params.path", "{request}"]
         }
     }
 });
 
-gpii.nexus.construct.handleRequest = function (path, request) {
+gpii.nexus.constructComponent.handleRequest = function (path, request) {
     fluid.construct(path, request.req.body);
     request.events.onSuccess.fire();
 };

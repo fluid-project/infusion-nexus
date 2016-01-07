@@ -47,6 +47,17 @@ fluid.defaults("gpii.test.nexus.testCaseHolder", {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
+        },
+        constructComponentRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/components/%path",
+                port: 8081,
+                method: "POST",
+                termMap: {
+                    path: "{tests}.options.testComponentPath"
+                }
+            }
         }
     }
 });
