@@ -137,6 +137,8 @@ gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, model
     // TODO: Note that applier.modelchanged.addListener is different from https://wiki.gpii.net/w/Nexus_API
     //       Which says applier.addModelListener
     handler.componentHolder.targetComponent.applier.modelChanged.addListener(modelPath, modelChangeListener); // TODO: namespace?
+
+    // TODO: On connect, send a message with the current state of the component model
 };
 
 gpii.nexus.bindModel.targetModelChangeListener = function (handler, value) {

@@ -12,7 +12,7 @@ gpii.test.nexus.assertStatusCode = function (request, statusCode) {
 };
 
 gpii.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGradeNames) {
-    // TODO: Switch over to kettle.test.assertJSONResponse
+    // TODO: Switch over to the new assertion function of KETTLE-39
     var responseGradeSpec = JSON.parse(body);
     var response = request.nativeResponse;
     jqUnit.assertEquals("Response has status code 200", 200, response.statusCode);
@@ -24,6 +24,17 @@ gpii.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGr
     });
 };
 
+gpii.test.nexus.verifyComponentNotConstructed = function (path) {
+    var component = gpii.nexus.componentForPath(path);
+    jqUnit.assertNoValue("Component has not been constructed", component);
+};
+
+gpii.test.nexus.verifyComponentModel = function (path, expectedModel) {
+    var component = gpii.nexus.componentForPath(path);
+    jqUnit.assertValue("Component exists", component);
+    jqUnit.assertDeepEq("Component model is as expected", expectedModel, component.model);
+};
+
 fluid.defaults("gpii.test.nexus.testCaseHolder", {
     gradeNames: "kettle.test.testCaseHolder",
     components: {
@@ -31,7 +42,7 @@ fluid.defaults("gpii.test.nexus.testCaseHolder", {
             type: "kettle.test.request.http",
             options: {
                 path: "/defaults/%gradeName",
-                port: 8081,
+                port: "{configuration}.options.serverPort",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
@@ -41,7 +52,7 @@ fluid.defaults("gpii.test.nexus.testCaseHolder", {
             type: "kettle.test.request.http",
             options: {
                 path: "/defaults/%gradeName",
-                port: 8081,
+                port: "{configuration}.options.serverPort",
                 method: "PUT",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
@@ -52,7 +63,7 @@ fluid.defaults("gpii.test.nexus.testCaseHolder", {
             type: "kettle.test.request.http",
             options: {
                 path: "/components/%path",
-                port: 8081,
+                port: "{configuration}.options.serverPort",
                 method: "POST",
                 termMap: {
                     path: "{tests}.options.testComponentPath"

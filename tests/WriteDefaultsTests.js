@@ -33,7 +33,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                 type: "kettle.test.request.http",
                 options: {
                     path: "/defaults/%gradeName",
-                    port: 8081,
+                    port: "{configuration}.options.serverPort",
                     termMap: {
                         gradeName: "{tests}.options.testGradeName"
                     }

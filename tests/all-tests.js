@@ -5,7 +5,8 @@ var fluid = require("infusion");
 var tests = [
     "./ReadDefaultsTests.js",
     "./WriteDefaultsTests.js",
-    "./ConstructComponentTests.js"
+    "./ConstructComponentTests.js",
+    "./BindModelTests.js"
 ];
 
 fluid.each(tests, function (path) {
