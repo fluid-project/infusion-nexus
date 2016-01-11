@@ -90,7 +90,8 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
         // See https://issues.fluidproject.org/browse/FLUID-4925
         componentHolder: {
             targetComponent: null // Will be set at onBindWs
-        }
+        },
+        modelPath: null // Will be set at onBindWs
     },
     invokers: {
         targetModelChangeListener: {
@@ -115,6 +116,7 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
             funcName: "gpii.nexus.bindModel.receiveMessage",
             args: [
                 "{that}.componentHolder.targetComponent",
+                "{that}.modelPath",
                 "{arguments}.1" // message
             ]
         },
@@ -137,6 +139,7 @@ gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, model
     // TODO: Note that applier.modelchanged.addListener is different from https://wiki.gpii.net/w/Nexus_API
     //       Which says applier.addModelListener
     handler.componentHolder.targetComponent.applier.modelChanged.addListener(modelPath, modelChangeListener); // TODO: namespace?
+    handler.modelPath = modelPath;
 
     // TODO: On connect, send a message with the current state of the component model
 };
@@ -145,7 +148,7 @@ gpii.nexus.bindModel.targetModelChangeListener = function (handler, value) {
     handler.sendMessage(value);
 };
 
-gpii.nexus.bindModel.receiveMessage = function (component, message) {
-    // TODO: Rebase path, relative to the registered modelPath
-    component.applier.change(message.path, message.value, message.type);
+gpii.nexus.bindModel.receiveMessage = function (component, baseModelPath, message) {
+    var path = fluid.model.composePath(baseModelPath, message.path);
+    component.applier.change(path, message.value, message.type);
 };

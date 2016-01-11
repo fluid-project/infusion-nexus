@@ -39,12 +39,13 @@ fluid.defaults("gpii.tests.nexus.bindModel.wsClient", {
 });
 
 // TODO: Test with multiple connected WebSocket clients
+// TODO: Test with change message path other than ""
 
 gpii.tests.nexus.bindModel.testDefs = [
     {
         name: "Bind Model",
         gradeNames: "gpii.test.nexus.testCaseHolder",
-        expect: 4,
+        expect: 5,
         config: {
             configName: "gpii.nexus.config",
             configPath: configPath
@@ -70,8 +71,8 @@ gpii.tests.nexus.bindModel.testDefs = [
         */
         sequence: [
             {
-                func: "gpii.test.nexus.verifyComponentNotConstructed",
-                args: ["{tests}.options.testComponentPath"]
+                func: "gpii.test.nexus.assertNoComponentAtPath",
+                args: ["Component not yet constructed", "{tests}.options.testComponentPath"]
             },
             {
                 func: "{constructComponentRequest}.send",
@@ -101,7 +102,7 @@ gpii.tests.nexus.bindModel.testDefs = [
                 func: "{client}.send",
                 args: [
                     {
-                        path: "someModelPath",
+                        path: "",
                         value: 10
                     }
                 ]
@@ -109,16 +110,16 @@ gpii.tests.nexus.bindModel.testDefs = [
             // TODO: Can I rely on the targetModelChanged and onReceiveMessage events happening in this order?
             {
                 event: "{testCaseHolder}.events.targetModelChanged",
-                listener: "gpii.test.nexus.verifyComponentModel",
-                args: ["{tests}.options.testComponentPath", { someModelPath: 10 }]
+                listener: "gpii.test.nexus.assertComponentModel",
+                args: ["Model updated", "{tests}.options.testComponentPath", { someModelPath: 10 }]
             },
             {
                 event: "{client}.events.onReceiveMessage",
-                // TODO: Check received message
                 // TODO: Do I want a message here?
                 //       Should a client receive change notifications for changes it made?
                 //       Is it unavoidable?
-                listener: "fluid.identity"
+                listener: "jqUnit.assertEquals",
+                args: ["Received change message", 10, "{arguments}.0"]
             },
             {
                 func: "{client}.disconnect"

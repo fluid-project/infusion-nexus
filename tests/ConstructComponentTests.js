@@ -33,8 +33,8 @@ gpii.tests.nexus.constructComponent.testDefs = [
         testComponentPath: "nexusConstructComponentTestComponent",
         sequence: [
             {
-                func: "gpii.test.nexus.verifyComponentNotConstructed",
-                args: ["{tests}.options.testComponentPath"]
+                func: "gpii.test.nexus.assertNoComponentAtPath",
+                args: ["Component not yet constructed", "{tests}.options.testComponentPath"]
             },
             {
                 func: "{constructComponentRequest}.send",
@@ -46,8 +46,9 @@ gpii.tests.nexus.constructComponent.testDefs = [
                 args: ["{constructComponentRequest}", 200]
             },
             {
-                func: "gpii.test.nexus.verifyComponentModel",
+                func: "gpii.test.nexus.assertComponentModel",
                 args: [
+                    "Model updated",
                     "{tests}.options.testComponentPath",
                     gpii.tests.nexus.constructComponent.componentOptions.model
                 ]

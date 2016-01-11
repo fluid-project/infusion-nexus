@@ -24,15 +24,15 @@ gpii.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGr
     });
 };
 
-gpii.test.nexus.verifyComponentNotConstructed = function (path) {
+gpii.test.nexus.assertNoComponentAtPath = function (message, path) {
     var component = gpii.nexus.componentForPath(path);
-    jqUnit.assertNoValue("Component has not been constructed", component);
+    jqUnit.assertNoValue(message, component);
 };
 
-gpii.test.nexus.verifyComponentModel = function (path, expectedModel) {
+gpii.test.nexus.assertComponentModel = function (message, path, expectedModel) {
     var component = gpii.nexus.componentForPath(path);
     jqUnit.assertValue("Component exists", component);
-    jqUnit.assertDeepEq("Component model is as expected", expectedModel, component.model);
+    jqUnit.assertDeepEq(message, expectedModel, component.model);
 };
 
 fluid.defaults("gpii.test.nexus.testCaseHolder", {
