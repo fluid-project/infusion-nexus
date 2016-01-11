@@ -161,7 +161,8 @@ gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, model
     handler.componentHolder.targetComponent.applier.modelChanged.addListener(modelPath, modelChangeListener); // TODO: namespace?
     handler.modelPath = modelPath;
 
-    // TODO: On connect, send a message with the current state of the component model
+    // On connect, send a message with the state of the component's model at modelPath
+    handler.sendMessage(fluid.get(handler.componentHolder.targetComponent.model, modelPath));
 };
 
 gpii.nexus.bindModel.targetModelChangeListener = function (handler, value) {

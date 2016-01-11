@@ -45,7 +45,7 @@ gpii.tests.nexus.bindModel.testDefs = [
     {
         name: "Bind Model",
         gradeNames: "gpii.test.nexus.testCaseHolder",
-        expect: 5,
+        expect: 6,
         config: {
             configName: "gpii.nexus.config",
             configPath: configPath
@@ -97,6 +97,11 @@ gpii.tests.nexus.bindModel.testDefs = [
             {
                 event: "{client}.events.onConnect",
                 listener: "fluid.identity"
+            },
+            {
+                event: "{client}.events.onReceiveMessage",
+                listener: "jqUnit.assertEquals",
+                args: ["Received initial message with the state of the component's model", 2, "{arguments}.0"]
             },
             {
                 func: "{client}.send",
