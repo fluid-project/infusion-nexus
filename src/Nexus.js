@@ -21,6 +21,11 @@ fluid.defaults("gpii.nexus", {
             method: "post",
             type: "gpii.nexus.constructComponent.handler"
         },
+        destroyComponent: {
+            route: "/components/:path",
+            method: "delete",
+            type: "gpii.nexus.destroyComponent.handler"
+        },
         bindModel: {
             route: "/bindModel/:componentPath/:modelPath",
             type: "gpii.nexus.bindModel.handler"
@@ -77,6 +82,21 @@ fluid.defaults("gpii.nexus.constructComponent.handler", {
 
 gpii.nexus.constructComponent.handleRequest = function (path, request) {
     fluid.construct(path, request.req.body);
+    request.events.onSuccess.fire();
+};
+
+fluid.defaults("gpii.nexus.destroyComponent.handler", {
+    gradeNames: ["kettle.request.http"],
+    invokers: {
+        handleRequest: {
+            funcName: "gpii.nexus.destroyComponent.handleRequest",
+            args: ["{request}.req.params.path", "{request}"]
+        }
+    }
+});
+
+gpii.nexus.destroyComponent.handleRequest = function (path, request) {
+    fluid.destroy(path);
     request.events.onSuccess.fire();
 };
 

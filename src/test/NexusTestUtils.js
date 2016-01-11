@@ -69,6 +69,17 @@ fluid.defaults("gpii.test.nexus.testCaseHolder", {
                     path: "{tests}.options.testComponentPath"
                 }
             }
+        },
+        destroyComponentRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/components/%path",
+                port: "{configuration}.options.serverPort",
+                method: "DELETE",
+                termMap: {
+                    path: "{tests}.options.testComponentPath"
+                }
+            }
         }
     }
 });

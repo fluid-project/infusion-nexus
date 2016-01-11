@@ -5,7 +5,7 @@ var fluid = require("infusion");
 var tests = [
     "./ReadDefaultsTests.js",
     "./WriteDefaultsTests.js",
-    "./ConstructComponentTests.js",
+    "./ConstructAndDestroyComponentTests.js",
     "./BindModelTests.js"
 ];
 

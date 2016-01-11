@@ -23,9 +23,9 @@ gpii.tests.nexus.constructComponent.componentOptions = {
 
 gpii.tests.nexus.constructComponent.testDefs = [
     {
-        name: "Construct Component",
+        name: "Construct and Destroy Component",
         gradeNames: "gpii.test.nexus.testCaseHolder",
-        expect: 4,
+        expect: 6,
         config: {
             configName: "gpii.nexus.config",
             configPath: configPath
@@ -48,10 +48,22 @@ gpii.tests.nexus.constructComponent.testDefs = [
             {
                 func: "gpii.test.nexus.assertComponentModel",
                 args: [
-                    "Model updated",
+                    "Model is as expected",
                     "{tests}.options.testComponentPath",
                     gpii.tests.nexus.constructComponent.componentOptions.model
                 ]
+            },
+            {
+                func: "{destroyComponentRequest}.send"
+            },
+            {
+                event: "{destroyComponentRequest}.events.onComplete",
+                listener: "gpii.test.nexus.assertStatusCode",
+                args: ["{destroyComponentRequest}", 200]
+            },
+            {
+                func: "gpii.test.nexus.assertNoComponentAtPath",
+                args: ["Component has been destroyed", "{tests}.options.testComponentPath"]
             }
         ]
     }
