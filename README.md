@@ -20,3 +20,41 @@ configuration is provided for running Nexus.
 
 For more information on the use of Vagrant, please see:
 https://github.com/GPII/qi-development-environments
+
+Trying it out
+-------------
+
+Prerequisites:
+
+- curl (or other HTTP client)
+- [wscat](https://www.npmjs.com/package/wscat) (or other WebSocket client)
+
+In this example, we will construct a new component, register 2 model
+listeners, and send a model update.
+
+Start Nexus and make a POST request to construct a new component:
+
+```
+$ vagrant up
+$ curl -H 'Content-Type: application/json' -d '{ "type": "fluid.modelComponent", "model": { "a": null } }' http://localhost:8081/components/example1
+```
+
+Next we will make WebSocket Bind Model connections to the constructed component. Set up 2 connections by executing the following in 2 separate terminals:
+
+```
+$ wscat -c ws://localhost:8081/bindModel/example1/a
+```
+
+And we can send an update message from one of the `wscat` sessions with:
+
+```
+> { "path": "", "value": "hello" }
+```
+
+If everything is working, we should see "hello" echoed back in both `wscat` sessions.
+
+Finally, stop Nexus with:
+
+```
+$ vagrant halt
+```
