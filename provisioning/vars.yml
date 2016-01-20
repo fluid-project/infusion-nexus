@@ -35,4 +35,4 @@ nodejs_app_dev_env: true
 
 # A TCP port used by the application.
 # Example: 8080
-nodejs_app_tcp_port: 8081
+nodejs_app_tcp_port: 9081

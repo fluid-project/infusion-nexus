@@ -1,7 +1,7 @@
 {
     "type": "gpii.nexus.config",
     "options": {
-        "serverPort": 8081,
+        "serverPort": 9081,
         "components": {
             "server": {
                 "type": "kettle.server",
