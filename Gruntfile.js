@@ -23,12 +23,24 @@ module.exports = function (grunt) {
         },
         jsonlint: {
             all: ["package.json", ".jshintrc", "src/**/*.json", "tests/**/*.json", "configs/**/*.json"]
+        },
+        shell: {
+            options: {
+                stdout: true,
+                srderr: true,
+                failOnError: true
+            },
+            runTests: {
+                command: "vagrant ssh -c 'DISPLAY=:0 node /home/vagrant/sync/tests/all-tests.js'"
+            }
         }
     });
 
     grunt.loadNpmTasks("grunt-contrib-jshint");
     grunt.loadNpmTasks("grunt-jsonlint");
+    grunt.loadNpmTasks("grunt-shell");
 
     grunt.registerTask("default", ["lint"]);
     grunt.registerTask("lint", "Run jshint and jsonlint", ["jshint", "jsonlint"]);
+    grunt.registerTask("tests", "Run Nexus tests", ["shell:runTests"]);
 };

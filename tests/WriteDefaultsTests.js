@@ -4,7 +4,7 @@ var fluid = require("infusion"),
     gpii = fluid.registerNamespace("gpii"),
     kettle = fluid.registerNamespace("kettle"),
     path = require("path"),
-    configPath = path.resolve(__dirname, "../configs");
+    configPath = path.resolve(__dirname, "configs");
 
 require("kettle");
 require("../src/Nexus.js");
@@ -24,7 +24,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
         gradeNames: "gpii.test.nexus.testCaseHolder",
         expect: 8,
         config: {
-            configName: "gpii.nexus.config",
+            configName: "gpii.tests.nexus.config",
             configPath: configPath
         },
         testGradeName: "gpii.tests.nexus.writeDefaults.newGrade",
@@ -82,7 +82,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
         gradeNames: "gpii.test.nexus.testCaseHolder",
         expect: 3,
         config: {
-            configName: "gpii.nexus.config",
+            configName: "gpii.tests.nexus.config",
             configPath: configPath
         },
         testGradeName: "gpii.tests.nexus.writeDefaults.badlyFormedJson",
@@ -173,7 +173,7 @@ gpii.tests.nexus.writeDefaults.sendBadlyFormedInvokerGradeOptions = function (re
         gradeNames: "gpii.test.nexus.testCaseHolder",
         expect: 3,
         config: {
-            configName: "gpii.nexus.config",
+            configName: "gpii.tests.nexus.config",
             configPath: configPath
         },
         testGradeName: "gpii.tests.nexus.writeDefaults.badlyFormedInvoker",

@@ -4,7 +4,7 @@ var fluid = require("infusion"),
     gpii = fluid.registerNamespace("gpii"),
     kettle = fluid.registerNamespace("kettle"),
     path = require("path"),
-    configPath = path.resolve(__dirname, "../configs");
+    configPath = path.resolve(__dirname, "configs");
 
 require("kettle");
 require("../src/Nexus.js");
@@ -47,7 +47,7 @@ gpii.tests.nexus.bindModel.testDefs = [
         gradeNames: "gpii.test.nexus.testCaseHolder",
         expect: 6,
         config: {
-            configName: "gpii.nexus.config",
+            configName: "gpii.tests.nexus.config",
             configPath: configPath
         },
         testComponentPath: "nexusBindModelTestComponent",
