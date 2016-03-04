@@ -1,13 +1,10 @@
 "use strict";
 
 var fluid = require("infusion"),
-    gpii = fluid.registerNamespace("gpii"),
-    kettle = fluid.registerNamespace("kettle"),
-    path = require("path"),
-    configPath = path.resolve(__dirname, "configs");
+    kettle = require("kettle"),
+    gpii = fluid.registerNamespace("gpii");
 
-require("kettle");
-require("../src/Nexus.js");
+require("../index.js");
 require("../src/test/NexusTestUtils.js");
 
 kettle.loadTestingSupport();
@@ -23,9 +20,7 @@ gpii.tests.nexus.bindModel.componentOptions = {
 
 gpii.tests.nexus.bindModel.registerModelListenerForPath = function (componentPath, modelPath, event) {
     var component = gpii.nexus.componentForPath(componentPath);
-    // TODO: Can I use an invoker here rather than an anonymous function?
-    //       I was unable to determine the right name to reference the invoker
-    component.applier.modelChanged.addListener(modelPath, function () { event.fire(); });
+    component.applier.modelChanged.addListener(modelPath, event.fire);
 };
 
 fluid.defaults("gpii.tests.nexus.bindModel.wsClient", {
@@ -48,7 +43,7 @@ gpii.tests.nexus.bindModel.testDefs = [
         expect: 6,
         config: {
             configName: "gpii.tests.nexus.config",
-            configPath: configPath
+            configPath: "%gpii-nexus/tests/configs"
         },
         testComponentPath: "nexusBindModelTestComponent",
         testModelPath: "someModelPath",
@@ -112,7 +107,6 @@ gpii.tests.nexus.bindModel.testDefs = [
                     }
                 ]
             },
-            // TODO: Can I rely on the targetModelChanged and onReceiveMessage events happening in this order?
             {
                 event: "{testCaseHolder}.events.targetModelChanged",
                 listener: "gpii.test.nexus.assertComponentModel",
@@ -120,9 +114,6 @@ gpii.tests.nexus.bindModel.testDefs = [
             },
             {
                 event: "{client}.events.onReceiveMessage",
-                // TODO: Do I want a message here?
-                //       Should a client receive change notifications for changes it made?
-                //       Is it unavoidable?
                 listener: "jqUnit.assertEquals",
                 args: ["Received change message", 10, "{arguments}.0"]
             },

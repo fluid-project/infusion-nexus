@@ -1,13 +1,10 @@
 "use strict";
 
 var fluid = require("infusion"),
-    gpii = fluid.registerNamespace("gpii"),
-    kettle = fluid.registerNamespace("kettle"),
-    path = require("path"),
-    configPath = path.resolve(__dirname, "configs");
+    kettle = require("kettle"),
+    gpii = fluid.registerNamespace("gpii");
 
-require("kettle");
-require("../src/Nexus.js");
+require("../index.js");
 require("../src/test/NexusTestUtils.js");
 
 kettle.loadTestingSupport();
@@ -28,7 +25,7 @@ gpii.tests.nexus.constructComponent.testDefs = [
         expect: 6,
         config: {
             configName: "gpii.tests.nexus.config",
-            configPath: configPath
+            configPath: "%gpii-nexus/tests/configs"
         },
         testComponentPath: "nexusConstructComponentTestComponent",
         sequence: [

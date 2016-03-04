@@ -1,13 +1,10 @@
 "use strict";
 
 var fluid = require("infusion"),
-    gpii = fluid.registerNamespace("gpii"),
-    kettle = fluid.registerNamespace("kettle"),
-    path = require("path"),
-    configPath = path.resolve(__dirname, "configs");
+    kettle = require("kettle"),
+    gpii = fluid.registerNamespace("gpii");
 
-require("kettle");
-require("../src/Nexus.js");
+require("../index.js");
 require("../src/test/NexusTestUtils.js");
 
 kettle.loadTestingSupport();
@@ -25,7 +22,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
         expect: 8,
         config: {
             configName: "gpii.tests.nexus.config",
-            configPath: configPath
+            configPath: "%gpii-nexus/tests/configs"
         },
         testGradeName: "gpii.tests.nexus.writeDefaults.newGrade",
         components: {
@@ -83,7 +80,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
         expect: 3,
         config: {
             configName: "gpii.tests.nexus.config",
-            configPath: configPath
+            configPath: "%gpii-nexus/tests/configs"
         },
         testGradeName: "gpii.tests.nexus.writeDefaults.badlyFormedJson",
         sequence: [

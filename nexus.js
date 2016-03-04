@@ -1,13 +1,10 @@
 "use strict";
 
-var fluid = require("infusion"),
-    kettle = fluid.registerNamespace("kettle"),
-    path = require("path");
+var kettle = require("kettle");
 
-require("kettle");
-require("./src/Nexus.js");
+require("./index.js");
 
 kettle.config.loadConfig({
     configName: kettle.config.getNodeEnv("gpii.nexus.config"),
-    configPath: kettle.config.getConfigPath(path.resolve(__dirname, "./configs"))
+    configPath: kettle.config.getConfigPath("%gpii-nexus/configs")
 });
