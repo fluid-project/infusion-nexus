@@ -11,6 +11,8 @@ kettle.loadTestingSupport();
 
 fluid.registerNamespace("gpii.tests.nexus.constructComponent");
 
+// TODO: Test construction and deletion of components at paths with segments containing "." and "\"
+
 gpii.tests.nexus.constructComponent.componentOptions = {
     type: "fluid.modelComponent",
     model: {

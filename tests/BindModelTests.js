@@ -14,7 +14,11 @@ fluid.registerNamespace("gpii.tests.nexus.bindModel");
 gpii.tests.nexus.bindModel.componentOptions = {
     type: "fluid.modelComponent",
     model: {
-        someModelPath: 2
+        "model.path\\seg1": {
+            "model.path\\seg2": {
+                "model.path\\seg3": "hello"
+            }
+        }
     }
 };
 
@@ -34,19 +38,18 @@ fluid.defaults("gpii.tests.nexus.bindModel.wsClient", {
 });
 
 // TODO: Test with multiple connected WebSocket clients
-// TODO: Test with change message path other than ""
 
 gpii.tests.nexus.bindModel.testDefs = [
     {
         name: "Bind Model",
         gradeNames: "gpii.test.nexus.testCaseHolder",
-        expect: 6,
+        expect: 12,
         config: {
             configName: "gpii.tests.nexus.config",
             configPath: "%gpii-nexus/tests/configs"
         },
         testComponentPath: "nexusBindModelTestComponent",
-        testModelPath: "someModelPath",
+        testModelPath: "model\\.path\\\\seg1.model\\.path\\\\seg2",
         components: {
             client: {
                 type: "gpii.tests.nexus.bindModel.wsClient"
@@ -55,15 +58,6 @@ gpii.tests.nexus.bindModel.testDefs = [
         events: {
             targetModelChanged: null
         },
-        /*
-        // TODO: See gpii.tests.nexus.bindModel.registerModelListenerForPath
-        invokers: {
-            fireTargetModelChanged: {
-                "this": "{testCaseHolder}.events.targetModelChanged",
-                method: "fire"
-            }
-        },
-        */
         sequence: [
             {
                 func: "gpii.test.nexus.assertNoComponentAtPath",
@@ -95,28 +89,126 @@ gpii.tests.nexus.bindModel.testDefs = [
             },
             {
                 event: "{client}.events.onReceiveMessage",
-                listener: "jqUnit.assertEquals",
-                args: ["Received initial message with the state of the component's model", 2, "{arguments}.0"]
+                listener: "jqUnit.assertDeepEq",
+                args: [
+                    "Received initial message with the state of the component's model",
+                    {
+                        "model.path\\seg3": "hello"
+                    },
+                    "{arguments}.0"
+                ]
             },
+            // Change at path with one segment
             {
                 func: "{client}.send",
                 args: [
                     {
-                        path: "",
-                        value: 10
+                        path: "model\\.path\\\\seg3a",
+                        value: "change at path with one segment"
                     }
                 ]
             },
             {
                 event: "{testCaseHolder}.events.targetModelChanged",
                 listener: "gpii.test.nexus.assertComponentModel",
-                args: ["Model updated", "{tests}.options.testComponentPath", { someModelPath: 10 }]
+                args: [
+                    "Model updated",
+                    "{tests}.options.testComponentPath",
+                    {
+                        "model.path\\seg1": {
+                            "model.path\\seg2": {
+                                "model.path\\seg3": "hello",
+                                "model.path\\seg3a": "change at path with one segment"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                event: "{client}.events.onReceiveMessage",
+                listener: "jqUnit.assertDeepEq",
+                args: [
+                    "Received change message",
+                    {
+                        "model.path\\seg3": "hello",
+                        "model.path\\seg3a": "change at path with one segment"
+                    },
+                    "{arguments}.0"
+                ]
+            },
+            // Change at path with two segments
+            {
+                func: "{client}.send",
+                args: [
+                    {
+                        path: "model\\.path\\\\seg3b.model\\.path\\\\seg4",
+                        value: "change at path with two segments"
+                    }
+                ]
+            },
+            {
+                event: "{testCaseHolder}.events.targetModelChanged",
+                listener: "gpii.test.nexus.assertComponentModel",
+                args: [
+                    "Model updated",
+                    "{tests}.options.testComponentPath",
+                    {
+                        "model.path\\seg1": {
+                            "model.path\\seg2": {
+                                "model.path\\seg3": "hello",
+                                "model.path\\seg3a": "change at path with one segment",
+                                "model.path\\seg3b": {
+                                    "model.path\\seg4": "change at path with two segments"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                event: "{client}.events.onReceiveMessage",
+                listener: "jqUnit.assertDeepEq",
+                args: [
+                    "Received change message",
+                    {
+                        "model.path\\seg3": "hello",
+                        "model.path\\seg3a": "change at path with one segment",
+                        "model.path\\seg3b": {
+                            "model.path\\seg4": "change at path with two segments"
+                        }
+                    },
+                    "{arguments}.0"
+                ]
+            },
+            // Change at path with no segments
+            {
+                func: "{client}.send",
+                args: [
+                    {
+                        path: "",
+                        value: "change at path with no segments"
+                    }
+                ]
+            },
+            {
+                event: "{testCaseHolder}.events.targetModelChanged",
+                listener: "gpii.test.nexus.assertComponentModel",
+                args: [
+                    "Model updated",
+                    "{tests}.options.testComponentPath",
+                    {
+                        "model.path\\seg1": {
+                            "model.path\\seg2": "change at path with no segments"
+                        }
+                    }
+                ]
             },
             {
                 event: "{client}.events.onReceiveMessage",
                 listener: "jqUnit.assertEquals",
-                args: ["Received change message", 10, "{arguments}.0"]
+                args: ["Received change message", "change at path with no segments", "{arguments}.0"]
             },
+            // Disconnect
             {
                 func: "{client}.disconnect"
             }

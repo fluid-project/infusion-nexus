@@ -111,7 +111,7 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
         componentHolder: {
             targetComponent: null // Will be set at onBindWs
         },
-        modelPath: null // Will be set at onBindWs
+        modelPathSegs: null // Will be set at onBindWs
     },
     invokers: {
         targetModelChangeListener: {
@@ -136,7 +136,7 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
             funcName: "gpii.nexus.bindModel.receiveMessage",
             args: [
                 "{that}.componentHolder.targetComponent",
-                "{that}.modelPath",
+                "{that}.modelPathSegs",
                 "{arguments}.1" // message
             ]
         },
@@ -149,6 +149,7 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
 });
 
 // TODO: Support both string and array paths
+// TODO: Support paths with segments containing "." and "\"
 // TODO: Move gpii.nexus.componentForPath to infusion FluidIoC.js "BEGIN NEXUS METHODS"
 gpii.nexus.componentForPath = function (path) {
     return fluid.globalInstantiator.pathToComponent[path];
@@ -158,18 +159,30 @@ gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, model
     handler.componentHolder.targetComponent = gpii.nexus.componentForPath(componentPath);
     // TODO: Note that applier.modelchanged.addListener is different from https://wiki.gpii.net/w/Nexus_API
     //       Which says applier.addModelListener
-    handler.componentHolder.targetComponent.applier.modelChanged.addListener(modelPath, modelChangeListener); // TODO: namespace?
-    handler.modelPath = modelPath;
+    handler.modelPathSegs = fluid.pathUtil.parseEL(modelPath);
+    handler.componentHolder.targetComponent.applier.modelChanged.addListener(
+        {
+            segs: handler.modelPathSegs
+        },
+        modelChangeListener
+    ); // TODO: namespace?
 
     // On connect, send a message with the state of the component's model at modelPath
-    handler.sendMessage(fluid.get(handler.componentHolder.targetComponent.model, modelPath));
+    handler.sendMessage(fluid.get(handler.componentHolder.targetComponent.model, handler.modelPathSegs));
 };
 
 gpii.nexus.bindModel.targetModelChangeListener = function (handler, value) {
     handler.sendMessage(value);
 };
 
-gpii.nexus.bindModel.receiveMessage = function (component, baseModelPath, message) {
-    var path = fluid.model.composePath(baseModelPath, message.path);
-    component.applier.change(path, message.value, message.type);
+gpii.nexus.bindModel.receiveMessage = function (component, baseModelPathSegs, message) {
+    var messagePathSegs = fluid.pathUtil.parseEL(message.path);
+    var changePathSegs = baseModelPathSegs.concat(messagePathSegs);
+    component.applier.fireChangeRequest(
+        {
+            segs: changePathSegs,
+            value: message.value,
+            type: message.type
+        }
+    );
 };
