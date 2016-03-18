@@ -45,6 +45,16 @@ gpii.test.nexus.assertComponentModel = function (message, path, expectedModel) {
     jqUnit.assertDeepEq(message, expectedModel, component.model);
 };
 
+gpii.test.nexus.assertNotContainsComponent = function (parentPath, childName) {
+    var parent = gpii.nexus.componentForPath(parentPath);
+    jqUnit.assertNoValue(parentPath + " component does not contain " + childName, parent[childName]);
+};
+
+gpii.test.nexus.assertContainsComponent = function (parentPath, childName) {
+    var parent = gpii.nexus.componentForPath(parentPath);
+    jqUnit.assertValue(parentPath + " component contains " + childName, parent[childName]);
+};
+
 fluid.defaults("gpii.test.nexus.testCaseHolder", {
     gradeNames: "kettle.test.testCaseHolder",
     components: {
@@ -80,6 +90,17 @@ fluid.defaults("gpii.test.nexus.testCaseHolder", {
                 }
             }
         },
+        constructComponentRequest2: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/components/%path",
+                port: "{configuration}.options.serverPort",
+                method: "POST",
+                termMap: {
+                    path: "{tests}.options.testComponentPath2"
+                }
+            }
+        },
         destroyComponentRequest: {
             type: "kettle.test.request.http",
             options: {
@@ -88,6 +109,17 @@ fluid.defaults("gpii.test.nexus.testCaseHolder", {
                 method: "DELETE",
                 termMap: {
                     path: "{tests}.options.testComponentPath"
+                }
+            }
+        },
+        destroyComponentRequest2: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/components/%path",
+                port: "{configuration}.options.serverPort",
+                method: "DELETE",
+                termMap: {
+                    path: "{tests}.options.testComponentPath2"
                 }
             }
         }

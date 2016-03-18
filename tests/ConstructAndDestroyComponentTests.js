@@ -21,33 +21,56 @@ kettle.loadTestingSupport();
 
 fluid.registerNamespace("gpii.tests.nexus.constructComponent");
 
-// TODO: Test construction and deletion of components at paths with segments containing "." and "\"
-
-gpii.tests.nexus.constructComponent.componentOptions = {
+gpii.tests.nexus.constructComponent.componentOptions1 = {
     type: "fluid.modelComponent",
     model: {
-        someModelPath: 2
+        "some.model\\path": "one"
+    }
+};
+
+gpii.tests.nexus.constructComponent.componentOptions2 = {
+    type: "fluid.modelComponent",
+    model: {
+        "some.model\\path": "two"
     }
 };
 
 gpii.tests.nexus.constructComponent.testDefs = [
     {
-        name: "Construct and Destroy Component",
+        name: "Construct and Destroy Components",
         gradeNames: "gpii.test.nexus.testCaseHolder",
-        expect: 6,
+        expect: 17,
         config: {
             configName: "gpii.tests.nexus.config",
             configPath: "%gpii-nexus/tests/configs"
         },
-        testComponentPath: "nexusConstructComponentTestComponent",
+        testComponentPath: "nexusConstructTestsComponentOne",
+        testComponentName2: "nexusConstructTestsComponentTwo",
+        testComponentPath2: {
+            expander: {
+                func: "fluid.stringTemplate",
+                args: [
+                    "%parent.%child",
+                    {
+                        parent: "{tests}.options.testComponentPath",
+                        child: "{tests}.options.testComponentName2"
+                    }
+                ]
+            }
+        },
         sequence: [
             {
                 func: "gpii.test.nexus.assertNoComponentAtPath",
                 args: ["Component not yet constructed", "{tests}.options.testComponentPath"]
             },
             {
+                func: "gpii.test.nexus.assertNoComponentAtPath",
+                args: ["Component not yet constructed", "{tests}.options.testComponentPath2"]
+            },
+            // Construct component one
+            {
                 func: "{constructComponentRequest}.send",
-                args: [gpii.tests.nexus.constructComponent.componentOptions]
+                args: [gpii.tests.nexus.constructComponent.componentOptions1]
             },
             {
                 event: "{constructComponentRequest}.events.onComplete",
@@ -59,7 +82,59 @@ gpii.tests.nexus.constructComponent.testDefs = [
                 args: [
                     "Model is as expected",
                     "{tests}.options.testComponentPath",
-                    gpii.tests.nexus.constructComponent.componentOptions.model
+                    gpii.tests.nexus.constructComponent.componentOptions1.model
+                ]
+            },
+            // Construct component two
+            {
+                func: "gpii.test.nexus.assertNotContainsComponent",
+                args: ["{tests}.options.testComponentPath", "{tests}.options.testComponentName2"]
+            },
+            {
+                func: "{constructComponentRequest2}.send",
+                args: [gpii.tests.nexus.constructComponent.componentOptions2]
+            },
+            {
+                event: "{constructComponentRequest2}.events.onComplete",
+                listener: "gpii.test.nexus.assertStatusCode",
+                args: ["{constructComponentRequest2}", 200]
+            },
+            {
+                func: "gpii.test.nexus.assertComponentModel",
+                args: [
+                    "Model is as expected",
+                    "{tests}.options.testComponentPath2",
+                    gpii.tests.nexus.constructComponent.componentOptions2.model
+                ]
+            },
+            {
+                func: "gpii.test.nexus.assertContainsComponent",
+                args: ["{tests}.options.testComponentPath", "{tests}.options.testComponentName2"]
+            },
+            // Destroy component two
+            {
+                func: "{destroyComponentRequest2}.send"
+            },
+            {
+                event: "{destroyComponentRequest2}.events.onComplete",
+                listener: "gpii.test.nexus.assertStatusCode",
+                args: ["{destroyComponentRequest2}", 200]
+            },
+            {
+                func: "gpii.test.nexus.assertNoComponentAtPath",
+                args: ["Component has been destroyed", "{tests}.options.testComponentPath2"]
+            },
+            {
+                func: "gpii.test.nexus.assertNotContainsComponent",
+                args: ["{tests}.options.testComponentPath", "{tests}.options.testComponentName2"]
+            },
+            // Destroy component one
+            {
+                func: "gpii.test.nexus.assertComponentModel",
+                args: [
+                    "Model is as expected",
+                    "{tests}.options.testComponentPath",
+                    gpii.tests.nexus.constructComponent.componentOptions1.model
                 ]
             },
             {

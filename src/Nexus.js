@@ -90,8 +90,10 @@ fluid.defaults("gpii.nexus.constructComponent.handler", {
     }
 });
 
+// TODO: Complain when component cannot be constructed due to parent not existing
 gpii.nexus.constructComponent.handleRequest = function (path, request) {
-    fluid.construct(path, request.req.body);
+    var segs = fluid.pathUtil.parseEL(path);
+    fluid.construct(segs, request.req.body);
     request.events.onSuccess.fire();
 };
 
@@ -105,8 +107,10 @@ fluid.defaults("gpii.nexus.destroyComponent.handler", {
     }
 });
 
+// TODO: Complain when component is not found
 gpii.nexus.destroyComponent.handleRequest = function (path, request) {
-    fluid.destroy(path);
+    var segs = fluid.pathUtil.parseEL(path);
+    fluid.destroy(segs);
     request.events.onSuccess.fire();
 };
 
@@ -159,7 +163,6 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
 });
 
 // TODO: Support both string and array paths
-// TODO: Support paths with segments containing "." and "\"
 // TODO: Move gpii.nexus.componentForPath to infusion FluidIoC.js "BEGIN NEXUS METHODS"
 gpii.nexus.componentForPath = function (path) {
     return fluid.globalInstantiator.pathToComponent[path];

@@ -124,6 +124,8 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                     // Kettle, see
                     // https://github.com/amb26/kettle/blob/KETTLE-32/README.md#working-with-middleware
 
+                    // JIRA issue filed at: https://issues.gpii.net/browse/GPII-1541
+
                     errorTexts: "Unknown error",
                     string: "{arguments}.0",
                     request: "{writeDefaultsRequest}",
