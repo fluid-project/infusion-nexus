@@ -111,7 +111,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                 args: [{
                     message: "Write Defaults returns 400 for badly formed JSON",
 
-                    // TODO: Maybe "Bad request" rather than "Unknown error"
+                    // TODO: GPII-1769 "Bad request" rather than "Unknown error"
 
                     // The "Unknown error" default message is set in
                     // kettle.request.http.errorHandler and in this
@@ -137,7 +137,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
 ];
 
 
-// TODO: Test sending a badly-formed grade definition (bad compact invoker)
+// TODO: GPII-1542 Test sending a badly-formed grade definition (such as bad compact invoker)
 
 // To implement testing of badly-formed grade definition, we will need
 // to replace the default Kettle run-time and test-time fluid.fail()
@@ -153,6 +153,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
 //
 // - addListener to failureEvent.fail with function fluid.identity
 //   (push a NOP handler onto the top of the stack)
+//   (see kettle.test.pushInstrumentedErrors)
 // - try fluid.defaults()
 // - catch exception, if instanceof fluid.FluidError, 400, otherwise 500
 // - finally removeListener failureEvent.fail (revert back to default handler)

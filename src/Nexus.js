@@ -162,8 +162,8 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
     }
 });
 
-// TODO: Support both string and array paths
-// TODO: Move gpii.nexus.componentForPath to infusion FluidIoC.js "BEGIN NEXUS METHODS"
+// TODO: GPII-1679 Support both string and array paths
+// TODO: GPII-1680 Move gpii.nexus.componentForPath to infusion FluidIoC.js "BEGIN NEXUS METHODS"
 gpii.nexus.componentForPath = function (path) {
     return fluid.globalInstantiator.pathToComponent[path];
 };
