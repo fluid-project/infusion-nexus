@@ -110,23 +110,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                 listener: "kettle.test.assertErrorResponse",
                 args: [{
                     message: "Write Defaults returns 400 for badly formed JSON",
-
-                    // TODO: GPII-1769 "Bad request" rather than "Unknown error"
-
-                    // The "Unknown error" default message is set in
-                    // kettle.request.http.errorHandler and in this
-                    // case, the error originates from Express
-                    // body-parser middleware
-                    // (body-parser/lib/read.js). We should implement
-                    // a replacement JSON parsing middleware based on
-                    // kettle.JSON.parse(), with richer error
-                    // reporting. For documentation on middleware in
-                    // Kettle, see
-                    // https://github.com/amb26/kettle/blob/KETTLE-32/README.md#working-with-middleware
-
-                    // JIRA issue filed at: https://issues.gpii.net/browse/GPII-1541
-
-                    errorTexts: "Unknown error",
+                    errorTexts: "Unexpected end of input",
                     string: "{arguments}.0",
                     request: "{writeDefaultsRequest}",
                     statusCode: 400

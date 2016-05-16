@@ -125,7 +125,8 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
         componentHolder: {
             targetComponent: null // Will be set at onBindWs
         },
-        modelPathSegs: null // Will be set at onBindWs
+        modelPathSegs: null, // Will be set at onBindWs
+        targetModelChangeListenerId: null // Will be set at onBindWs
     },
     invokers: {
         targetModelChangeListener: {
@@ -157,7 +158,7 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
         onDestroy: {
             "this": "{that}.componentHolder.targetComponent.applier.modelChanged",
             method: "removeListener",
-            args: ["{that}.targetModelChangeListener"]
+            args: ["{that}.targetModelChangeListenerId"]
         }
     }
 });
@@ -173,9 +174,11 @@ gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, model
     // TODO: Note that applier.modelchanged.addListener is different from https://wiki.gpii.net/w/Nexus_API
     //       Which says applier.addModelListener
     handler.modelPathSegs = fluid.pathUtil.parseEL(modelPath);
+    handler.targetModelChangeListenerId = fluid.allocateGuid();
     handler.componentHolder.targetComponent.applier.modelChanged.addListener(
         {
-            segs: handler.modelPathSegs
+            segs: handler.modelPathSegs,
+            listenerId: handler.targetModelChangeListenerId
         },
         modelChangeListener
     ); // TODO: namespace?
