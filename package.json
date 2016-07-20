@@ -1,0 +1,17 @@
+{
+    "name": "gpii-nexus",
+    "version": "0.1.0",
+    "author": "GPII",
+    "license": "BSD-3-Clause",
+    "dependencies": {
+        "infusion": "2.0.0-dev.20160513T002747Z.477b81a",
+        "kettle": "git://github.com/amb26/kettle.git#d808f3d5e326265aab9aaa1014703d75fa8ef0d0"
+    },
+    "devDependencies": {
+        "grunt": "0.4.5",
+        "grunt-contrib-jshint": "1.0.0",
+        "grunt-jsonlint": "1.0.7",
+        "grunt-shell": "1.2.1",
+        "node-jqunit": "1.1.4"
+    }
+}

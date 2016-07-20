@@ -1,0 +1,20 @@
+{
+    "type": "gpii.tests.nexus.config",
+    "options": {
+        "serverPort": 8082,
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "gradeNames": "kettle.server.ws",
+                    "port": "{kettle.config}.options.serverPort",
+                    "components": {
+                        "nexus": {
+                            "type": "gpii.nexus"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
