@@ -4,8 +4,8 @@
     "author": "GPII",
     "license": "BSD-3-Clause",
     "dependencies": {
-        "infusion": "2.0.0-dev.20160513T002747Z.477b81a",
-        "kettle": "git://github.com/amb26/kettle.git#d808f3d5e326265aab9aaa1014703d75fa8ef0d0"
+        "infusion": "2.0.0-dev.20160519T222603Z.754d2c6",
+        "kettle": "1.1.0"
     },
     "devDependencies": {
         "grunt": "0.4.5",
