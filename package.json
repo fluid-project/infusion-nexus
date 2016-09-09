@@ -4,7 +4,7 @@
     "author": "GPII",
     "license": "BSD-3-Clause",
     "dependencies": {
-        "infusion": "2.0.0-dev.20160519T222603Z.754d2c6",
+        "infusion": "git://github.com/simonbates/infusion.git#3a2722eba403e2ee135dda6e7d3764348f519b03",
         "kettle": "1.1.0"
     },
     "devDependencies": {

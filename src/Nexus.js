@@ -163,14 +163,8 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
     }
 });
 
-// TODO: GPII-1679 Support both string and array paths
-// TODO: GPII-1680 Move gpii.nexus.componentForPath to infusion FluidIoC.js "BEGIN NEXUS METHODS"
-gpii.nexus.componentForPath = function (path) {
-    return fluid.globalInstantiator.pathToComponent[path];
-};
-
 gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, modelChangeListener) {
-    handler.componentHolder.targetComponent = gpii.nexus.componentForPath(componentPath);
+    handler.componentHolder.targetComponent = fluid.componentForPath(componentPath);
     // TODO: Note that applier.modelchanged.addListener is different from https://wiki.gpii.net/w/Nexus_API
     //       Which says applier.addModelListener
     handler.modelPathSegs = fluid.pathUtil.parseEL(modelPath);

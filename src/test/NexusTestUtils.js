@@ -37,23 +37,23 @@ gpii.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGr
 };
 
 gpii.test.nexus.assertNoComponentAtPath = function (message, path) {
-    var component = gpii.nexus.componentForPath(path);
+    var component = fluid.componentForPath(path);
     jqUnit.assertNoValue(message, component);
 };
 
 gpii.test.nexus.assertComponentModel = function (message, path, expectedModel) {
-    var component = gpii.nexus.componentForPath(path);
+    var component = fluid.componentForPath(path);
     jqUnit.assertValue("Component exists", component);
     jqUnit.assertDeepEq(message, expectedModel, component.model);
 };
 
 gpii.test.nexus.assertNotContainsComponent = function (parentPath, childName) {
-    var parent = gpii.nexus.componentForPath(parentPath);
+    var parent = fluid.componentForPath(parentPath);
     jqUnit.assertNoValue(parentPath + " component does not contain " + childName, parent[childName]);
 };
 
 gpii.test.nexus.assertContainsComponent = function (parentPath, childName) {
-    var parent = gpii.nexus.componentForPath(parentPath);
+    var parent = fluid.componentForPath(parentPath);
     jqUnit.assertValue(parentPath + " component contains " + childName, parent[childName]);
 };
 
