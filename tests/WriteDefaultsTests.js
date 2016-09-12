@@ -151,11 +151,11 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                 event: "{writeDefaultsRequest}.events.onComplete",
                 listener: "kettle.test.assertErrorResponse",
                 args: [{
-                    message: "Write Defaults returns 400 for badly formed grade",
+                    message: "Write Defaults returns 500 for badly formed grade",
                     errorTexts: "Badly-formed compact invoker record without matching parentheses: bad(",
                     string: "{arguments}.0",
                     request: "{writeDefaultsRequest}",
-                    statusCode: 400
+                    statusCode: 500
                 }]
             },
             {
