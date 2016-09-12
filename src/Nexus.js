@@ -75,9 +75,29 @@ fluid.defaults("gpii.nexus.writeDefaults.handler", {
     }
 });
 
+gpii.nexus.makeSend400FailHandler = function (request) {
+    return function (msg) {
+        request.events.onError.fire({
+            message: msg,
+            statusCode: 400
+        });
+    };
+};
+
 gpii.nexus.writeDefaults.handleRequest = function (gradeName, request) {
-    fluid.defaults(gradeName, request.req.body);
-    request.events.onSuccess.fire();
+    // Handle a fluid.defaults failure ourselves
+    fluid.failureEvent.addListener(gpii.nexus.makeSend400FailHandler(request), "fail");
+    var success = false;
+    try {
+        fluid.defaults(gradeName, request.req.body);
+        success = true;
+    } finally {
+        // Revert to the previously defined failure handler
+        fluid.failureEvent.removeListener("fail");
+    }
+    if (success) {
+        request.events.onSuccess.fire();
+    }
 };
 
 fluid.defaults("gpii.nexus.constructComponent.handler", {
