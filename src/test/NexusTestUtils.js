@@ -23,17 +23,14 @@ gpii.test.nexus.assertStatusCode = function (request, statusCode) {
     jqUnit.assertEquals("Response has status code " + statusCode, statusCode, response.statusCode);
 };
 
-gpii.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGradeNames) {
+gpii.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGradeSpec) {
     // TODO: Switch over to the new assertion function of KETTLE-39
     var responseGradeSpec = JSON.parse(body);
     var response = request.nativeResponse;
     jqUnit.assertEquals("Response has status code 200", 200, response.statusCode);
     jqUnit.assertTrue("Response has JSON content-type",
                       response.headers["content-type"].indexOf("application/json") === 0);
-    fluid.each(expectedGradeNames, function (gradeName) {
-        jqUnit.assertTrue("Response has grade " + gradeName,
-                          fluid.hasGrade(responseGradeSpec, gradeName));
-    });
+    jqUnit.assertLeftHand("Response has expected grade specification", expectedGradeSpec, responseGradeSpec);
 };
 
 gpii.test.nexus.assertNoComponentAtPath = function (message, path) {

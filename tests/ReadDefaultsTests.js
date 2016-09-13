@@ -20,14 +20,17 @@ require("../src/test/NexusTestUtils.js");
 kettle.loadTestingSupport();
 
 fluid.defaults("gpii.tests.nexus.readDefaults.testGrade", {
-    gradeNames: ["fluid.component"]
+    gradeNames: ["fluid.component"],
+    model: {
+        name1: "hello world"
+    }
 });
 
 gpii.tests.nexus.readDefaults.testDefs = [
     {
         name: "Read Defaults for existing grade",
         gradeNames: "gpii.test.nexus.testCaseHolder",
-        expect: 4,
+        expect: 3,
         config: {
             configName: "gpii.tests.nexus.config",
             configPath: "%gpii-nexus/tests/configs"
@@ -40,7 +43,16 @@ gpii.tests.nexus.readDefaults.testDefs = [
             {
                 event: "{readDefaultsRequest}.events.onComplete",
                 listener: "gpii.test.nexus.verifyReadDefaultsResponse",
-                args: ["{arguments}.0", "{readDefaultsRequest}", ["fluid.component", "gpii.tests.nexus.readDefaults.testGrade"]]
+                args: [
+                    "{arguments}.0",
+                    "{readDefaultsRequest}",
+                    {
+                        gradeNames: ["fluid.component", "gpii.tests.nexus.readDefaults.testGrade"],
+                        model: {
+                            name1: "hello world"
+                        }
+                    }
+                ]
             }
         ]
     },

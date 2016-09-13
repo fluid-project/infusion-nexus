@@ -22,7 +22,10 @@ kettle.loadTestingSupport();
 fluid.registerNamespace("gpii.tests.nexus.writeDefaults");
 
 gpii.tests.nexus.writeDefaults.newGradeOptions = {
-    gradeNames: ["fluid.component"]
+    gradeNames: ["fluid.component"],
+    model: {
+        name1: "hello world"
+    }
 };
 
 gpii.tests.nexus.writeDefaults.badlyFormedInvokerGradeOptions = {
@@ -40,7 +43,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
     {
         name: "Write Defaults with good grade options",
         gradeNames: "gpii.test.nexus.testCaseHolder",
-        expect: 8,
+        expect: 7,
         config: {
             configName: "gpii.tests.nexus.config",
             configPath: "%gpii-nexus/tests/configs"
@@ -88,7 +91,16 @@ gpii.tests.nexus.writeDefaults.testDefs = [
             {
                 event: "{readDefaultsAgainRequest}.events.onComplete",
                 listener: "gpii.test.nexus.verifyReadDefaultsResponse",
-                args: ["{arguments}.0", "{readDefaultsAgainRequest}", ["fluid.component", "gpii.tests.nexus.writeDefaults.newGrade"]]
+                args: [
+                    "{arguments}.0",
+                    "{readDefaultsAgainRequest}",
+                    {
+                        gradeNames: ["fluid.component", "gpii.tests.nexus.writeDefaults.newGrade"],
+                        model: {
+                            name1: "hello world"
+                        }
+                    }
+                ]
             }
 
             // TODO: Update the grade definition and verify
