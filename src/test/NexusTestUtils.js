@@ -67,7 +67,38 @@ fluid.defaults("gpii.test.nexus.testCaseHolder", {
                 }
             }
         },
+        readDefaultsSecondTimeRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/defaults/%gradeName",
+                port: "{configuration}.options.serverPort",
+                termMap: {
+                    gradeName: "{tests}.options.testGradeName"
+                }
+            }
+        },
+        readDefaultsThirdTimeRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/defaults/%gradeName",
+                port: "{configuration}.options.serverPort",
+                termMap: {
+                    gradeName: "{tests}.options.testGradeName"
+                }
+            }
+        },
         writeDefaultsRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/defaults/%gradeName",
+                port: "{configuration}.options.serverPort",
+                method: "PUT",
+                termMap: {
+                    gradeName: "{tests}.options.testGradeName"
+                }
+            }
+        },
+        writeDefaultsAgainRequest: {
             type: "kettle.test.request.http",
             options: {
                 path: "/defaults/%gradeName",

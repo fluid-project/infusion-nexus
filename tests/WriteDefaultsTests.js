@@ -28,6 +28,13 @@ gpii.tests.nexus.writeDefaults.newGradeOptions = {
     }
 };
 
+gpii.tests.nexus.writeDefaults.updatedGradeOptions = {
+    gradeNames: ["fluid.component"],
+    model: {
+        updatedGrade: true
+    }
+};
+
 gpii.tests.nexus.writeDefaults.badlyFormedInvokerGradeOptions = {
     gradeNames: ["fluid.component"],
     invokers: {
@@ -41,26 +48,14 @@ gpii.tests.nexus.writeDefaults.sendBadlyFormedInvokerGradeOptions = function (re
 
 gpii.tests.nexus.writeDefaults.testDefs = [
     {
-        name: "Write Defaults with good grade options",
+        name: "Write Defaults with good grade options and then change it by writing the grade again",
         gradeNames: "gpii.test.nexus.testCaseHolder",
-        expect: 7,
+        expect: 11,
         config: {
             configName: "gpii.tests.nexus.config",
             configPath: "%gpii-nexus/tests/configs"
         },
         testGradeName: "gpii.tests.nexus.writeDefaults.newGrade",
-        components: {
-            readDefaultsAgainRequest: {
-                type: "kettle.test.request.http",
-                options: {
-                    path: "/defaults/%gradeName",
-                    port: "{configuration}.options.serverPort",
-                    termMap: {
-                        gradeName: "{tests}.options.testGradeName"
-                    }
-                }
-            }
-        },
         sequence: [
             {
                 func: "{readDefaultsRequest}.send"
@@ -86,14 +81,14 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                 args: ["{writeDefaultsRequest}", 200]
             },
             {
-                func: "{readDefaultsAgainRequest}.send"
+                func: "{readDefaultsSecondTimeRequest}.send"
             },
             {
-                event: "{readDefaultsAgainRequest}.events.onComplete",
+                event: "{readDefaultsSecondTimeRequest}.events.onComplete",
                 listener: "gpii.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{arguments}.0",
-                    "{readDefaultsAgainRequest}",
+                    "{readDefaultsSecondTimeRequest}",
                     {
                         gradeNames: ["fluid.component", "gpii.tests.nexus.writeDefaults.newGrade"],
                         model: {
@@ -101,10 +96,33 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                         }
                     }
                 ]
+            },
+            {
+                func: "{writeDefaultsAgainRequest}.send",
+                args: [gpii.tests.nexus.writeDefaults.updatedGradeOptions]
+            },
+            {
+                event: "{writeDefaultsAgainRequest}.events.onComplete",
+                listener: "gpii.test.nexus.assertStatusCode",
+                args: ["{writeDefaultsAgainRequest}", 200]
+            },
+            {
+                func: "{readDefaultsThirdTimeRequest}.send"
+            },
+            {
+                event: "{readDefaultsThirdTimeRequest}.events.onComplete",
+                listener: "gpii.test.nexus.verifyReadDefaultsResponse",
+                args: [
+                    "{arguments}.0",
+                    "{readDefaultsThirdTimeRequest}",
+                    {
+                        gradeNames: ["fluid.component", "gpii.tests.nexus.writeDefaults.newGrade"],
+                        model: {
+                            updatedGrade: true
+                        }
+                    }
+                ]
             }
-
-            // TODO: Update the grade definition and verify
-
         ]
     },
     {
