@@ -8,6 +8,8 @@ You may obtain a copy of the License at
 https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 */
 
+/* global JSON */
+
 "use strict";
 
 var fluid = require("infusion"),
@@ -46,9 +48,14 @@ gpii.tests.nexus.writeDefaults.sendBadlyFormedInvokerGradeOptions = function (re
     request.send(gpii.tests.nexus.writeDefaults.badlyFormedInvokerGradeOptions);
 };
 
+gpii.tests.nexus.writeDefaults.rememberReadDefaultsResponse = function (body, component) {
+    component.readDefaultsResponseBody = body;
+    component.readDefaultsResponseGradeSpec = JSON.parse(body);
+};
+
 gpii.tests.nexus.writeDefaults.testDefs = [
     {
-        name: "Write Defaults with good grade options and then change it by writing the grade again",
+        name: "Write Defaults with good grade options and verify update to the grade",
         gradeNames: "gpii.test.nexus.testCaseHolder",
         expect: 11,
         config: {
@@ -192,11 +199,70 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                 funcName: "kettle.test.popInstrumentedErrors"
             }
         ]
+    },
+    {
+        name: "Send a Read Defaults response back to Write Defaults and verify that the grade is stable",
+        gradeNames: "gpii.test.nexus.testCaseHolder",
+        expect: 8,
+        config: {
+            configName: "gpii.tests.nexus.config",
+            configPath: "%gpii-nexus/tests/configs"
+        },
+        testGradeName: "gpii.tests.nexus.writeDefaults.newGrade",
+        sequence: [
+            {
+                func: "{writeDefaultsRequest}.send",
+                args: [gpii.tests.nexus.writeDefaults.newGradeOptions]
+            },
+            {
+                event: "{writeDefaultsRequest}.events.onComplete",
+                listener: "gpii.test.nexus.assertStatusCode",
+                args: ["{writeDefaultsRequest}", 200]
+            },
+            {
+                func: "{readDefaultsRequest}.send"
+            },
+            {
+                event: "{readDefaultsRequest}.events.onComplete",
+                listener: "gpii.tests.nexus.writeDefaults.rememberReadDefaultsResponse",
+                args: ["{arguments}.0", "{tests}"]
+            },
+            {
+                funcName: "gpii.test.nexus.verifyReadDefaultsResponse",
+                args: [
+                    "{tests}.readDefaultsResponseBody",
+                    "{readDefaultsRequest}",
+                    {
+                        gradeNames: ["fluid.component", "gpii.tests.nexus.writeDefaults.newGrade"],
+                        model: {
+                            name1: "hello world"
+                        }
+                    }
+                ]
+            },
+            {
+                func: "{writeDefaultsAgainRequest}.send",
+                args: ["{tests}.readDefaultsResponseGradeSpec"]
+            },
+            {
+                event: "{writeDefaultsAgainRequest}.events.onComplete",
+                listener: "gpii.test.nexus.assertStatusCode",
+                args: ["{writeDefaultsAgainRequest}", 200]
+            },
+            {
+                func: "{readDefaultsSecondTimeRequest}.send"
+            },
+            {
+                event: "{readDefaultsSecondTimeRequest}.events.onComplete",
+                listener: "gpii.test.nexus.verifyReadDefaultsResponse",
+                args: [
+                    "{arguments}.0",
+                    "{readDefaultsSecondTimeRequest}",
+                    "{tests}.readDefaultsResponseGradeSpec"
+                ]
+            }
+        ]
     }
 ];
-
-
-// TODO: Resubmit a read defaults response to the write defaults endpoint and verify idempotent
-
 
 kettle.test.bootstrapServer(gpii.tests.nexus.writeDefaults.testDefs);
