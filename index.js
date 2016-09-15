@@ -8,6 +8,8 @@ You may obtain a copy of the License at
 https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 */
 
+/* eslint-env node */
+
 "use strict";
 
 var fluid = require("infusion");

@@ -8,21 +8,18 @@ You may obtain a copy of the License at
 https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 */
 
-/* global module */
+/* eslint-env node */
 
 "use strict";
 
 module.exports = function (grunt) {
 
     grunt.initConfig({
-        jshint: {
-            all: ["**/*.js"],
-            options: {
-                jshintrc: true
-            }
+        eslint: {
+            all: ["**/*.js"]
         },
         jsonlint: {
-            all: ["package.json", ".jshintrc", "src/**/*.json", "tests/**/*.json", "configs/**/*.json"]
+            all: [".eslintrc.json", "package.json", "configs/**/*.json", "src/**/*.json", "tests/**/*.json"]
         },
         shell: {
             options: {
@@ -36,11 +33,11 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.loadNpmTasks("grunt-contrib-jshint");
+    grunt.loadNpmTasks("fluid-grunt-eslint");
     grunt.loadNpmTasks("grunt-jsonlint");
     grunt.loadNpmTasks("grunt-shell");
 
     grunt.registerTask("default", ["lint"]);
-    grunt.registerTask("lint", "Run jshint and jsonlint", ["jshint", "jsonlint"]);
+    grunt.registerTask("lint", "Run eslint and jsonlint", ["eslint", "jsonlint"]);
     grunt.registerTask("tests", "Run Nexus tests", ["shell:runTests"]);
 };
