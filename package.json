@@ -1,0 +1,21 @@
+{
+    "name": "gpii-nexus",
+    "version": "0.1.0",
+    "author": "GPII",
+    "license": "BSD-3-Clause",
+    "repository": "git@github.com:GPII/nexus.git",
+    "scripts": {
+        "test": "node tests/all-tests.js"
+    },
+    "dependencies": {
+        "infusion": "2.0.0-dev.20160911T222604Z.b86ecbb",
+        "kettle": "1.1.0"
+    },
+    "devDependencies": {
+        "fluid-grunt-eslint": "18.1.2",
+        "grunt": "1.0.1",
+        "grunt-jsonlint": "1.1.0",
+        "grunt-shell": "1.3.0",
+        "node-jqunit": "1.1.4"
+    }
+}
