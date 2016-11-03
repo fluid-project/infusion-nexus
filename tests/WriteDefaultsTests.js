@@ -158,7 +158,14 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                 listener: "kettle.test.assertErrorResponse",
                 args: [{
                     message: "Write Defaults returns 400 for badly formed JSON",
-                    errorTexts: "Unexpected end of input",
+                    // In Node 4, parsing JSON that is not properly closed
+                    // results in the error message "Unexpected end of input".
+                    // In Node 6, the message was changed to "Unexpected end
+                    // of JSON input".
+                    // Here we test for "Unexpected end of" so that the test
+                    // works as expected in both Node 4 and Node 6.
+                    // https://issues.gpii.net/browse/GPII-2080
+                    errorTexts: "Unexpected end of",
                     string: "{arguments}.0",
                     request: "{writeDefaultsRequest}",
                     statusCode: 400
