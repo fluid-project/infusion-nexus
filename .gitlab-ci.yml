@@ -12,7 +12,7 @@ stages:
   - test
   - cleanup
 
-build_job:
+build:
   stage: build
   script:
     - vagrant up
@@ -20,12 +20,12 @@ build_job:
     - npm install -g grunt
   when: always
 
-test_job:
+test:
   stage: test
   script:
     - grunt tests
 
-cleanup_job:
+cleanup:
   stage: cleanup
   script:
     - vagrant destroy -f
