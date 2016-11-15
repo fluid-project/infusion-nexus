@@ -1,0 +1,32 @@
+# This folder is cached between builds
+# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+cache:
+  key: "$CI_BUILD_REF_NAME"
+  untracked: true
+  paths:
+    - node_modules/
+    - .vagrant/
+
+stages:
+  - build
+  - test
+  - cleanup
+
+build_job:
+  stage: build
+  script:
+    - vagrant up
+    - npm install
+    - npm install -g grunt
+  when: always
+
+test_job:
+  stage: test
+  script:
+    - grunt tests
+
+cleanup_job:
+  stage: cleanup
+  script:
+    - vagrant destroy -f
+  when: always
