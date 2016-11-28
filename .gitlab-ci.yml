@@ -5,28 +5,33 @@ cache:
   untracked: true
   paths:
     - node_modules/
-    - .vagrant/
 
 stages:
   - build
   - test
   - cleanup
 
+before_script:
+  - "mkdir -p ../.vagrant-$CI_BUILD_REF_NAME"
+  - rm -fr .vagrant
+  - "ln -s ../.vagrant-$CI_BUILD_REF_NAME .vagrant"
+
 build:
   stage: build
   script:
     - vagrant up
-    - npm install
-    - npm install -g grunt
   when: always
 
 test:
   stage: test
   script:
+    - npm install
+    - npm install -g grunt
     - grunt tests
 
 cleanup:
   stage: cleanup
   script:
     - vagrant destroy -f
+    - "rm -fr ../.vagrant-$CI_BUILD_REF_NAME"
   when: always
