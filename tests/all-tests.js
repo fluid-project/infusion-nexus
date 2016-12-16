@@ -18,7 +18,8 @@ var tests = [
     "./ReadDefaultsTests.js",
     "./WriteDefaultsTests.js",
     "./ConstructAndDestroyComponentTests.js",
-    "./BindModelTests.js"
+    "./BindModelTests.js",
+    "./RecipeProductTests.js"
 ];
 
 fluid.each(tests, function (path) {
