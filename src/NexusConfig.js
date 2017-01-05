@@ -25,14 +25,12 @@ fluid.defaults("gpii.nexus.recipeProduct", {
 
 fluid.defaults("gpii.nexus.coOccurrenceEngine", {
     gradeNames: "fluid.modelComponent",
-    model: {
-        recipes: []
-    },
+    recipes: [],
     invokers: {
         matchRecipes: {
             funcName: "gpii.nexus.coOccurrenceEngine.matchRecipes",
             args: [
-                "{that}.model.recipes",
+                "{that}.options.recipes",
                 "{arguments}.0" // component root to match against
             ]
         }
@@ -51,13 +49,25 @@ gpii.nexus.coOccurrenceEngine.matchRecipes = function (recipes, componentRoot) {
     var matchedRecipes = [];
 
     fluid.each(recipes, function (recipe) {
-        fluid.each(recipe.options.reactants, function (reactant) {
-            fluid.each(components, function (component) {
+        var recipeMatch = {
+            recipe: recipe,
+            reactants: { }
+        };
+        var foundAllReactants = true;
+        fluid.each(recipe.options.reactants, function (reactant, name) {
+            var foundReactant = fluid.find(components, function (component) {
                 if (gpii.nexus.coOccurrenceEngine.componentMatchesReactantSpec(reactant.match, component)) {
-                    matchedRecipes.push(recipe);
+                    recipeMatch.reactants[name] = component;
+                    return true;
                 }
             });
+            if (!foundReactant) {
+                foundAllReactants = false;
+            }
         });
+        if (foundAllReactants) {
+            matchedRecipes.push(recipeMatch);
+        }
     });
 
     return matchedRecipes;

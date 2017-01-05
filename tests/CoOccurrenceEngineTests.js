@@ -34,31 +34,33 @@ fluid.defaults("gpii.tests.nexus.recipeA", {
     }
 });
 
-jqUnit.test("CoOccurenceEngine Test", function () {
-    jqUnit.expect(2);
+jqUnit.test("CoOccurrenceEngine Test", function () {
+    jqUnit.expect(4);
 
-    var componentRoot = fluid.construct("nexusCoOccurenceEngineTests", {
+    var componentRoot = fluid.construct("nexusCoOccurrenceEngineTests", {
         type: "fluid.modelComponent"
     });
 
     var engine = gpii.nexus.coOccurrenceEngine({
-        model: {
-            recipes: [
-                // TODO: Better way to instantiate recipes?
-                gpii.tests.nexus.recipeA()
-            ]
-        }
+        recipes: [
+            "@expand:gpii.tests.nexus.recipeA()"
+        ]
     });
 
     // Start with no components and verify that no recipes match
     jqUnit.assertEquals("No match", 0, engine.matchRecipes(componentRoot).length);
 
     // Make an instance of reactantA
-    fluid.construct("nexusCoOccurenceEngineTests.componentA1", {
+    fluid.construct("nexusCoOccurrenceEngineTests.componentA1", {
         type: "gpii.tests.nexus.reactantA"
     });
 
     // Verify that recipeA now matches
     var matches = engine.matchRecipes(componentRoot);
-    jqUnit.assertTrue("Match recipeA", matches.length === 1 && fluid.contains(matches[0].options.gradeNames, "gpii.tests.nexus.recipeA"));
+    jqUnit.assertEquals("Matched one recipe", 1, matches.length);
+    jqUnit.assertTrue("Matched recipeA", fluid.componentHasGrade(matches[0].recipe,
+        "gpii.tests.nexus.recipeA"));
+    jqUnit.assertEquals("Matched componentA",
+        fluid.componentForPath("nexusCoOccurrenceEngineTests.componentA1"),
+        matches[0].reactants.componentA);
 });
