@@ -15,7 +15,7 @@ https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 var fluid = require("infusion"),
     gpii = fluid.registerNamespace("gpii");
 
-require("node-jqunit");
+fluid.require("node-jqunit");
 
 require("../index.js");
 
