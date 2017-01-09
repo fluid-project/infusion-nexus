@@ -20,6 +20,7 @@ var tests = [
     "./ConstructAndDestroyComponentTests.js",
     "./BindModelTests.js",
     "./RecipeProductTests.js",
+    "./RecipeMatcherTests.js",
     "./CoOccurrenceEngineTests.js"
 ];
 

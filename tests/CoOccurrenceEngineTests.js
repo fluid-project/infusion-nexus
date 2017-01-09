@@ -25,12 +25,13 @@ fluid.defaults("gpii.tests.nexus.reactantA", {
 jqUnit.test("CoOccurrenceEngine Test", function () {
     jqUnit.expect(4);
 
-    var componentRoot = fluid.construct("nexusCoOccurrenceEngineTests", {
+    fluid.construct("nexusCoOccurrenceEngineTests", {
         type: "fluid.modelComponent"
     });
 
     var engine = gpii.nexus.coOccurrenceEngine({
         model: {
+            componentRootPath: "nexusCoOccurrenceEngineTests",
             recipes: {
                 recipeA: {
                     reactants: {
@@ -40,6 +41,12 @@ jqUnit.test("CoOccurrenceEngine Test", function () {
                                 gradeName: "gpii.tests.nexus.reactantA"
                             }
                         }
+                    },
+                    product: {
+                        name: "recipeAProduct",
+                        options: {
+                            type: "gpii.tests.nexus.recipeA.product"
+                        }
                     }
                 }
             }
@@ -47,7 +54,7 @@ jqUnit.test("CoOccurrenceEngine Test", function () {
     });
 
     // Start with no components and verify that no recipes match
-    jqUnit.assertEquals("No match", 0, engine.matchRecipes(componentRoot).length);
+    jqUnit.assertEquals("No match", 0, engine.matchRecipes().length);
 
     // Make an instance of reactantA
     fluid.construct("nexusCoOccurrenceEngineTests.componentA1", {
@@ -55,7 +62,7 @@ jqUnit.test("CoOccurrenceEngine Test", function () {
     });
 
     // Verify that recipeA now matches
-    var matches = engine.matchRecipes(componentRoot);
+    var matches = engine.matchRecipes();
     jqUnit.assertEquals("Matched one recipe", 1, matches.length);
     jqUnit.assertEquals("Matched recipeA", "recipeA", matches[0].recipe);
     jqUnit.assertEquals("Matched componentA",
