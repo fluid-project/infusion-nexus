@@ -73,20 +73,24 @@ gpii.nexus.recipeMatcher.componentMatchesReactantSpec = function (component, mat
     }
 };
 
-// TODO: Monitor appearance and disappearance of components using the
-// instantiator "onComponentAttach" and "onComponentClear" events.
+// TODO: Monitor the appearance and disappearance of peer components
+// using the instantiator "onComponentAttach" and "onComponentClear"
+// events.
+//
 // See:
 // https://github.com/amb26/fluid-authoring/blob/FLUID-4884/src/js/ComponentGraph.js#L270
 
 // TODO: Where are recipe products constructed?
 //       - Under the component root that the Co-Occurrence Engine is
-//         configured with
+//         configured with; or
 //       - Subcomponents of the Co-Occurrence Engine
+
 // TODO: Who names recipe products?
-//       - Configured in each recipe
+//       - Configured in each recipe; or
 //       - Randomly assigned by the Co-Occurrence Engine
+
 // TODO: Some mechanism to know if we already have a product made for
-//       a given recipe
+// a given recipe
 
 fluid.defaults("gpii.nexus.coOccurrenceEngine", {
     gradeNames: "fluid.modelComponent",
@@ -100,18 +104,22 @@ fluid.defaults("gpii.nexus.coOccurrenceEngine", {
         recipes: {}
     },
     invokers: {
-        matchRecipes: {
-            funcName: "gpii.nexus.coOccurrenceEngine.matchRecipes",
+        onPeersChanged: {
+            funcName: "gpii.nexus.coOccurrenceEngine.onPeersChanged",
             args: [
                 "{that}.recipeMatcher",
                 "{that}.model.componentRootPath",
-                "{that}.model.recipes"
+                "{that}.model.recipes",
+                "{that}.events.afterProductsCreated"
             ]
         }
+    },
+    events: {
+        afterProductsCreated: null
     }
 });
 
-gpii.nexus.coOccurrenceEngine.matchRecipes = function (recipeMatcher, componentRootPath, recipes) {
+gpii.nexus.coOccurrenceEngine.onPeersChanged = function (recipeMatcher, componentRootPath, recipes, doneEvent) {
     var componentRoot = fluid.componentForPath(componentRootPath);
 
     var components = [];
@@ -122,17 +130,19 @@ gpii.nexus.coOccurrenceEngine.matchRecipes = function (recipeMatcher, componentR
         }
     });
 
-    var matchedRecipes = [];
-
-    fluid.each(recipes, function (recipe, recipeName) {
+    fluid.each(recipes, function (recipe) {
         var matchedReactants = recipeMatcher.matchRecipe(recipe, components);
         if (matchedReactants) {
-            matchedRecipes.push({
-                recipe: recipeName,
-                reactants: matchedReactants
+            var productPath = componentRootPath + "." + recipe.product.name;
+            var productOptions = fluid.extend({
+                componentPaths: { }
+            }, recipe.product.options);
+            fluid.each(matchedReactants, function (reactantComponent, reactantName) {
+                productOptions.componentPaths[reactantName] = fluid.pathForComponent(reactantComponent);
             });
+            fluid.construct(productPath, productOptions);
         }
     });
 
-    return matchedRecipes;
+    doneEvent.fire();
 };

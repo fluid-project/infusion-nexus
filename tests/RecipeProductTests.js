@@ -12,8 +12,7 @@ https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 
 "use strict";
 
-var fluid = require("infusion"),
-    gpii = fluid.registerNamespace("gpii");
+var fluid = require("infusion");
 
 fluid.require("node-jqunit");
 
@@ -62,14 +61,6 @@ fluid.defaults("gpii.tests.nexus.recipeA.product", {
 });
 
 // Tests
-
-gpii.tests.nexus.recipeProduct.changeEventForComponent = function (path) {
-    return fluid.componentForPath(path).applier.modelChanged;
-};
-
-gpii.tests.nexus.recipeProduct.changeModel = function (componentPath, modelPath, value) {
-    fluid.componentForPath(componentPath).applier.change(modelPath, value);
-};
 
 fluid.defaults("gpii.tests.nexus.recipeProductTestTree", {
     gradeNames: ["fluid.test.testEnvironment"],
@@ -163,11 +154,11 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                     },
                     // Exercise the model relay rules and verify
                     {
-                        func: "gpii.tests.nexus.recipeProduct.changeModel",
+                        func: "gpii.test.nexus.changeModelAtPath",
                         args: ["nexusRecipeProductTests.componentA1", "valueA", 100]
                     },
                     {
-                        changeEvent: "@expand:gpii.tests.nexus.recipeProduct.changeEventForComponent(nexusRecipeProductTests.componentB1)",
+                        changeEvent: "@expand:gpii.test.nexus.changeEventForComponent(nexusRecipeProductTests.componentB1)",
                         path: "valueB",
                         listener: "jqUnit.assertEquals",
                         args: [
@@ -177,11 +168,11 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                         ]
                     },
                     {
-                        func: "gpii.tests.nexus.recipeProduct.changeModel",
+                        func: "gpii.test.nexus.changeModelAtPath",
                         args: ["nexusRecipeProductTests.componentA2", "valueA", 200]
                     },
                     {
-                        changeEvent: "@expand:gpii.tests.nexus.recipeProduct.changeEventForComponent(nexusRecipeProductTests.componentB2)",
+                        changeEvent: "@expand:gpii.test.nexus.changeEventForComponent(nexusRecipeProductTests.componentB2)",
                         path: "valueB",
                         listener: "jqUnit.assertEquals",
                         args: [

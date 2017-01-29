@@ -38,6 +38,11 @@ gpii.test.nexus.assertNoComponentAtPath = function (message, path) {
     jqUnit.assertNoValue(message, component);
 };
 
+gpii.test.nexus.assertComponentAtPath = function (message, path) {
+    var component = fluid.componentForPath(path);
+    jqUnit.assertValue(message, component);
+};
+
 gpii.test.nexus.assertComponentModel = function (message, path, expectedModel) {
     var component = fluid.componentForPath(path);
     jqUnit.assertValue("Component exists", component);
@@ -52,6 +57,14 @@ gpii.test.nexus.assertNotContainsComponent = function (parentPath, childName) {
 gpii.test.nexus.assertContainsComponent = function (parentPath, childName) {
     var parent = fluid.componentForPath(parentPath);
     jqUnit.assertValue(parentPath + " component contains " + childName, parent[childName]);
+};
+
+gpii.test.nexus.changeModelAtPath = function (componentPath, modelPath, value) {
+    fluid.componentForPath(componentPath).applier.change(modelPath, value);
+};
+
+gpii.test.nexus.changeEventForComponent = function (path) {
+    return fluid.componentForPath(path).applier.modelChanged;
 };
 
 fluid.defaults("gpii.test.nexus.testCaseHolder", {
