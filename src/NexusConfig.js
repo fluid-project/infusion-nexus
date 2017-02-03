@@ -73,76 +73,125 @@ gpii.nexus.recipeMatcher.componentMatchesReactantSpec = function (component, mat
     }
 };
 
-// TODO: Monitor the appearance and disappearance of peer components
-// using the instantiator "onComponentAttach" and "onComponentClear"
-// events.
-//
-// See:
-// https://github.com/amb26/fluid-authoring/blob/FLUID-4884/src/js/ComponentGraph.js#L270
+fluid.defaults("gpii.nexus.nexusComponentRoot", {
+    gradeNames: ["fluid.component"],
+    invokers: {
+        pathForComponent: {
+            funcName: "gpii.nexus.nexusComponentRoot.pathForComponent",
+            args: [
+                "{that}",
+                "{arguments}.0" // path
+            ]
+        },
+        containsComponent: {
+            funcName: "gpii.nexus.nexusComponentRoot.containsComponent",
+            args: [
+                "@expand:gpii.nexus.nexusComponentRoot.pathForComponent({that}, {arguments}.0)" // path
+            ]
+        },
+        constructComponent: {
+            funcName: "fluid.construct",
+            args: [
+                "@expand:gpii.nexus.nexusComponentRoot.pathForComponent({that}, {arguments}.0)", // path
+                "{arguments}.1" // options
+            ]
+        }
+    },
+    events: {
+        onComponentCreated: null
+    },
+    distributeOptions: [{
+        target: "{that fluid.component}.options.listeners",
+        record: {
+            "onCreate.fireNexusComponentCreated":
+                "{gpii.nexus.nexusComponentRoot}.events.onComponentCreated"
+        },
+        namespace: "nexusComponentRoot"
+    }]
+});
 
-// TODO: Where are recipe products constructed?
-//       - Under the component root that the Co-Occurrence Engine is
-//         configured with; or
-//       - Subcomponents of the Co-Occurrence Engine
+gpii.nexus.nexusComponentRoot.pathForComponent = function (that, path) {
+    var segs = typeof(path) === "string" ? fluid.pathUtil.parseEL(path) : path;
+    var rootPath = fluid.pathForComponent(that);
+    return fluid.makeArray(rootPath).concat(segs);
+};
+
+gpii.nexus.nexusComponentRoot.containsComponent = function (path) {
+    return fluid.isValue(fluid.componentForPath(path));
+};
 
 // TODO: Who names recipe products?
 //       - Configured in each recipe; or
 //       - Randomly assigned by the Co-Occurrence Engine
 
-// TODO: Some mechanism to know if we already have a product made for
-// a given recipe
-
 fluid.defaults("gpii.nexus.coOccurrenceEngine", {
     gradeNames: "fluid.modelComponent",
     components: {
+        nexusComponentRoot: {
+            type: "gpii.nexus.nexusComponentRoot"
+        },
         recipeMatcher: {
             type: "gpii.nexus.recipeMatcher"
         }
     },
     model: {
-        componentRootPath: "",
         recipes: {}
     },
-    invokers: {
-        onPeersChanged: {
-            funcName: "gpii.nexus.coOccurrenceEngine.onPeersChanged",
+    events: {
+        onProductCreated: null
+    },
+    listeners: {
+        "{nexusComponentRoot}.events.onComponentCreated": {
+            funcName: "gpii.nexus.coOccurrenceEngine.componentCreated",
             args: [
+                "{that}.nexusComponentRoot",
                 "{that}.recipeMatcher",
-                "{that}.model.componentRootPath",
                 "{that}.model.recipes",
-                "{that}.events.afterProductsCreated"
+                "{that}.events.onProductCreated"
             ]
         }
-    },
-    events: {
-        afterProductsCreated: null
     }
 });
 
-gpii.nexus.coOccurrenceEngine.onPeersChanged = function (recipeMatcher, componentRootPath, recipes, doneEvent) {
-    var componentRoot = fluid.componentForPath(componentRootPath);
-
+gpii.nexus.coOccurrenceEngine.componentCreated = function (componentRoot, recipeMatcher, recipes, productCreatedEvent) {
     var components = [];
 
+    // TODO: This will only collect direct children of componentRoot, we
+    // want all descendants
+    // TODO: Maybe better to pass the componentRoot directly to the
+    // recipeMatcher and let it do the walking
     fluid.each(componentRoot, function (component) {
         if (fluid.isComponent(component)) {
             components.push(component);
         }
     });
 
-    fluid.each(recipes, function (recipe) {
-        var matchedReactants = recipeMatcher.matchRecipe(recipe, components);
-        if (matchedReactants) {
-            var productPath = componentRootPath + "." + recipe.product.name;
-            var productOptions = fluid.extend({
-                componentPaths: { }
-            }, recipe.product.options);
-            fluid.each(matchedReactants, function (reactantComponent, reactantName) {
-                productOptions.componentPaths[reactantName] = fluid.pathForComponent(reactantComponent);
-            });
-            fluid.construct(productPath, productOptions);
-        }
-    });
+    if (components.length > 0) {
+        fluid.each(recipes, function (recipe) {
+            // Process the recipe if we don't already have a product
+            // constructed for it
+            var productPath = recipe.product.path;
+            if (!componentRoot.containsComponent(productPath)) {
+                var matchedReactants = recipeMatcher.matchRecipe(recipe, components);
+                if (matchedReactants) {
+                    // Extend the product options with the reactant
+                    // component paths and an event listener for onCreated
+                    var productOptions = fluid.extend({
+                        componentPaths: { },
+                        listeners: {
+                            "onCreate.fireCoOccurrenceEngineProductCreated": {
+                                "this": productCreatedEvent,
+                                method: "fire"
+                            }
+                        }
+                    }, recipe.product.options);
+                    fluid.each(matchedReactants, function (reactantComponent, reactantName) {
+                        productOptions.componentPaths[reactantName] = fluid.pathForComponent(reactantComponent);
+                    });
 
-    doneEvent.fire();
+                    componentRoot.constructComponent(productPath, productOptions);
+                }
+            }
+        });
+    }
 };

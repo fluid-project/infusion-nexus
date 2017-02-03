@@ -66,7 +66,6 @@ fluid.defaults("gpii.tests.nexus.recipeA.product", {
 fluid.defaults("gpii.tests.nexus.coOccurrenceEngine", {
     gradeNames: ["gpii.nexus.coOccurrenceEngine"],
     model: {
-        componentRootPath: "nexusCoOccurrenceEngineTests",
         recipes: {
             recipeA: {
                 reactants: {
@@ -84,7 +83,7 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngine", {
                     }
                 },
                 product: {
-                    name: "recipeAProduct",
+                    path: "recipeAProduct",
                     options: {
                         type: "gpii.tests.nexus.recipeA.product"
                     }
@@ -99,8 +98,16 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngine", {
 fluid.defaults("gpii.tests.nexus.coOccurrenceEngineTests", {
     gradeNames: ["fluid.test.testEnvironment"],
     components: {
+        nexusComponentRoot: {
+            type: "gpii.nexus.nexusComponentRoot"
+        },
         coOccurrenceEngine : {
-            type: "gpii.tests.nexus.coOccurrenceEngine"
+            type: "gpii.tests.nexus.coOccurrenceEngine",
+            options: {
+                components: {
+                    nexusComponentRoot: "{coOccurrenceEngineTests}.nexusComponentRoot"
+                }
+            }
         },
         coOccurrenceEngineTester: {
             type: "gpii.tests.nexus.coOccurrenceEngineTester"
@@ -115,82 +122,52 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngineTester", {
         tests: [
             {
                 name: "Construct reactants and verify product created",
-                expect: 4,
+                expect: 3,
                 sequence: [
-                    // Construct component root
-                    {
-                        func: "fluid.construct",
-                        args: [
-                            "nexusCoOccurrenceEngineTests",
-                            {
-                                type: "fluid.modelComponent"
-                            }
-                        ]
-                    },
                     // Start with no reactants and verify that no recipe
-                    // products are created
+                    // product exists
                     {
-                        func: "{coOccurrenceEngine}.onPeersChanged"
-                    },
-                    {
-                        event: "{coOccurrenceEngine}.events.afterProductsCreated",
-                        listener: "gpii.test.nexus.assertNoComponentAtPath",
+                        func: "jqUnit.assertNoValue",
                         args: [
-                            "No product constructed",
-                            "nexusCoOccurrenceEngineTests.recipeAProduct"
+                            "No product existing",
+                            "{nexusComponentRoot}.recipeAProduct"
                         ]
                     },
-                    // Add reactant A and verify that no recipe products
-                    // are created
+                    // Add reactant A and reactant B and verify that the
+                    // product for recipe A is created
                     {
-                        func: "fluid.construct",
+                        func: "{nexusComponentRoot}.constructComponent",
                         args: [
-                            "nexusCoOccurrenceEngineTests.reactantA",
+                            "reactantA",
                             {
                                 type: "gpii.tests.nexus.reactantA"
                             }
                         ]
                     },
                     {
-                        func: "{coOccurrenceEngine}.onPeersChanged"
-                    },
-                    {
-                        event: "{coOccurrenceEngine}.events.afterProductsCreated",
-                        listener: "gpii.test.nexus.assertNoComponentAtPath",
+                        func: "{nexusComponentRoot}.constructComponent",
                         args: [
-                            "No product constructed",
-                            "nexusCoOccurrenceEngineTests.recipeAProduct"
-                        ]
-                    },
-                    // Add reactant B and verify that the product for
-                    // recipe A is created
-                    {
-                        func: "fluid.construct",
-                        args: [
-                            "nexusCoOccurrenceEngineTests.reactantB",
+                            "reactantB",
                             {
                                 type: "gpii.tests.nexus.reactantB"
                             }
                         ]
                     },
                     {
-                        func: "{coOccurrenceEngine}.onPeersChanged"
-                    },
-                    {
-                        event: "{coOccurrenceEngine}.events.afterProductsCreated",
-                        listener: "gpii.test.nexus.assertComponentAtPath",
+                        event: "{coOccurrenceEngine}.events.onProductCreated",
+                        listener: "jqUnit.assertValue",
                         args: [
-                            "Recipe A product constructed",
-                            "nexusCoOccurrenceEngineTests.recipeAProduct"
+                            "Recipe A product created",
+                            "{nexusComponentRoot}.recipeAProduct"
                         ]
                     },
                     // Exercise the model relay rules and verify
                     {
-                        func: "gpii.test.nexus.changeModelAtPath",
-                        args: ["nexusCoOccurrenceEngineTests.reactantA", "valueA", 100]
+                        func: "{nexusComponentRoot}.reactantA.applier.change",
+                        args: [ "valueA", 100 ]
                     },
                     {
-                        changeEvent: "@expand:gpii.test.nexus.changeEventForComponent(nexusCoOccurrenceEngineTests.reactantB)",
+                        changeEvent: "{nexusComponentRoot}.reactantB.applier.modelChanged",
                         path: "valueB",
                         listener: "jqUnit.assertEquals",
                         args: [
