@@ -75,6 +75,14 @@ fluid.defaults("gpii.nexus", {
     components: {
         nexusComponentRoot: {
             type: "gpii.nexus.nexusComponentRoot"
+        },
+        coOccurrenceEngine : {
+            type: "gpii.nexus.coOccurrenceEngine",
+            options: {
+                components: {
+                    nexusComponentRoot: "{gpii.nexus}.nexusComponentRoot"
+                }
+            }
         }
     },
     requestHandlers: {
@@ -101,6 +109,11 @@ fluid.defaults("gpii.nexus", {
         bindModel: {
             route: "/bindModel/:componentPath/:modelPath",
             type: "gpii.nexus.bindModel.handler"
+        },
+        addRecipe: {
+            route: "/recipes/:recipeName",
+            method: "put",
+            type: "gpii.nexus.addRecipe.handler"
         }
     }
 });
@@ -258,4 +271,20 @@ gpii.nexus.bindModel.receiveMessage = function (component, baseModelPathSegs, me
             type: message.type
         }
     );
+};
+
+fluid.defaults("gpii.nexus.addRecipe.handler", {
+    gradeNames: ["kettle.request.http"],
+    invokers: {
+        handleRequest: {
+            funcName: "gpii.nexus.addRecipe.handleRequest",
+            args: ["{request}.req.params.recipeName", "{request}", "{gpii.nexus}.coOccurrenceEngine"]
+        }
+    }
+});
+
+gpii.nexus.addRecipe.handleRequest = function (recipeName, request, coOccurrenceEngine) {
+    // TODO: Validate recipeName
+    coOccurrenceEngine.applier.change(["recipes", recipeName], request.req.body);
+    request.events.onSuccess.fire();
 };
