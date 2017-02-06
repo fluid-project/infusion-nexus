@@ -12,7 +12,10 @@
                         "nexus": {
                             "type": "gpii.nexus",
                             "options": {
-                                "gradeNames": "fluid.resolveRoot"
+                                "distributeOptions": {
+                                    "target": "{that gpii.nexus.nexusComponentRoot}.options.gradeNames",
+                                    "record": "fluid.resolveRoot"
+                                }
                             }
                         }
                     }
