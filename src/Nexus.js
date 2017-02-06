@@ -15,8 +15,68 @@ https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 var fluid = require("infusion"),
     gpii = fluid.registerNamespace("gpii");
 
+fluid.defaults("gpii.nexus.nexusComponentRoot", {
+    gradeNames: ["fluid.component"],
+    invokers: {
+        resolvePath: {
+            funcName: "gpii.nexus.nexusComponentRoot.resolvePath",
+            args: [
+                "{that}",
+                "{arguments}.0" // path
+            ]
+        },
+        componentForPath: {
+            funcName: "fluid.componentForPath",
+            args: [
+                "@expand:{that}.resolvePath({arguments}.0)" // path
+            ]
+        },
+        containsComponent: {
+            funcName: "fluid.isValue",
+            args: [
+                "@expand:{that}.componentForPath({arguments}.0)" // path
+            ]
+        },
+        constructComponent: {
+            funcName: "fluid.construct",
+            args: [
+                "@expand:{that}.resolvePath({arguments}.0)", // path
+                "{arguments}.1" // options
+            ]
+        },
+        destroyComponent: {
+            funcName: "fluid.destroy",
+            args: [
+                "@expand:{that}.resolvePath({arguments}.0)" // path
+            ]
+        }
+    },
+    events: {
+        onComponentCreated: null
+    },
+    distributeOptions: [{
+        target: "{that fluid.component}.options.listeners",
+        record: {
+            "onCreate.fireNexusComponentCreated":
+                "{gpii.nexus.nexusComponentRoot}.events.onComponentCreated"
+        },
+        namespace: "nexusComponentRoot"
+    }]
+});
+
+gpii.nexus.nexusComponentRoot.resolvePath = function (that, path) {
+    var segs = typeof(path) === "string" ? fluid.pathUtil.parseEL(path) : path;
+    var rootPath = fluid.pathForComponent(that);
+    return fluid.makeArray(rootPath).concat(segs);
+};
+
 fluid.defaults("gpii.nexus", {
     gradeNames: ["kettle.app"],
+    components: {
+        nexusComponentRoot: {
+            type: "gpii.nexus.nexusComponentRoot"
+        }
+    },
     requestHandlers: {
         readDefaults: {
             route: "/defaults/:gradeName",
@@ -87,15 +147,15 @@ fluid.defaults("gpii.nexus.constructComponent.handler", {
     invokers: {
         handleRequest: {
             funcName: "gpii.nexus.constructComponent.handleRequest",
-            args: ["{request}.req.params.path", "{request}"]
+            args: ["{request}.req.params.path", "{request}", "{gpii.nexus}.nexusComponentRoot"]
         }
     }
 });
 
 // TODO: Complain when component cannot be constructed due to parent not existing
-gpii.nexus.constructComponent.handleRequest = function (path, request) {
+gpii.nexus.constructComponent.handleRequest = function (path, request, nexusComponentRoot) {
     var segs = fluid.pathUtil.parseEL(path);
-    fluid.construct(segs, request.req.body);
+    nexusComponentRoot.constructComponent(segs, request.req.body);
     request.events.onSuccess.fire();
 };
 
@@ -104,15 +164,15 @@ fluid.defaults("gpii.nexus.destroyComponent.handler", {
     invokers: {
         handleRequest: {
             funcName: "gpii.nexus.destroyComponent.handleRequest",
-            args: ["{request}.req.params.path", "{request}"]
+            args: ["{request}.req.params.path", "{request}", "{gpii.nexus}.nexusComponentRoot"]
         }
     }
 });
 
 // TODO: Complain when component is not found
-gpii.nexus.destroyComponent.handleRequest = function (path, request) {
+gpii.nexus.destroyComponent.handleRequest = function (path, request, nexusComponentRoot) {
     var segs = fluid.pathUtil.parseEL(path);
-    fluid.destroy(segs);
+    nexusComponentRoot.destroyComponent(segs);
     request.events.onSuccess.fire();
 };
 
@@ -146,7 +206,8 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
                 "{that}",
                 "{request}.req.params.componentPath",
                 "{request}.req.params.modelPath",
-                "{that}.targetModelChangeListener"
+                "{that}.targetModelChangeListener",
+                "{gpii.nexus}.nexusComponentRoot"
             ]
         },
         onReceiveMessage: {
@@ -165,8 +226,8 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
     }
 });
 
-gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, modelChangeListener) {
-    handler.componentHolder.targetComponent = fluid.componentForPath(componentPath);
+gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, modelChangeListener, nexusComponentRoot) {
+    handler.componentHolder.targetComponent = nexusComponentRoot.componentForPath(componentPath);
     // TODO: Note that applier.modelchanged.addListener is different from https://wiki.gpii.net/w/Nexus_API
     //       Which says applier.addModelListener
     handler.modelPathSegs = fluid.pathUtil.parseEL(modelPath);

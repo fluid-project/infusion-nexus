@@ -73,53 +73,6 @@ gpii.nexus.recipeMatcher.componentMatchesReactantSpec = function (component, mat
     }
 };
 
-fluid.defaults("gpii.nexus.nexusComponentRoot", {
-    gradeNames: ["fluid.component"],
-    invokers: {
-        pathForComponent: {
-            funcName: "gpii.nexus.nexusComponentRoot.pathForComponent",
-            args: [
-                "{that}",
-                "{arguments}.0" // path
-            ]
-        },
-        containsComponent: {
-            funcName: "gpii.nexus.nexusComponentRoot.containsComponent",
-            args: [
-                "@expand:gpii.nexus.nexusComponentRoot.pathForComponent({that}, {arguments}.0)" // path
-            ]
-        },
-        constructComponent: {
-            funcName: "fluid.construct",
-            args: [
-                "@expand:gpii.nexus.nexusComponentRoot.pathForComponent({that}, {arguments}.0)", // path
-                "{arguments}.1" // options
-            ]
-        }
-    },
-    events: {
-        onComponentCreated: null
-    },
-    distributeOptions: [{
-        target: "{that fluid.component}.options.listeners",
-        record: {
-            "onCreate.fireNexusComponentCreated":
-                "{gpii.nexus.nexusComponentRoot}.events.onComponentCreated"
-        },
-        namespace: "nexusComponentRoot"
-    }]
-});
-
-gpii.nexus.nexusComponentRoot.pathForComponent = function (that, path) {
-    var segs = typeof(path) === "string" ? fluid.pathUtil.parseEL(path) : path;
-    var rootPath = fluid.pathForComponent(that);
-    return fluid.makeArray(rootPath).concat(segs);
-};
-
-gpii.nexus.nexusComponentRoot.containsComponent = function (path) {
-    return fluid.isValue(fluid.componentForPath(path));
-};
-
 // TODO: Who names recipe products?
 //       - Configured in each recipe; or
 //       - Randomly assigned by the Co-Occurrence Engine

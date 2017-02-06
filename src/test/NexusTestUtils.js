@@ -33,29 +33,23 @@ gpii.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGr
     jqUnit.assertLeftHand("Response has expected grade specification", expectedGradeSpec, responseGradeSpec);
 };
 
-gpii.test.nexus.assertNoComponentAtPath = function (message, path) {
-    var component = fluid.componentForPath(path);
-    jqUnit.assertNoValue(message, component);
+gpii.test.nexus.assertNoComponentAtPath = function (message, nexusComponentRoot, path) {
+    jqUnit.assertFalse(message, nexusComponentRoot.containsComponent(path));
 };
 
-gpii.test.nexus.assertComponentAtPath = function (message, path) {
-    var component = fluid.componentForPath(path);
-    jqUnit.assertValue(message, component);
-};
-
-gpii.test.nexus.assertComponentModel = function (message, path, expectedModel) {
-    var component = fluid.componentForPath(path);
+gpii.test.nexus.assertComponentModel = function (message, nexusComponentRoot, path, expectedModel) {
+    var component = nexusComponentRoot.componentForPath(path);
     jqUnit.assertValue("Component exists", component);
     jqUnit.assertDeepEq(message, expectedModel, component.model);
 };
 
-gpii.test.nexus.assertNotContainsComponent = function (parentPath, childName) {
-    var parent = fluid.componentForPath(parentPath);
+gpii.test.nexus.assertNotContainsComponent = function (nexusComponentRoot, parentPath, childName) {
+    var parent = nexusComponentRoot.componentForPath(parentPath);
     jqUnit.assertNoValue(parentPath + " component does not contain " + childName, parent[childName]);
 };
 
-gpii.test.nexus.assertContainsComponent = function (parentPath, childName) {
-    var parent = fluid.componentForPath(parentPath);
+gpii.test.nexus.assertContainsComponent = function (nexusComponentRoot, parentPath, childName) {
+    var parent = nexusComponentRoot.componentForPath(parentPath);
     jqUnit.assertValue(parentPath + " component contains " + childName, parent[childName]);
 };
 
