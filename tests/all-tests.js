@@ -21,7 +21,8 @@ var tests = [
     "./BindModelTests.js",
     "./RecipeProductTests.js",
     "./RecipeMatcherTests.js",
-    "./CoOccurrenceEngineTests.js"
+    "./CoOccurrenceEngineTests.js",
+    "./AddRecipeTests.js"
 ];
 
 fluid.each(tests, function (path) {

@@ -66,6 +66,8 @@ gpii.tests.nexus.addRecipe.testDefs = [
                 listener: "gpii.test.nexus.assertStatusCode",
                 args: ["{addRecipeRequest}", 200]
             }
+
+            // TODO: Construct reactants and verify product created
         ]
     }
 ];
