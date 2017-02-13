@@ -18,48 +18,7 @@ fluid.require("node-jqunit");
 
 require("../index.js");
 require("../src/test/NexusTestUtils.js");
-
-// Reactant grades
-
-fluid.defaults("gpii.tests.nexus.reactantA", {
-    gradeNames: "fluid.modelComponent",
-    model: {
-        valueA: 10
-    }
-});
-
-fluid.defaults("gpii.tests.nexus.reactantB", {
-    gradeNames: "fluid.modelComponent",
-    model: {
-        valueB: 20
-    }
-});
-
-// Recipe product grade
-
-fluid.defaults("gpii.tests.nexus.recipeA.product", {
-    gradeNames: "gpii.nexus.recipeProduct",
-    componentPaths: {
-        componentA: null,
-        componentB: null
-    },
-    components: {
-        componentA: "@expand:fluid.componentForPath({recipeProduct}.options.componentPaths.componentA)",
-        componentB: "@expand:fluid.componentForPath({recipeProduct}.options.componentPaths.componentB)"
-    },
-    modelRelay: [
-        {
-            source: "{componentA}.model.valueA",
-            target: "{componentB}.model.valueB",
-            forward: {
-                excludeSource: "init"
-            },
-            singleTransform: {
-                type: "fluid.transforms.identity"
-            }
-        }
-    ]
-});
+require("../src/test/NexusTestData.js");
 
 // Co-Occurrence Engine
 
@@ -72,20 +31,20 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngine", {
                     componentA: {
                         match: {
                             type: "gradeMatcher",
-                            gradeName: "gpii.tests.nexus.reactantA"
+                            gradeName: "gpii.test.nexus.reactantA"
                         }
                     },
                     componentB: {
                         match: {
                             type: "gradeMatcher",
-                            gradeName: "gpii.tests.nexus.reactantB"
+                            gradeName: "gpii.test.nexus.reactantB"
                         }
                     }
                 },
                 product: {
                     path: "recipeAProduct",
                     options: {
-                        type: "gpii.tests.nexus.recipeA.product"
+                        type: "gpii.test.nexus.recipeA.product"
                     }
                 }
             }
@@ -140,7 +99,7 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngineTester", {
                         args: [
                             "reactantA",
                             {
-                                type: "gpii.tests.nexus.reactantA"
+                                type: "gpii.test.nexus.reactantA"
                             }
                         ]
                     },
@@ -149,7 +108,7 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngineTester", {
                         args: [
                             "reactantB",
                             {
-                                type: "gpii.tests.nexus.reactantB"
+                                type: "gpii.test.nexus.reactantB"
                             }
                         ]
                     },

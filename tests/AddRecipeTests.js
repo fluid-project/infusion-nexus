@@ -18,6 +18,7 @@ var fluid = require("infusion"),
 
 require("../index.js");
 require("../src/test/NexusTestUtils.js");
+require("../src/test/NexusTestData.js");
 
 kettle.loadTestingSupport();
 
@@ -30,20 +31,20 @@ gpii.tests.nexus.addRecipe.recipeA = {
         componentA: {
             match: {
                 type: "gradeMatcher",
-                gradeName: "gpii.tests.nexus.reactantA"
+                gradeName: "gpii.test.nexus.reactantA"
             }
         },
         componentB: {
             match: {
                 type: "gradeMatcher",
-                gradeName: "gpii.tests.nexus.reactantB"
+                gradeName: "gpii.test.nexus.reactantB"
             }
         }
     },
     product: {
         path: "recipeAProduct",
         options: {
-            type: "gpii.tests.nexus.recipeA.product"
+            type: "gpii.test.nexus.recipeA.product"
         }
     }
 };
@@ -64,47 +65,15 @@ gpii.tests.nexus.addRecipe.testDefs = [
         },
         testRecipeName: "recipeA",
         testGradeOptions: {
-            reactantAOptions: {
-                gradeNames: ["fluid.modelComponent"],
-                model: {
-                    valueA: 10
-                }
-            },
-            reactantBOptions: {
-                gradeNames: ["fluid.modelComponent"],
-                model: {
-                    valueB: 20
-                }
-            },
-            recipeAProductOptions: {
-                gradeNames: ["gpii.nexus.recipeProduct"],
-                componentPaths: {
-                    componentA: null,
-                    componentB: null
-                },
-                components: {
-                    componentA: "@expand:fluid.componentForPath({recipeProduct}.options.componentPaths.componentA)",
-                    componentB: "@expand:fluid.componentForPath({recipeProduct}.options.componentPaths.componentB)"
-                },
-                modelRelay: [
-                    {
-                        source: "{componentA}.model.valueA",
-                        target: "{componentB}.model.valueB",
-                        forward: {
-                            excludeSource: "init"
-                        },
-                        singleTransform: {
-                            type: "fluid.transforms.identity"
-                        }
-                    }
-                ]
-            }
+            reactantAOptions: gpii.test.nexus.reactantAOptions,
+            reactantBOptions: gpii.test.nexus.reactantBOptions,
+            recipeAProductOptions: gpii.test.nexus.recipeAProductOptions
         },
         components: {
             writeReactantADefaultsRequest: {
                 type: "kettle.test.request.http",
                 options: {
-                    path: "/defaults/gpii.tests.nexus.reactantA",
+                    path: "/defaults/gpii.test.nexus.reactantA",
                     port: "{configuration}.options.serverPort",
                     method: "PUT"
                 }
@@ -112,7 +81,7 @@ gpii.tests.nexus.addRecipe.testDefs = [
             writeReactantBDefaultsRequest: {
                 type: "kettle.test.request.http",
                 options: {
-                    path: "/defaults/gpii.tests.nexus.reactantB",
+                    path: "/defaults/gpii.test.nexus.reactantB",
                     port: "{configuration}.options.serverPort",
                     method: "PUT"
                 }
@@ -120,7 +89,7 @@ gpii.tests.nexus.addRecipe.testDefs = [
             writeRecipeAProductDefaultsRequest: {
                 type: "kettle.test.request.http",
                 options: {
-                    path: "/defaults/gpii.tests.nexus.recipeA.product",
+                    path: "/defaults/gpii.test.nexus.recipeA.product",
                     port: "{configuration}.options.serverPort",
                     method: "PUT"
                 }
@@ -185,7 +154,7 @@ gpii.tests.nexus.addRecipe.testDefs = [
             // created
             {
                 func: "{constructReactantARequest}.send",
-                args: [{ type: "gpii.tests.nexus.reactantA" }]
+                args: [{ type: "gpii.test.nexus.reactantA" }]
             },
             {
                 event: "{constructReactantARequest}.events.onComplete",
@@ -194,7 +163,7 @@ gpii.tests.nexus.addRecipe.testDefs = [
             },
             {
                 func: "{constructReactantBRequest}.send",
-                args: [{ type: "gpii.tests.nexus.reactantB" }]
+                args: [{ type: "gpii.test.nexus.reactantB" }]
             },
             {
                 event: "{coOccurrenceEngine}.events.onProductCreated",

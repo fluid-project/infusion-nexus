@@ -1,5 +1,5 @@
 /*
-Copyright 2016 OCAD University
+Copyright 2016, 2017 OCAD University
 
 Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
@@ -17,48 +17,8 @@ var fluid = require("infusion");
 fluid.require("node-jqunit");
 
 require("../index.js");
-
-// Peer grades
-
-fluid.defaults("gpii.tests.nexus.recipeProduct.gradeA", {
-    gradeNames: "fluid.modelComponent",
-    model: {
-        valueA: 10
-    }
-});
-
-fluid.defaults("gpii.tests.nexus.recipeProduct.gradeB", {
-    gradeNames: "fluid.modelComponent",
-    model: {
-        valueB: 20
-    }
-});
-
-// Recipe grade
-
-fluid.defaults("gpii.tests.nexus.recipeA.product", {
-    gradeNames: "gpii.nexus.recipeProduct",
-    componentPaths: {
-        componentA: null,
-        componentB: null
-    },
-    components: {
-        componentA: "@expand:fluid.componentForPath({recipeProduct}.options.componentPaths.componentA)",
-        componentB: "@expand:fluid.componentForPath({recipeProduct}.options.componentPaths.componentB)"
-    },
-    modelRelay: [
-        {
-            source: "{componentA}.model.valueA",
-            target: "{componentB}.model.valueB",
-            forward: {
-                excludeSource: "init"
-            },
-            singleTransform: {
-                type: "fluid.transforms.identity"
-            }
-        }
-    ]
-});
+require("../src/test/NexusTestUtils.js");
+require("../src/test/NexusTestData.js");
 
 // Tests
 
@@ -95,7 +55,7 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                         args: [
                             "nexusRecipeProductTests.componentA1",
                             {
-                                type: "gpii.tests.nexus.recipeProduct.gradeA"
+                                type: "gpii.test.nexus.reactantA"
                             }
                         ]
                     },
@@ -104,7 +64,7 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                         args: [
                             "nexusRecipeProductTests.componentA2",
                             {
-                                type: "gpii.tests.nexus.recipeProduct.gradeA"
+                                type: "gpii.test.nexus.reactantA"
                             }
                         ]
                     },
@@ -113,7 +73,7 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                         args: [
                             "nexusRecipeProductTests.componentB1",
                             {
-                                type: "gpii.tests.nexus.recipeProduct.gradeB"
+                                type: "gpii.test.nexus.reactantB"
                             }
                         ]
                     },
@@ -122,7 +82,7 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                         args: [
                             "nexusRecipeProductTests.componentB2",
                             {
-                                type: "gpii.tests.nexus.recipeProduct.gradeB"
+                                type: "gpii.test.nexus.reactantB"
                             }
                         ]
                     },
@@ -132,7 +92,7 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                         args: [
                             "nexusRecipeProductTests.recipeA1",
                             {
-                                type: "gpii.tests.nexus.recipeA.product",
+                                type: "gpii.test.nexus.recipeA.product",
                                 componentPaths: {
                                     componentA: "nexusRecipeProductTests.componentA1",
                                     componentB: "nexusRecipeProductTests.componentB1"
@@ -144,7 +104,7 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                         args: [
                             "nexusRecipeProductTests.recipeA2",
                             {
-                                type: "gpii.tests.nexus.recipeA.product",
+                                type: "gpii.test.nexus.recipeA.product",
                                 componentPaths: {
                                     componentA: "nexusRecipeProductTests.componentA2",
                                     componentB: "nexusRecipeProductTests.componentB2"
