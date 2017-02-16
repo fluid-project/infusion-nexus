@@ -51,7 +51,8 @@ gpii.test.nexus.recipeAProductOptions = {
                 excludeSource: "init"
             },
             singleTransform: {
-                type: "fluid.transforms.identity"
+                type: "fluid.transforms.linearScale",
+                factor: 2
             }
         }
     ]

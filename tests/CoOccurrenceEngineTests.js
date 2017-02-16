@@ -123,7 +123,7 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngineTester", {
                     // Exercise the model relay rules and verify
                     {
                         func: "{nexusComponentRoot}.reactantA.applier.change",
-                        args: [ "valueA", 100 ]
+                        args: [ "valueA", 42 ]
                     },
                     {
                         changeEvent: "{nexusComponentRoot}.reactantB.applier.modelChanged",
@@ -131,7 +131,7 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngineTester", {
                         listener: "jqUnit.assertEquals",
                         args: [
                             "Reactant B model updated",
-                            100,
+                            84,
                             "{arguments}.0"
                         ]
                     }

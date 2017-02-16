@@ -58,7 +58,7 @@ gpii.tests.nexus.addRecipe.testDefs = [
         mergePolicy: {
             "testGradeOptions": "noexpand"
         },
-        expect: 7,
+        expect: 9,
         config: {
             configName: "gpii.tests.nexus.config",
             configPath: "%gpii-nexus/tests/configs"
@@ -108,6 +108,20 @@ gpii.tests.nexus.addRecipe.testDefs = [
                     path: "/components/reactantB",
                     port: "{configuration}.options.serverPort",
                     method: "POST"
+                }
+            },
+            reactantAClient: {
+                type: "kettle.test.request.ws",
+                options: {
+                    path: "/bindModel/reactantA/valueA",
+                    port: "{configuration}.options.serverPort"
+                }
+            },
+            reactantBClient: {
+                type: "kettle.test.request.ws",
+                options: {
+                    path: "/bindModel/reactantB/valueB",
+                    port: "{configuration}.options.serverPort"
                 }
             }
         },
@@ -177,13 +191,50 @@ gpii.tests.nexus.addRecipe.testDefs = [
                 event: "{constructReactantBRequest}.events.onComplete",
                 listener: "gpii.test.nexus.assertStatusCode",
                 args: ["{constructReactantBRequest}", 200]
-            }
-
-
+            },
             // Change reactant A's model and verify that the product
             // relay rules cause reactant B's model to be updated
-
-            // TODO
+            {
+                func: "{reactantAClient}.connect"
+            },
+            {
+                event: "{reactantAClient}.events.onConnect",
+                listener: "fluid.identity"
+            },
+            {
+                func: "{reactantBClient}.connect"
+            },
+            {
+                event: "{reactantBClient}.events.onConnect",
+                listener: "fluid.identity"
+            },
+            {
+                event: "{reactantBClient}.events.onReceiveMessage",
+                listener: "jqUnit.assertDeepEq",
+                args: [
+                    "Received initial message with the state of reactantB's model",
+                    20,
+                    "{arguments}.0"
+                ]
+            },
+            {
+                func: "{reactantAClient}.send",
+                args: [
+                    {
+                        path: "",
+                        value: 42
+                    }
+                ]
+            },
+            {
+                event: "{reactantBClient}.events.onReceiveMessage",
+                listener: "jqUnit.assertDeepEq",
+                args: [
+                    "Received change message from reactantB",
+                    84,
+                    "{arguments}.0"
+                ]
+            }
         ]
     }
 ];

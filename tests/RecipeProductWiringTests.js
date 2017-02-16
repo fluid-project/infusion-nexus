@@ -115,7 +115,7 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                     // Exercise the model relay rules and verify
                     {
                         func: "gpii.test.nexus.changeModelAtPath",
-                        args: ["nexusRecipeProductTests.componentA1", "valueA", 100]
+                        args: ["nexusRecipeProductTests.componentA1", "valueA", 42]
                     },
                     {
                         changeEvent: "@expand:gpii.test.nexus.changeEventForComponent(nexusRecipeProductTests.componentB1)",
@@ -123,13 +123,13 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                         listener: "jqUnit.assertEquals",
                         args: [
                             "Component B1 model updated",
-                            100,
+                            84,
                             "{arguments}.0"
                         ]
                     },
                     {
                         func: "gpii.test.nexus.changeModelAtPath",
-                        args: ["nexusRecipeProductTests.componentA2", "valueA", 200]
+                        args: ["nexusRecipeProductTests.componentA2", "valueA", 420]
                     },
                     {
                         changeEvent: "@expand:gpii.test.nexus.changeEventForComponent(nexusRecipeProductTests.componentB2)",
@@ -137,7 +137,7 @@ fluid.defaults("gpii.tests.nexus.recipeProductTester", {
                         listener: "jqUnit.assertEquals",
                         args: [
                             "Component B2 model updated",
-                            200,
+                            840,
                             "{arguments}.0"
                         ]
                     }
