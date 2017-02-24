@@ -79,6 +79,15 @@ gpii.nexus.recipeMatcher.componentMatchesReactantSpec = function (component, mat
 
 fluid.defaults("gpii.nexus.coOccurrenceEngine", {
     gradeNames: "fluid.modelComponent",
+    members: {
+        // TODO: Is "members" the best place for this map?
+
+        // When a reactant is destroyed, we destroy any products that
+        // the reactant is a member of. The "reactantRecipeMembership"
+        // object is used to maintain a map from reactant component id
+        // to product path and is consulted at reactant destruction.
+        reactantRecipeMembership: {}
+    },
     components: {
         nexusComponentRoot: {
             type: "gpii.nexus.nexusComponentRoot"
@@ -100,13 +109,22 @@ fluid.defaults("gpii.nexus.coOccurrenceEngine", {
                 "{that}.nexusComponentRoot",
                 "{that}.recipeMatcher",
                 "{that}.model.recipes",
+                "{that}.reactantRecipeMembership",
                 "{that}.events.onProductCreated"
+            ]
+        },
+        "{nexusComponentRoot}.events.onComponentDestroyed": {
+            funcName: "gpii.nexus.coOccurrenceEngine.componentDestroyed",
+            args: [
+                "{that}.nexusComponentRoot",
+                "{that}.reactantRecipeMembership",
+                "{arguments}.0.id" // Id of component destroyed
             ]
         }
     }
 });
 
-gpii.nexus.coOccurrenceEngine.componentCreated = function (componentRoot, recipeMatcher, recipes, productCreatedEvent) {
+gpii.nexus.coOccurrenceEngine.componentCreated = function (componentRoot, recipeMatcher, recipes, reactantRecipeMembership, productCreatedEvent) {
     var components = [];
 
     // TODO: This will only collect direct children of componentRoot, we
@@ -142,9 +160,27 @@ gpii.nexus.coOccurrenceEngine.componentCreated = function (componentRoot, recipe
                         productOptions.componentPaths[reactantName] = fluid.pathForComponent(reactantComponent);
                     });
 
+                    // Record matchedReactants product membership
+                    fluid.each(matchedReactants, function (reactantComponent) {
+                        var reactantId = reactantComponent.id;
+                        if (fluid.contains(reactantRecipeMembership, reactantId)) {
+                            reactantRecipeMembership[reactantId].push(productPath);
+                        } else {
+                            reactantRecipeMembership[reactantId] = [ productPath ];
+                        }
+                    });
+
+                    // Construct Product
                     componentRoot.constructComponent(productPath, productOptions);
                 }
             }
         });
     }
+};
+
+gpii.nexus.coOccurrenceEngine.componentDestroyed = function (componentRoot, reactantRecipeMembership, destroyedComponentId) {
+    var parentPaths = reactantRecipeMembership[destroyedComponentId];
+    fluid.each(parentPaths, function (parentPath) {
+        componentRoot.destroyComponent(parentPath);
+    });
 };

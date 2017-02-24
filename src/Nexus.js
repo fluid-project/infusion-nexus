@@ -52,16 +52,27 @@ fluid.defaults("gpii.nexus.nexusComponentRoot", {
         }
     },
     events: {
-        onComponentCreated: null
+        onComponentCreated: null,
+        onComponentDestroyed: null
     },
-    distributeOptions: [{
-        target: "{that fluid.component}.options.listeners",
-        record: {
-            "onCreate.fireNexusComponentCreated":
-                "{gpii.nexus.nexusComponentRoot}.events.onComponentCreated"
+    distributeOptions: [
+        {
+            target: "{that fluid.component}.options.listeners",
+            record: {
+                "onCreate.fireNexusComponentCreated":
+                    "{gpii.nexus.nexusComponentRoot}.events.onComponentCreated"
+            },
+            namespace: "nexusComponentRoot"
         },
-        namespace: "nexusComponentRoot"
-    }]
+        {
+            target: "{that fluid.component}.options.listeners",
+            record: {
+                "afterDestroy.fireNexusComponentDestroyed":
+                    "{gpii.nexus.nexusComponentRoot}.events.onComponentDestroyed"
+            },
+            namespace: "nexusComponentRoot"
+        }
+    ]
 });
 
 gpii.nexus.nexusComponentRoot.resolvePath = function (that, path) {

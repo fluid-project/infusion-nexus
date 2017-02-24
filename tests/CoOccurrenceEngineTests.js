@@ -81,7 +81,7 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngineTester", {
         tests: [
             {
                 name: "Construct reactants and verify product created",
-                expect: 3,
+                expect: 5,
                 sequence: [
                     // Start with no reactants and verify that no recipe
                     // product exists
@@ -134,7 +134,40 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngineTester", {
                             84,
                             "{arguments}.0"
                         ]
+                    },
+                    // Destroy reactant A and verify that:
+                    // 1. the product is destroyed
+                    // 2. reactant B is not destroyed
+                    {
+                        func: "{nexusComponentRoot}.reactantA.destroy"
+                    },
+                    {
+                        event: "{nexusComponentRoot}.reactantA.events.onDestroy",
+                        listener: "fluid.identity"
+                    },
+                    {
+                        event: "{nexusComponentRoot}.recipeAProduct.events.afterDestroy",
+                        listener: "jqUnit.assertNoValue",
+                        args: [
+                            "Reactant A has been removed from the component root",
+                            "@expand:{nexusComponentRoot}.componentForPath(reactantA)"
+                        ]
+                    },
+                    {
+                        func: "jqUnit.assertValue",
+                        args: [
+                            "Reactant B has not been removed from the component root",
+                            "@expand:{nexusComponentRoot}.componentForPath(reactantB)"
+                        ]
                     }
+
+                    // TODO: Make another reactant A and verify that the
+                    // product is created again and wired with the
+                    // existing reactant B
+
+                    // TODO: Test reactant as member of multiple
+                    // products (including destroying the reactant)
+
                 ]
             }
         ]
