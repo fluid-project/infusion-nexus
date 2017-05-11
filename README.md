@@ -66,3 +66,25 @@ Finally, stop Nexus with:
 ```
 $ vagrant halt
 ```
+
+# Docker
+
+To run the Nexus inside a Docker container please follow these steps below.
+
+Build the Docker image:
+
+```
+$ docker build -t nexus .
+```
+
+Run the container (exposing port 9081 locally):
+
+```
+$ docker run -p 9081:9081 nexus
+```
+
+You can also run the tests inside this container:
+
+```
+$ docker run -ti nexus node tests/all-tests.js
+```
