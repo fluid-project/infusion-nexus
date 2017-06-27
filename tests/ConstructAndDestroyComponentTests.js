@@ -37,6 +37,11 @@ gpii.tests.nexus.constructComponent.componentOptions2 = {
     }
 };
 
+// Note that these tests verify steps by peeking into the Nexus internal
+// state. This is done by making the gpii.nexus.nexusComponentRoot
+// addressable with the fluid.resolveRoot grade in the test Kettle app
+// config.
+
 gpii.tests.nexus.constructComponent.testDefs = [
     {
         name: "Construct and Destroy Components",
@@ -63,11 +68,19 @@ gpii.tests.nexus.constructComponent.testDefs = [
         sequence: [
             {
                 func: "gpii.test.nexus.assertNoComponentAtPath",
-                args: ["Component not yet constructed", "{tests}.options.testComponentPath"]
+                args: [
+                    "Component not yet constructed",
+                    "{gpii.nexus.nexusComponentRoot}",
+                    "{tests}.options.testComponentPath"
+                ]
             },
             {
                 func: "gpii.test.nexus.assertNoComponentAtPath",
-                args: ["Component not yet constructed", "{tests}.options.testComponentPath2"]
+                args: [
+                    "Component not yet constructed",
+                    "{gpii.nexus.nexusComponentRoot}",
+                    "{tests}.options.testComponentPath2"
+                ]
             },
             // Construct component one
             {
@@ -83,6 +96,7 @@ gpii.tests.nexus.constructComponent.testDefs = [
                 func: "gpii.test.nexus.assertComponentModel",
                 args: [
                     "Model is as expected",
+                    "{gpii.nexus.nexusComponentRoot}",
                     "{tests}.options.testComponentPath",
                     gpii.tests.nexus.constructComponent.componentOptions1.model
                 ]
@@ -90,7 +104,11 @@ gpii.tests.nexus.constructComponent.testDefs = [
             // Construct component two
             {
                 func: "gpii.test.nexus.assertNotContainsComponent",
-                args: ["{tests}.options.testComponentPath", "{tests}.options.testComponentName2"]
+                args: [
+                    "{gpii.nexus.nexusComponentRoot}",
+                    "{tests}.options.testComponentPath",
+                    "{tests}.options.testComponentName2"
+                ]
             },
             {
                 func: "{constructComponentRequest2}.send",
@@ -105,13 +123,18 @@ gpii.tests.nexus.constructComponent.testDefs = [
                 func: "gpii.test.nexus.assertComponentModel",
                 args: [
                     "Model is as expected",
+                    "{gpii.nexus.nexusComponentRoot}",
                     "{tests}.options.testComponentPath2",
                     gpii.tests.nexus.constructComponent.componentOptions2.model
                 ]
             },
             {
                 func: "gpii.test.nexus.assertContainsComponent",
-                args: ["{tests}.options.testComponentPath", "{tests}.options.testComponentName2"]
+                args: [
+                    "{gpii.nexus.nexusComponentRoot}",
+                    "{tests}.options.testComponentPath",
+                    "{tests}.options.testComponentName2"
+                ]
             },
             // Destroy component two
             {
@@ -124,17 +147,26 @@ gpii.tests.nexus.constructComponent.testDefs = [
             },
             {
                 func: "gpii.test.nexus.assertNoComponentAtPath",
-                args: ["Component has been destroyed", "{tests}.options.testComponentPath2"]
+                args: [
+                    "Component has been destroyed",
+                    "{gpii.nexus.nexusComponentRoot}",
+                    "{tests}.options.testComponentPath2"
+                ]
             },
             {
                 func: "gpii.test.nexus.assertNotContainsComponent",
-                args: ["{tests}.options.testComponentPath", "{tests}.options.testComponentName2"]
+                args: [
+                    "{gpii.nexus.nexusComponentRoot}",
+                    "{tests}.options.testComponentPath",
+                    "{tests}.options.testComponentName2"
+                ]
             },
             // Destroy component one
             {
                 func: "gpii.test.nexus.assertComponentModel",
                 args: [
                     "Model is as expected",
+                    "{gpii.nexus.nexusComponentRoot}",
                     "{tests}.options.testComponentPath",
                     gpii.tests.nexus.constructComponent.componentOptions1.model
                 ]
@@ -149,7 +181,11 @@ gpii.tests.nexus.constructComponent.testDefs = [
             },
             {
                 func: "gpii.test.nexus.assertNoComponentAtPath",
-                args: ["Component has been destroyed", "{tests}.options.testComponentPath"]
+                args: [
+                    "Component has been destroyed",
+                    "{gpii.nexus.nexusComponentRoot}",
+                    "{tests}.options.testComponentPath"
+                ]
             }
         ]
     }
