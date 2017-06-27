@@ -16,7 +16,7 @@ var fluid = require("infusion"),
     gpii = fluid.registerNamespace("gpii");
 
 fluid.defaults("gpii.nexus.recipe", {
-    gradeNames: "fluid.modelComponent"
+    gradeNames: "fluid.component"
 });
 
 fluid.defaults("gpii.nexus.recipeProduct", {
@@ -39,7 +39,7 @@ fluid.defaults("gpii.nexus.recipeMatcher", {
 gpii.nexus.recipeMatcher.matchRecipe = function (recipe, components) {
     var matchedReactants = {};
     var foundAllReactants = true;
-    fluid.each(recipe.reactants, function (reactant, reactantName) {
+    fluid.each(recipe.options.reactants, function (reactant, reactantName) {
         var foundReactant = fluid.find(components, function (component) {
             if (gpii.nexus.recipeMatcher.componentMatchesReactantSpec(component, reactant.match)) {
                 matchedReactants[reactantName] = component;
@@ -90,14 +90,25 @@ fluid.defaults("gpii.nexus.coOccurrenceEngine", {
     },
     components: {
         nexusComponentRoot: {
-            type: "gpii.nexus.nexusComponentRoot"
+            type: "gpii.nexus.nexusComponentRoot",
+            options: {
+                components: {
+                    recipes: {
+                        type: "fluid.component"
+                    }
+                }
+            }
         },
+        recipesContainer: "{gpii.nexus.coOccurrenceEngine}.nexusComponentRoot.recipes",
         recipeMatcher: {
             type: "gpii.nexus.recipeMatcher"
         }
     },
-    model: {
-        recipes: {}
+    invokers: {
+        getRecipes: {
+            funcName: "gpii.nexus.coOccurrenceEngine.getRecipes",
+            args: ["{that}.recipesContainer"]
+        }
     },
     events: {
         onProductCreated: null
@@ -108,7 +119,7 @@ fluid.defaults("gpii.nexus.coOccurrenceEngine", {
             args: [
                 "{that}.nexusComponentRoot",
                 "{that}.recipeMatcher",
-                "{that}.model.recipes",
+                "@expand:{that}.getRecipes()",
                 "{that}.reactantRecipeMembership",
                 "{that}.events.onProductCreated"
             ]
@@ -123,6 +134,17 @@ fluid.defaults("gpii.nexus.coOccurrenceEngine", {
         }
     }
 });
+
+gpii.nexus.coOccurrenceEngine.getRecipes = function (recipesContainer) {
+    var recipes = [];
+    fluid.each(recipesContainer, function (recipe) {
+        if (fluid.isComponent(recipe)
+                && fluid.componentHasGrade(recipe, "gpii.nexus.recipe")) {
+            recipes.push(recipe);
+        }
+    });
+    return recipes;
+};
 
 gpii.nexus.coOccurrenceEngine.componentCreated = function (componentRoot, recipeMatcher, recipes, reactantRecipeMembership, productCreatedEvent) {
     var components = [];
@@ -141,7 +163,7 @@ gpii.nexus.coOccurrenceEngine.componentCreated = function (componentRoot, recipe
         fluid.each(recipes, function (recipe) {
             // Process the recipe if we don't already have a product
             // constructed for it
-            var productPath = recipe.product.path;
+            var productPath = recipe.options.product.path;
             if (!componentRoot.containsComponent(productPath)) {
                 var matchedReactants = recipeMatcher.matchRecipe(recipe, components);
                 if (matchedReactants) {
@@ -155,7 +177,7 @@ gpii.nexus.coOccurrenceEngine.componentCreated = function (componentRoot, recipe
                                 method: "fire"
                             }
                         }
-                    }, recipe.product.options);
+                    }, recipe.options.product.options);
                     fluid.each(matchedReactants, function (reactantComponent, reactantName) {
                         productOptions.componentPaths[reactantName] = fluid.pathForComponent(reactantComponent);
                     });

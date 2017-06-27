@@ -27,6 +27,7 @@ fluid.registerNamespace("gpii.tests.nexus.addRecipe");
 // Recipe
 
 gpii.tests.nexus.addRecipe.recipeA = {
+    type: "gpii.nexus.recipe",
     reactants: {
         componentA: {
             match: {

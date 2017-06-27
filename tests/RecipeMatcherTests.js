@@ -28,11 +28,13 @@ jqUnit.test("RecipeMatcher Test", function () {
     var matcher = gpii.nexus.recipeMatcher();
 
     var recipe = {
-        reactants: {
-            componentA: {
-                match: {
-                    type: "gradeMatcher",
-                    gradeName: "gpii.tests.nexus.reactantA"
+        options: {
+            reactants: {
+                componentA: {
+                    match: {
+                        type: "gradeMatcher",
+                        gradeName: "gpii.tests.nexus.reactantA"
+                    }
                 }
             }
         }

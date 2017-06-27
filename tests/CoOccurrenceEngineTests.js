@@ -20,31 +20,39 @@ require("../index.js");
 require("../src/test/NexusTestUtils.js");
 require("../src/test/NexusTestData.js");
 
-// Co-Occurrence Engine
+// Nexus Component Root with Recipe
 
-fluid.defaults("gpii.tests.nexus.coOccurrenceEngine", {
-    gradeNames: ["gpii.nexus.coOccurrenceEngine"],
-    model: {
+fluid.defaults("gpii.tests.nexus.nexusComponentRoot", {
+    gradeNames: ["gpii.nexus.nexusComponentRoot"],
+    components: {
         recipes: {
-            recipeA: {
-                reactants: {
-                    componentA: {
-                        match: {
-                            type: "gradeMatcher",
-                            gradeName: "gpii.test.nexus.reactantA"
+            type: "fluid.component",
+            options: {
+                components: {
+                    recipeA: {
+                        type: "gpii.nexus.recipe",
+                        options: {
+                            reactants: {
+                                componentA: {
+                                    match: {
+                                        type: "gradeMatcher",
+                                        gradeName: "gpii.test.nexus.reactantA"
+                                    }
+                                },
+                                componentB: {
+                                    match: {
+                                        type: "gradeMatcher",
+                                        gradeName: "gpii.test.nexus.reactantB"
+                                    }
+                                }
+                            },
+                            product: {
+                                path: "recipeAProduct",
+                                options: {
+                                    type: "gpii.test.nexus.recipeA.product"
+                                }
+                            }
                         }
-                    },
-                    componentB: {
-                        match: {
-                            type: "gradeMatcher",
-                            gradeName: "gpii.test.nexus.reactantB"
-                        }
-                    }
-                },
-                product: {
-                    path: "recipeAProduct",
-                    options: {
-                        type: "gpii.test.nexus.recipeA.product"
                     }
                 }
             }
@@ -58,10 +66,10 @@ fluid.defaults("gpii.tests.nexus.coOccurrenceEngineTests", {
     gradeNames: ["fluid.test.testEnvironment"],
     components: {
         nexusComponentRoot: {
-            type: "gpii.nexus.nexusComponentRoot"
+            type: "gpii.tests.nexus.nexusComponentRoot"
         },
         coOccurrenceEngine : {
-            type: "gpii.tests.nexus.coOccurrenceEngine",
+            type: "gpii.nexus.coOccurrenceEngine",
             options: {
                 components: {
                     nexusComponentRoot: "{coOccurrenceEngineTests}.nexusComponentRoot"

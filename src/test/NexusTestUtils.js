@@ -163,9 +163,9 @@ fluid.defaults("gpii.test.nexus.testCaseHolder", {
         addRecipeRequest: {
             type: "kettle.test.request.http",
             options: {
-                path: "/recipes/%recipeName",
+                path: "/components/recipes.%recipeName",
                 port: "{configuration}.options.serverPort",
-                method: "PUT",
+                method: "POST",
                 termMap: {
                     recipeName: "{tests}.options.testRecipeName"
                 }
