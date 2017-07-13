@@ -17,6 +17,7 @@ var fluid = require("infusion");
 var tests = [
     "./BindModelTests.js",
     "./ConstructAndDestroyComponentTests.js",
+    "./NexusUtilsTests.js",
     "./ReadDefaultsTests.js",
     "./WriteDefaultsTests.js"
 ];
