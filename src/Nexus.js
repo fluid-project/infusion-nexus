@@ -1,5 +1,5 @@
 /*
-Copyright 2015, 2016 OCAD University
+Copyright 2015, 2016, 2017 OCAD University
 
 Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
@@ -17,6 +17,11 @@ var fluid = require("infusion"),
 
 fluid.defaults("gpii.nexus", {
     gradeNames: ["kettle.app"],
+    components: {
+        nexusComponentRoot: {
+            type: "fluid.component"
+        }
+    },
     requestHandlers: {
         readDefaults: {
             route: "/defaults/:gradeName",
@@ -87,15 +92,15 @@ fluid.defaults("gpii.nexus.constructComponent.handler", {
     invokers: {
         handleRequest: {
             funcName: "gpii.nexus.constructComponent.handleRequest",
-            args: ["{request}.req.params.path", "{request}"]
+            args: ["{request}.req.params.path", "{request}", "{nexusComponentRoot}"]
         }
     }
 });
 
 // TODO: Complain when component cannot be constructed due to parent not existing
-gpii.nexus.constructComponent.handleRequest = function (path, request) {
+gpii.nexus.constructComponent.handleRequest = function (path, request, componentRoot) {
     var segs = fluid.pathUtil.parseEL(path);
-    fluid.construct(segs, request.req.body);
+    gpii.nexus.constructInContainer(componentRoot, segs, request.req.body);
     request.events.onSuccess.fire();
 };
 
@@ -104,15 +109,15 @@ fluid.defaults("gpii.nexus.destroyComponent.handler", {
     invokers: {
         handleRequest: {
             funcName: "gpii.nexus.destroyComponent.handleRequest",
-            args: ["{request}.req.params.path", "{request}"]
+            args: ["{request}.req.params.path", "{request}", "{nexusComponentRoot}"]
         }
     }
 });
 
 // TODO: Complain when component is not found
-gpii.nexus.destroyComponent.handleRequest = function (path, request) {
+gpii.nexus.destroyComponent.handleRequest = function (path, request, componentRoot) {
     var segs = fluid.pathUtil.parseEL(path);
-    fluid.destroy(segs);
+    gpii.nexus.destroyInContainer(componentRoot, segs);
     request.events.onSuccess.fire();
 };
 
@@ -146,7 +151,8 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
                 "{that}",
                 "{request}.req.params.componentPath",
                 "{request}.req.params.modelPath",
-                "{that}.targetModelChangeListener"
+                "{that}.targetModelChangeListener",
+                "{nexusComponentRoot}"
             ]
         },
         onReceiveMessage: {
@@ -165,8 +171,8 @@ fluid.defaults("gpii.nexus.bindModel.handler", {
     }
 });
 
-gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, modelChangeListener) {
-    handler.componentHolder.targetComponent = fluid.componentForPath(componentPath);
+gpii.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, modelChangeListener, componentRoot) {
+    handler.componentHolder.targetComponent = gpii.nexus.componentForPathInContainer(componentRoot, componentPath);
     // TODO: Note that applier.modelchanged.addListener is different from https://wiki.gpii.net/w/Nexus_API
     //       Which says applier.addModelListener
     handler.modelPathSegs = fluid.pathUtil.parseEL(modelPath);
