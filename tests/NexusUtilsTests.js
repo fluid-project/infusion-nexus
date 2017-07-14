@@ -32,7 +32,12 @@ fluid.defaults("gpii.tests.nexus.nexusUtils.parent", {
                         options: {
                             components: {
                                 componentA1: {
-                                    type: "fluid.component"
+                                    type: "fluid.component",
+                                    options: {
+                                        listeners: {
+                                            afterDestroy: "{gpii.tests.nexus.nexusUtils.parent}.events.onComponentA1Destroyed"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -50,6 +55,7 @@ fluid.defaults("gpii.tests.nexus.nexusUtils.parent", {
         }
     },
     events: {
+        onComponentA1Destroyed: null,
         onComponentBDestroyed: null
     }
 });
@@ -75,6 +81,16 @@ gpii.tests.nexus.nexusUtils.verifyNewComponent = function (container, newCompone
         fluid.componentHasGrade(gpii.nexus.componentForPathInContainer(container, newComponentName),
             "gpii.tests.nexus.nexusUtils.newComponent"));
     jqUnit.start();
+};
+
+gpii.tests.nexus.testConstructInContainer = function (container, newComponentName) {
+    jqUnit.assertFalse(newComponentName + " does not exist",
+        gpii.nexus.containsComponent(container, newComponentName));
+
+    gpii.nexus.constructInContainer(container, newComponentName, {
+        type: "gpii.tests.nexus.nexusUtils.newComponent",
+        newComponentName: newComponentName
+    });
 };
 
 jqUnit.test("absComponentPath", function () {
@@ -134,21 +150,23 @@ jqUnit.test("containsComponent", function () {
         gpii.nexus.containsComponent(parent.container, "componentA.nonExistingComponent"));
 });
 
-jqUnit.asyncTest("constructInContainer", function () {
+jqUnit.asyncTest("constructInContainer top level component", function () {
     jqUnit.expect(3);
 
     var parent = gpii.tests.nexus.nexusUtils.parent();
 
-    jqUnit.assertFalse("newComponent does not exist",
-        gpii.nexus.containsComponent(parent.container, "newComponent"));
-
-    gpii.nexus.constructInContainer(parent.container, "newComponent", {
-        type: "gpii.tests.nexus.nexusUtils.newComponent",
-        newComponentName: "newComponent"
-    });
+    gpii.tests.nexus.testConstructInContainer(parent.container, "newComponent");
 });
 
-jqUnit.asyncTest("destroyInContainer", function () {
+jqUnit.asyncTest("constructInContainer second level component", function () {
+    jqUnit.expect(3);
+
+    var parent = gpii.tests.nexus.nexusUtils.parent();
+
+    gpii.tests.nexus.testConstructInContainer(parent.container, "componentA.newComponent");
+});
+
+jqUnit.asyncTest("destroyInContainer top level component", function () {
     jqUnit.expect(1);
 
     var parent = gpii.tests.nexus.nexusUtils.parent({
@@ -159,4 +177,17 @@ jqUnit.asyncTest("destroyInContainer", function () {
 
     jqUnit.assertTrue("componentB exists initially", gpii.nexus.containsComponent(parent.container, "componentB"));
     gpii.nexus.destroyInContainer(parent.container, "componentB");
+});
+
+jqUnit.asyncTest("destroyInContainer second level component", function () {
+    jqUnit.expect(1);
+
+    var parent = gpii.tests.nexus.nexusUtils.parent({
+        listeners: {
+            onComponentA1Destroyed: "jqUnit.start"
+        }
+    });
+
+    jqUnit.assertTrue("componentA1 exists initially", gpii.nexus.containsComponent(parent.container, "componentA.componentA1"));
+    gpii.nexus.destroyInContainer(parent.container, "componentA.componentA1");
 });
