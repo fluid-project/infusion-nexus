@@ -53,14 +53,6 @@ gpii.test.nexus.assertContainsComponent = function (componentRoot, parentPath, c
     jqUnit.assertValue(parentPath + " component contains " + childName, parent[childName]);
 };
 
-gpii.test.nexus.changeModelAtPath = function (componentPath, modelPath, value) {
-    fluid.componentForPath(componentPath).applier.change(modelPath, value);
-};
-
-gpii.test.nexus.changeEventForComponent = function (path) {
-    return fluid.componentForPath(path).applier.modelChanged;
-};
-
 fluid.defaults("gpii.test.nexus.testCaseHolder", {
     gradeNames: "kettle.test.testCaseHolder",
     components: {

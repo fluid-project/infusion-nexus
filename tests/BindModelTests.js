@@ -34,8 +34,8 @@ gpii.tests.nexus.bindModel.componentOptions = {
     }
 };
 
-gpii.tests.nexus.bindModel.registerModelListenerForPath = function (nexusComponentRoot, componentPath, modelPath, event) {
-    var component = gpii.nexus.componentForPathInContainer(nexusComponentRoot, componentPath);
+gpii.tests.nexus.bindModel.registerModelListenerForPath = function (componentRoot, componentPath, modelPath, event) {
+    var component = gpii.nexus.componentForPathInContainer(componentRoot, componentPath);
     component.applier.modelChanged.addListener(modelPath, event.fire);
 };
 
