@@ -1,5 +1,5 @@
 /*
-Copyright 2015, 2016 OCAD University
+Copyright 2015, 2016, 2017 OCAD University
 
 Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
@@ -33,24 +33,23 @@ gpii.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGr
     jqUnit.assertLeftHand("Response has expected grade specification", expectedGradeSpec, responseGradeSpec);
 };
 
-gpii.test.nexus.assertNoComponentAtPath = function (message, path) {
-    var component = fluid.componentForPath(path);
-    jqUnit.assertNoValue(message, component);
+gpii.test.nexus.assertNoComponentAtPath = function (message, componentRoot, path) {
+    jqUnit.assertFalse(message, gpii.nexus.containsComponent(componentRoot, path));
 };
 
-gpii.test.nexus.assertComponentModel = function (message, path, expectedModel) {
-    var component = fluid.componentForPath(path);
+gpii.test.nexus.assertComponentModel = function (message, componentRoot, path, expectedModel) {
+    var component = gpii.nexus.componentForPathInContainer(componentRoot, path);
     jqUnit.assertValue("Component exists", component);
     jqUnit.assertDeepEq(message, expectedModel, component.model);
 };
 
-gpii.test.nexus.assertNotContainsComponent = function (parentPath, childName) {
-    var parent = fluid.componentForPath(parentPath);
+gpii.test.nexus.assertNotContainsComponent = function (componentRoot, parentPath, childName) {
+    var parent = gpii.nexus.componentForPathInContainer(componentRoot, parentPath);
     jqUnit.assertNoValue(parentPath + " component does not contain " + childName, parent[childName]);
 };
 
-gpii.test.nexus.assertContainsComponent = function (parentPath, childName) {
-    var parent = fluid.componentForPath(parentPath);
+gpii.test.nexus.assertContainsComponent = function (componentRoot, parentPath, childName) {
+    var parent = gpii.nexus.componentForPathInContainer(componentRoot, parentPath);
     jqUnit.assertValue(parentPath + " component contains " + childName, parent[childName]);
 };
 

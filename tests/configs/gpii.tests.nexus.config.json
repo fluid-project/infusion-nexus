@@ -10,7 +10,18 @@
                     "port": "{kettle.config}.options.serverPort",
                     "components": {
                         "nexus": {
-                            "type": "gpii.nexus"
+                            "type": "gpii.nexus",
+                            "options": {
+                                "distributeOptions": [
+                                    {
+                                        "target": "{that nexusComponentRoot}.options.gradeNames",
+                                        "record": [
+                                            "gpii.tests.nexus.componentRoot",
+                                            "fluid.resolveRoot"
+                                        ]
+                                    }
+                                ]
+                            }
                         }
                     }
                 }
