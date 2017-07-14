@@ -1,10 +1,14 @@
-FROM node:6-alpine
+FROM node:8-alpine
 
 EXPOSE 9081
 
-WORKDIR /home/node/nexus
-COPY . /home/node/nexus
+WORKDIR /app
+COPY . /app
 
-RUN yarn && yarn cache clean
+RUN npm install && \
+    chown -R node:node . && \
+    npm cache clean --force
 
-CMD ["sh","-c","node nexus.js"]
+USER node
+
+CMD ["npm","start"]
