@@ -5,7 +5,7 @@
 # A hyphenated string representing the application's name.
 nodejs_app_name: nexus
 
-nodejs_version: 4.3.1
+nodejs_branch: lts
 
 # A boolean stating whether the application's Git repository should be cloned or
 # not. An example scenario where you may want to set this to 'false' would be a
