@@ -34,3 +34,6 @@ node_modules
 
 # Vagrant files
 /.vagrant/
+
+# Ansible files
+/provisioning/playbook.retry
