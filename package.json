@@ -1,6 +1,6 @@
 {
     "name": "gpii-nexus",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "author": "GPII",
     "license": "BSD-3-Clause",
     "repository": "git@github.com:GPII/nexus.git",
@@ -8,8 +8,8 @@
         "test": "node tests/all-tests.js"
     },
     "dependencies": {
-        "infusion": "2.0.0",
-        "kettle": "1.1.1"
+        "infusion": "3.0.0-dev.20170713T172705Z.330ed53",
+        "kettle": "1.6.2"
     },
     "devDependencies": {
         "eslint-config-fluid": "1.0.0",
