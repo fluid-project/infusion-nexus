@@ -61,7 +61,7 @@ Vagrant.configure(2) do |config|
   # inclusivedesign/centos7 Vagrant box includes one.
   config.vm.provision "shell", inline: <<-SHELL
     sudo ansible-galaxy install -fr #{app_directory}/provisioning/requirements.yml
-    sudo PYTHONUNBUFFERED=1 ansible-playbook #{app_directory}/provisioning/playbook.yml --tags="install,configure,deploy"
+    sudo PYTHONUNBUFFERED=1 ansible-playbook #{app_directory}/provisioning/playbook.yml --tags="install,configure,deploy" --inventory="localhost ansible_connection=local,"
   SHELL
 
   # 'Vagrantfile.local' should be excluded from version control.
