@@ -20,6 +20,6 @@
         "start": "node nexus.js",
         "test": "node tests/all-tests.js",
         "test:vagrant": "vagrant ssh -c 'DISPLAY=:0 node /home/vagrant/sync/tests/all-tests.js'",
-        "test:docker": "docker run --rm -ti -v ${PWD}:/app node:8-alpine sh -c 'cd /app &&  npm install && npm test'"
+        "test:docker": "docker build -t nexus ."
     }
 }
