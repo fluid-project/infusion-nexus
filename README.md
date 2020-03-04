@@ -1,7 +1,7 @@
 Nexus
 =====
 
-The GPII Nexus Integration Technology, allowing the interconnection of arbitrary sources and sinks of state via HTTP and WebSockets.
+The Infusion Nexus Integration Technology, allowing the interconnection of arbitrary sources and sinks of state via HTTP and WebSockets.
 
 See: https://wiki.gpii.net/w/Nexus_API
 

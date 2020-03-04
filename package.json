@@ -1,15 +1,15 @@
 {
-    "name": "gpii-nexus",
+    "name": "infusion-nexus",
     "version": "0.2.0",
-    "author": "GPII",
+    "author": "fluid-project",
     "license": "BSD-3-Clause",
-    "repository": "git@github.com:GPII/nexus.git",
+    "repository": "git@github.com:fluid-project/nexus.git",
     "scripts": {
         "test": "node tests/all-tests.js"
     },
     "dependencies": {
-        "infusion": "3.0.0-dev.20170713T172705Z.330ed53",
-        "kettle": "1.6.2"
+        "infusion": "3.0.0-dev.20200214T151835Z.ab768289a.FLUID-6145",
+        "kettle": "1.12.0-dev.20191220T164344Z.f1fef17.FLUID-6145"
     },
     "devDependencies": {
         "eslint-config-fluid": "1.0.0",
