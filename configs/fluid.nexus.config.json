@@ -1,5 +1,5 @@
 {
-    "type": "gpii.nexus.config",
+    "type": "fluid.nexus.config",
     "options": {
         "serverPort": 9081,
         "components": {
@@ -10,7 +10,7 @@
                     "port": "{kettle.config}.options.serverPort",
                     "components": {
                         "nexus": {
-                            "type": "gpii.nexus"
+                            "type": "fluid.nexus"
                         }
                     }
                 }

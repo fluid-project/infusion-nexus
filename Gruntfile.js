@@ -5,7 +5,7 @@ Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
 
 You may obtain a copy of the License at
-https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
+https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.txt
 */
 
 /* eslint-env node */
@@ -35,7 +35,6 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks("fluid-grunt-eslint");
     grunt.loadNpmTasks("grunt-jsonlint");
-    grunt.loadNpmTasks("grunt-shell");
 
     grunt.registerTask("default", ["lint"]);
     grunt.registerTask("lint", "Run eslint and jsonlint", ["eslint", "jsonlint"]);
