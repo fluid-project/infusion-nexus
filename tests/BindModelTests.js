@@ -5,7 +5,7 @@ Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
 
 You may obtain a copy of the License at
-https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
+https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.txt
 */
 
 /* eslint-env node */
@@ -13,17 +13,16 @@ https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("kettle"),
-    gpii = fluid.registerNamespace("gpii");
+    kettle = require("kettle");
 
 require("../index.js");
 require("../src/test/NexusTestUtils.js");
 
 kettle.loadTestingSupport();
 
-fluid.registerNamespace("gpii.tests.nexus.bindModel");
+fluid.registerNamespace("fluid.tests.nexus.bindModel");
 
-gpii.tests.nexus.bindModel.componentOptions = {
+fluid.tests.nexus.bindModel.componentOptions = {
     type: "fluid.modelComponent",
     model: {
         "model.path\\seg1": {
@@ -34,12 +33,12 @@ gpii.tests.nexus.bindModel.componentOptions = {
     }
 };
 
-gpii.tests.nexus.bindModel.registerModelListenerForPath = function (componentRoot, componentPath, modelPath, event) {
-    var component = gpii.nexus.componentForPathInContainer(componentRoot, componentPath);
+fluid.tests.nexus.bindModel.registerModelListenerForPath = function (componentRoot, componentPath, modelPath, event) {
+    var component = fluid.nexus.componentForPathInContainer(componentRoot, componentPath);
     component.applier.modelChanged.addListener(modelPath, event.fire);
 };
 
-fluid.defaults("gpii.tests.nexus.bindModel.wsClient", {
+fluid.defaults("fluid.tests.nexus.bindModel.wsClient", {
     gradeNames: "kettle.test.request.ws",
     path: "/bindModel/%componentPath/%modelPath",
     port: "{configuration}.options.serverPort",
@@ -53,23 +52,23 @@ fluid.defaults("gpii.tests.nexus.bindModel.wsClient", {
 
 // Note that these tests verify steps by peeking into the Nexus internal
 // state. This is done by making the nexusComponentRoot addressable by
-// giving it the grades "gpii.tests.nexus.componentRoot" and
+// giving it the grades "fluid.tests.nexus.componentRoot" and
 // "fluid.resolveRoot" in the test Kettle app config.
 
-gpii.tests.nexus.bindModel.testDefs = [
+fluid.tests.nexus.bindModel.testDefs = [
     {
         name: "Bind Model",
-        gradeNames: "gpii.test.nexus.testCaseHolder",
+        gradeNames: "fluid.test.nexus.testCaseHolder",
         expect: 12,
         config: {
-            configName: "gpii.tests.nexus.config",
-            configPath: "%gpii-nexus/tests/configs"
+            configName: "fluid.tests.nexus.config",
+            configPath: "%infusion-nexus/tests/configs"
         },
         testComponentPath: "nexusBindModelTestComponent",
         testModelPath: "model\\.path\\\\seg1.model\\.path\\\\seg2",
         components: {
             client: {
-                type: "gpii.tests.nexus.bindModel.wsClient"
+                type: "fluid.tests.nexus.bindModel.wsClient"
             }
         },
         events: {
@@ -77,26 +76,26 @@ gpii.tests.nexus.bindModel.testDefs = [
         },
         sequence: [
             {
-                func: "gpii.test.nexus.assertNoComponentAtPath",
+                func: "fluid.test.nexus.assertNoComponentAtPath",
                 args: [
                     "Component not yet constructed",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath"
                 ]
             },
             {
                 func: "{constructComponentRequest}.send",
-                args: [gpii.tests.nexus.bindModel.componentOptions]
+                args: [fluid.tests.nexus.bindModel.componentOptions]
             },
             {
                 event: "{constructComponentRequest}.events.onComplete",
-                listener: "gpii.test.nexus.assertStatusCode",
+                listener: "fluid.test.nexus.assertStatusCode",
                 args: ["{constructComponentRequest}", 200]
             },
             {
-                func: "gpii.tests.nexus.bindModel.registerModelListenerForPath",
+                func: "fluid.tests.nexus.bindModel.registerModelListenerForPath",
                 args: [
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath",
                     "{tests}.options.testModelPath",
                     "{testCaseHolder}.events.targetModelChanged"
@@ -132,10 +131,10 @@ gpii.tests.nexus.bindModel.testDefs = [
             },
             {
                 event: "{testCaseHolder}.events.targetModelChanged",
-                listener: "gpii.test.nexus.assertComponentModel",
+                listener: "fluid.test.nexus.assertComponentModel",
                 args: [
                     "Model updated",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath",
                     {
                         "model.path\\seg1": {
@@ -171,10 +170,10 @@ gpii.tests.nexus.bindModel.testDefs = [
             },
             {
                 event: "{testCaseHolder}.events.targetModelChanged",
-                listener: "gpii.test.nexus.assertComponentModel",
+                listener: "fluid.test.nexus.assertComponentModel",
                 args: [
                     "Model updated",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath",
                     {
                         "model.path\\seg1": {
@@ -216,10 +215,10 @@ gpii.tests.nexus.bindModel.testDefs = [
             },
             {
                 event: "{testCaseHolder}.events.targetModelChanged",
-                listener: "gpii.test.nexus.assertComponentModel",
+                listener: "fluid.test.nexus.assertComponentModel",
                 args: [
                     "Model updated",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath",
                     {
                         "model.path\\seg1": {
@@ -241,4 +240,4 @@ gpii.tests.nexus.bindModel.testDefs = [
     }
 ];
 
-kettle.test.bootstrapServer(gpii.tests.nexus.bindModel.testDefs);
+kettle.test.bootstrapServer(fluid.tests.nexus.bindModel.testDefs);

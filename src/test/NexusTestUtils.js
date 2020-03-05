@@ -5,7 +5,7 @@ Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
 
 You may obtain a copy of the License at
-https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
+https://raw.githubusercontent.com/fluid/infusion-nexus/master/LICENSE.txt
 */
 
 /* eslint-env node */
@@ -13,17 +13,16 @@ https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-    gpii = fluid.registerNamespace("gpii"),
     jqUnit = fluid.require("node-jqunit");
 
-fluid.registerNamespace("gpii.test.nexus");
+fluid.registerNamespace("fluid.test.nexus");
 
-gpii.test.nexus.assertStatusCode = function (request, statusCode) {
+fluid.test.nexus.assertStatusCode = function (request, statusCode) {
     var response = request.nativeResponse;
     jqUnit.assertEquals("Response has status code " + statusCode, statusCode, response.statusCode);
 };
 
-gpii.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGradeSpec) {
+fluid.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGradeSpec) {
     // TODO: Switch over to the new assertion function of KETTLE-39
     var responseGradeSpec = JSON.parse(body);
     var response = request.nativeResponse;
@@ -33,27 +32,27 @@ gpii.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGr
     jqUnit.assertLeftHand("Response has expected grade specification", expectedGradeSpec, responseGradeSpec);
 };
 
-gpii.test.nexus.assertNoComponentAtPath = function (message, componentRoot, path) {
-    jqUnit.assertFalse(message, gpii.nexus.containsComponent(componentRoot, path));
+fluid.test.nexus.assertNoComponentAtPath = function (message, componentRoot, path) {
+    jqUnit.assertFalse(message, fluid.nexus.containsComponent(componentRoot, path));
 };
 
-gpii.test.nexus.assertComponentModel = function (message, componentRoot, path, expectedModel) {
-    var component = gpii.nexus.componentForPathInContainer(componentRoot, path);
+fluid.test.nexus.assertComponentModel = function (message, componentRoot, path, expectedModel) {
+    var component = fluid.nexus.componentForPathInContainer(componentRoot, path);
     jqUnit.assertValue("Component exists", component);
     jqUnit.assertDeepEq(message, expectedModel, component.model);
 };
 
-gpii.test.nexus.assertNotContainsComponent = function (componentRoot, parentPath, childName) {
-    var parent = gpii.nexus.componentForPathInContainer(componentRoot, parentPath);
+fluid.test.nexus.assertNotContainsComponent = function (componentRoot, parentPath, childName) {
+    var parent = fluid.nexus.componentForPathInContainer(componentRoot, parentPath);
     jqUnit.assertNoValue(parentPath + " component does not contain " + childName, parent[childName]);
 };
 
-gpii.test.nexus.assertContainsComponent = function (componentRoot, parentPath, childName) {
-    var parent = gpii.nexus.componentForPathInContainer(componentRoot, parentPath);
+fluid.test.nexus.assertContainsComponent = function (componentRoot, parentPath, childName) {
+    var parent = fluid.nexus.componentForPathInContainer(componentRoot, parentPath);
     jqUnit.assertValue(parentPath + " component contains " + childName, parent[childName]);
 };
 
-fluid.defaults("gpii.test.nexus.testCaseHolder", {
+fluid.defaults("fluid.test.nexus.testCaseHolder", {
     gradeNames: "kettle.test.testCaseHolder",
     components: {
         readDefaultsRequest: {

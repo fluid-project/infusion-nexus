@@ -1,3 +1,9 @@
+0.3.0 / 2020-05-03
+==================
+
+* Moved from GPII organisation to fluid-project organisation
+* Updated to in-progress releases of FLUID-6145 Infusion
+
 0.2.0 / 2017-07-14
 ==================
 

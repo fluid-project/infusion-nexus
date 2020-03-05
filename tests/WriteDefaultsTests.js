@@ -5,7 +5,7 @@ Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
 
 You may obtain a copy of the License at
-https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
+https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.txt
 */
 
 /* eslint-env node */
@@ -13,56 +13,65 @@ https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("kettle"),
-    gpii = fluid.registerNamespace("gpii");
+    kettle = require("kettle");
 
 require("../index.js");
 require("../src/test/NexusTestUtils.js");
 
 kettle.loadTestingSupport();
 
-fluid.registerNamespace("gpii.tests.nexus.writeDefaults");
+fluid.registerNamespace("fluid.tests.nexus.writeDefaults");
 
-gpii.tests.nexus.writeDefaults.newGradeOptions = {
+fluid.tests.nexus.writeDefaults.newGradeOptions = {
     gradeNames: ["fluid.component"],
     model: {
         name1: "hello world"
     }
 };
 
-gpii.tests.nexus.writeDefaults.updatedGradeOptions = {
+fluid.tests.nexus.writeDefaults.updatedGradeOptions = {
     gradeNames: ["fluid.component"],
     model: {
         updatedGrade: true
     }
 };
 
-gpii.tests.nexus.writeDefaults.badlyFormedInvokerGradeOptions = {
+fluid.tests.nexus.writeDefaults.badlyFormedInvokerGradeOptions = {
     gradeNames: ["fluid.component"],
     invokers: {
         invoker1: "bad("
     }
 };
 
-gpii.tests.nexus.writeDefaults.sendBadlyFormedInvokerGradeOptions = function (request) {
-    request.send(gpii.tests.nexus.writeDefaults.badlyFormedInvokerGradeOptions);
+fluid.defaults("fluid.tests.nexus.writeDefaults.badlyFormedJson", {
+    gradeNames: "fluid.resourceLoader",
+    resources: {
+        corruptJSON: {
+            path: "%infusion-nexus/tests/data/corruptJSONFile.jsonx",
+            dataType: "text"
+        }
+    }
+});
+
+fluid.tests.nexus.writeDefaults.sendBadlyFormedInvokerGradeOptions = function (request) {
+    request.send(fluid.tests.nexus.writeDefaults.badlyFormedInvokerGradeOptions);
 };
 
-gpii.tests.nexus.writeDefaults.rememberReadDefaultsResponse = function (body, component) {
+fluid.tests.nexus.writeDefaults.rememberReadDefaultsResponse = function (body, component) {
     component.readDefaultsResponseBody = body;
     component.readDefaultsResponseGradeSpec = JSON.parse(body);
 };
 
-gpii.tests.nexus.writeDefaults.testDefs = [
+fluid.tests.nexus.writeDefaults.testDefs = [
     {
         name: "Write Defaults with good grade options and verify update to the grade",
-        gradeNames: "gpii.test.nexus.testCaseHolder",
+        gradeNames: "fluid.test.nexus.testCaseHolder",
         expect: 11,
         config: {
-            configName: "gpii.tests.nexus.config",
-            configPath: "%gpii-nexus/tests/configs"
+            configName: "fluid.tests.nexus.config",
+            configPath: "%infusion-nexus/tests/configs"
         },
-        testGradeName: "gpii.tests.nexus.writeDefaults.newGrade",
+        testGradeName: "fluid.tests.nexus.writeDefaults.newGradeRemote",
         sequence: [
             {
                 func: "{readDefaultsRequest}.send"
@@ -80,11 +89,11 @@ gpii.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 func: "{writeDefaultsRequest}.send",
-                args: [gpii.tests.nexus.writeDefaults.newGradeOptions]
+                args: [fluid.tests.nexus.writeDefaults.newGradeOptions]
             },
             {
                 event: "{writeDefaultsRequest}.events.onComplete",
-                listener: "gpii.test.nexus.assertStatusCode",
+                listener: "fluid.test.nexus.assertStatusCode",
                 args: ["{writeDefaultsRequest}", 200]
             },
             {
@@ -92,12 +101,12 @@ gpii.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 event: "{readDefaultsSecondTimeRequest}.events.onComplete",
-                listener: "gpii.test.nexus.verifyReadDefaultsResponse",
+                listener: "fluid.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{arguments}.0",
                     "{readDefaultsSecondTimeRequest}",
                     {
-                        gradeNames: ["fluid.component", "gpii.tests.nexus.writeDefaults.newGrade"],
+                        gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
                         model: {
                             name1: "hello world"
                         }
@@ -106,11 +115,11 @@ gpii.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 func: "{writeDefaultsAgainRequest}.send",
-                args: [gpii.tests.nexus.writeDefaults.updatedGradeOptions]
+                args: [fluid.tests.nexus.writeDefaults.updatedGradeOptions]
             },
             {
                 event: "{writeDefaultsAgainRequest}.events.onComplete",
-                listener: "gpii.test.nexus.assertStatusCode",
+                listener: "fluid.test.nexus.assertStatusCode",
                 args: ["{writeDefaultsAgainRequest}", 200]
             },
             {
@@ -118,12 +127,12 @@ gpii.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 event: "{readDefaultsThirdTimeRequest}.events.onComplete",
-                listener: "gpii.test.nexus.verifyReadDefaultsResponse",
+                listener: "fluid.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{arguments}.0",
                     "{readDefaultsThirdTimeRequest}",
                     {
-                        gradeNames: ["fluid.component", "gpii.tests.nexus.writeDefaults.newGrade"],
+                        gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
                         model: {
                             updatedGrade: true
                         }
@@ -134,18 +143,22 @@ gpii.tests.nexus.writeDefaults.testDefs = [
     },
     {
         name: "Write Defaults with badly formed JSON",
-        gradeNames: "gpii.test.nexus.testCaseHolder",
+        gradeNames: ["fluid.test.nexus.testCaseHolder", "fluid.tests.nexus.writeDefaults.badlyFormedJson"],
         expect: 3,
         config: {
-            configName: "gpii.tests.nexus.config",
-            configPath: "%gpii-nexus/tests/configs"
+            configName: "fluid.tests.nexus.config",
+            configPath: "%infusion-nexus/tests/configs"
         },
-        testGradeName: "gpii.tests.nexus.writeDefaults.badlyFormedJson",
+        testGradeName: "fluid.tests.nexus.writeDefaults.badlyFormedJsonRemote",
         sequence: [
+            {
+                event: "{badlyFormedJson}.events.onResourcesLoaded",
+                listener: "fluid.identity"
+            },
             {
                 func: "{writeDefaultsRequest}.send",
                 args: [
-                    "{",
+                    "{badlyFormedJson}.resources.corruptJSON.resourceText",
                     {
                         headers: {
                             "Content-Type": "application/json"
@@ -164,7 +177,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
                     // of JSON input".
                     // Here we test for "Unexpected end of" so that the test
                     // works as expected in both Node 4 and Node 6.
-                    // https://issues.gpii.net/browse/GPII-2080
+                    // https://issues.fluid.net/browse/GPII-2080
                     errorTexts: "Unexpected end of",
                     string: "{arguments}.0",
                     request: "{writeDefaultsRequest}",
@@ -175,20 +188,20 @@ gpii.tests.nexus.writeDefaults.testDefs = [
     },
     {
         name: "Write Defaults with badly formed grade",
-        gradeNames: "gpii.test.nexus.testCaseHolder",
+        gradeNames: "fluid.test.nexus.testCaseHolder",
         expect: 3,
         config: {
-            configName: "gpii.tests.nexus.config",
-            configPath: "%gpii-nexus/tests/configs"
+            configName: "fluid.tests.nexus.config",
+            configPath: "%infusion-nexus/tests/configs"
         },
-        testGradeName: "gpii.tests.nexus.writeDefaults.badlyFormedInvoker",
+        testGradeName: "fluid.tests.nexus.writeDefaults.badlyFormedInvokerRemote",
         sequence: [
             {
                 funcName: "kettle.test.pushInstrumentedErrors",
                 args: ["fluid.identity"]
             },
             {
-                funcName: "gpii.tests.nexus.writeDefaults.sendBadlyFormedInvokerGradeOptions",
+                funcName: "fluid.tests.nexus.writeDefaults.sendBadlyFormedInvokerGradeOptions",
                 args: ["{writeDefaultsRequest}"]
             },
             {
@@ -209,21 +222,21 @@ gpii.tests.nexus.writeDefaults.testDefs = [
     },
     {
         name: "Send a Read Defaults response back to Write Defaults and verify that the grade is stable",
-        gradeNames: "gpii.test.nexus.testCaseHolder",
+        gradeNames: "fluid.test.nexus.testCaseHolder",
         expect: 8,
         config: {
-            configName: "gpii.tests.nexus.config",
-            configPath: "%gpii-nexus/tests/configs"
+            configName: "fluid.tests.nexus.config",
+            configPath: "%infusion-nexus/tests/configs"
         },
-        testGradeName: "gpii.tests.nexus.writeDefaults.newGrade",
+        testGradeName: "fluid.tests.nexus.writeDefaults.newGradeRemote",
         sequence: [
             {
                 func: "{writeDefaultsRequest}.send",
-                args: [gpii.tests.nexus.writeDefaults.newGradeOptions]
+                args: [fluid.tests.nexus.writeDefaults.newGradeOptions]
             },
             {
                 event: "{writeDefaultsRequest}.events.onComplete",
-                listener: "gpii.test.nexus.assertStatusCode",
+                listener: "fluid.test.nexus.assertStatusCode",
                 args: ["{writeDefaultsRequest}", 200]
             },
             {
@@ -231,16 +244,16 @@ gpii.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 event: "{readDefaultsRequest}.events.onComplete",
-                listener: "gpii.tests.nexus.writeDefaults.rememberReadDefaultsResponse",
+                listener: "fluid.tests.nexus.writeDefaults.rememberReadDefaultsResponse",
                 args: ["{arguments}.0", "{tests}"]
             },
             {
-                funcName: "gpii.test.nexus.verifyReadDefaultsResponse",
+                funcName: "fluid.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{tests}.readDefaultsResponseBody",
                     "{readDefaultsRequest}",
                     {
-                        gradeNames: ["fluid.component", "gpii.tests.nexus.writeDefaults.newGrade"],
+                        gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
                         model: {
                             name1: "hello world"
                         }
@@ -253,7 +266,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 event: "{writeDefaultsAgainRequest}.events.onComplete",
-                listener: "gpii.test.nexus.assertStatusCode",
+                listener: "fluid.test.nexus.assertStatusCode",
                 args: ["{writeDefaultsAgainRequest}", 200]
             },
             {
@@ -261,7 +274,7 @@ gpii.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 event: "{readDefaultsSecondTimeRequest}.events.onComplete",
-                listener: "gpii.test.nexus.verifyReadDefaultsResponse",
+                listener: "fluid.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{arguments}.0",
                     "{readDefaultsSecondTimeRequest}",
@@ -272,4 +285,4 @@ gpii.tests.nexus.writeDefaults.testDefs = [
     }
 ];
 
-kettle.test.bootstrapServer(gpii.tests.nexus.writeDefaults.testDefs);
+kettle.test.bootstrapServer(fluid.tests.nexus.writeDefaults.testDefs);
