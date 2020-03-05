@@ -172,7 +172,7 @@ fluid.defaults("fluid.nexus.bindModel.handler", {
 
 fluid.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, modelChangeListener, componentRoot) {
     handler.componentHolder.targetComponent = fluid.nexus.componentForPathInContainer(componentRoot, componentPath);
-    // TODO: Note that applier.modelchanged.addListener is different from https://wiki.fluid.net/w/Nexus_API
+    // TODO: Note that applier.modelchanged.addListener is different from https://wiki.fluidproject.org/display/fluid/Nexus+API
     //       Which says applier.addModelListener
     handler.modelPathSegs = fluid.pathUtil.parseEL(modelPath);
     handler.targetModelChangeListenerId = fluid.allocateGuid();

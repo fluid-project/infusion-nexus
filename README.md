@@ -3,7 +3,7 @@ Nexus
 
 The Infusion Nexus Integration Technology, allowing the interconnection of arbitrary sources and sinks of state via HTTP and WebSockets.
 
-See: https://wiki.fluid.net/w/Nexus_API
+See: https://wiki.fluidproject.org/display/fluid/Nexus+API
 
 Running Nexus
 -------------
