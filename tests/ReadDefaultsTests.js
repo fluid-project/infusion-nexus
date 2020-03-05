@@ -5,7 +5,7 @@ Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
 
 You may obtain a copy of the License at
-https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
+https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.txt
 */
 
 /* eslint-env node */
@@ -13,43 +13,42 @@ https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("kettle"),
-    gpii = fluid.registerNamespace("gpii");
+    kettle = require("kettle");
 
 require("../index.js");
 require("../src/test/NexusTestUtils.js");
 
 kettle.loadTestingSupport();
 
-fluid.defaults("gpii.tests.nexus.readDefaults.testGrade", {
+fluid.defaults("fluid.tests.nexus.readDefaults.testGrade", {
     gradeNames: ["fluid.component"],
     model: {
         name1: "hello world"
     }
 });
 
-gpii.tests.nexus.readDefaults.testDefs = [
+fluid.tests.nexus.readDefaults.testDefs = [
     {
         name: "Read Defaults for existing grade",
-        gradeNames: "gpii.test.nexus.testCaseHolder",
+        gradeNames: "fluid.test.nexus.testCaseHolder",
         expect: 3,
         config: {
-            configName: "gpii.tests.nexus.config",
-            configPath: "%gpii-nexus/tests/configs"
+            configName: "fluid.tests.nexus.config",
+            configPath: "%infusion-nexus/tests/configs"
         },
-        testGradeName: "gpii.tests.nexus.readDefaults.testGrade",
+        testGradeName: "fluid.tests.nexus.readDefaults.testGrade",
         sequence: [
             {
                 func: "{readDefaultsRequest}.send"
             },
             {
                 event: "{readDefaultsRequest}.events.onComplete",
-                listener: "gpii.test.nexus.verifyReadDefaultsResponse",
+                listener: "fluid.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{arguments}.0",
                     "{readDefaultsRequest}",
                     {
-                        gradeNames: ["fluid.component", "gpii.tests.nexus.readDefaults.testGrade"],
+                        gradeNames: ["fluid.component", "fluid.tests.nexus.readDefaults.testGrade"],
                         model: {
                             name1: "hello world"
                         }
@@ -60,13 +59,13 @@ gpii.tests.nexus.readDefaults.testDefs = [
     },
     {
         name: "Read Defaults for non-existing grade",
-        gradeNames: "gpii.test.nexus.testCaseHolder",
+        gradeNames: "fluid.test.nexus.testCaseHolder",
         expect: 3,
         config: {
-            configName: "gpii.tests.nexus.config",
-            configPath: "%gpii-nexus/tests/configs"
+            configName: "fluid.tests.nexus.config",
+            configPath: "%infusion-nexus/tests/configs"
         },
-        testGradeName: "gpii.tests.nexus.nonExistingGrade",
+        testGradeName: "fluid.tests.nexus.nonExistingGrade",
         sequence: [
             {
                 func: "{readDefaultsRequest}.send"
@@ -86,4 +85,4 @@ gpii.tests.nexus.readDefaults.testDefs = [
     }
 ];
 
-kettle.test.bootstrapServer(gpii.tests.nexus.readDefaults.testDefs);
+kettle.test.bootstrapServer(fluid.tests.nexus.readDefaults.testDefs);

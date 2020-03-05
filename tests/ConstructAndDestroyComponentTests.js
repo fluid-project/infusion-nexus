@@ -5,7 +5,7 @@ Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
 
 You may obtain a copy of the License at
-https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
+https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.txt
 */
 
 /* eslint-env node */
@@ -13,24 +13,23 @@ https://raw.githubusercontent.com/GPII/nexus/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("kettle"),
-    gpii = fluid.registerNamespace("gpii");
+    kettle = require("kettle");
 
 require("../index.js");
 require("../src/test/NexusTestUtils.js");
 
 kettle.loadTestingSupport();
 
-fluid.registerNamespace("gpii.tests.nexus.constructComponent");
+fluid.registerNamespace("fluid.tests.nexus.constructComponent");
 
-gpii.tests.nexus.constructComponent.componentOptions1 = {
+fluid.tests.nexus.constructComponent.componentOptions1 = {
     type: "fluid.modelComponent",
     model: {
         "some.model\\path": "one"
     }
 };
 
-gpii.tests.nexus.constructComponent.componentOptions2 = {
+fluid.tests.nexus.constructComponent.componentOptions2 = {
     type: "fluid.modelComponent",
     model: {
         "some.model\\path": "two"
@@ -39,17 +38,17 @@ gpii.tests.nexus.constructComponent.componentOptions2 = {
 
 // Note that these tests verify steps by peeking into the Nexus internal
 // state. This is done by making the nexusComponentRoot addressable by
-// giving it the grades "gpii.tests.nexus.componentRoot" and
+// giving it the grades "fluid.tests.nexus.componentRoot" and
 // "fluid.resolveRoot" in the test Kettle app config.
 
-gpii.tests.nexus.constructComponent.testDefs = [
+fluid.tests.nexus.constructComponent.testDefs = [
     {
         name: "Construct and Destroy Components",
-        gradeNames: "gpii.test.nexus.testCaseHolder",
+        gradeNames: "fluid.test.nexus.testCaseHolder",
         expect: 17,
         config: {
-            configName: "gpii.tests.nexus.config",
-            configPath: "%gpii-nexus/tests/configs"
+            configName: "fluid.tests.nexus.config",
+            configPath: "%infusion-nexus/tests/configs"
         },
         testComponentPath: "nexusConstructTestsComponentOne",
         testComponentName2: "nexusConstructTestsComponentTwo",
@@ -67,71 +66,71 @@ gpii.tests.nexus.constructComponent.testDefs = [
         },
         sequence: [
             {
-                func: "gpii.test.nexus.assertNoComponentAtPath",
+                func: "fluid.test.nexus.assertNoComponentAtPath",
                 args: [
                     "Component not yet constructed",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath"
                 ]
             },
             {
-                func: "gpii.test.nexus.assertNoComponentAtPath",
+                func: "fluid.test.nexus.assertNoComponentAtPath",
                 args: [
                     "Component not yet constructed",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath2"
                 ]
             },
             // Construct component one
             {
                 func: "{constructComponentRequest}.send",
-                args: [gpii.tests.nexus.constructComponent.componentOptions1]
+                args: [fluid.tests.nexus.constructComponent.componentOptions1]
             },
             {
                 event: "{constructComponentRequest}.events.onComplete",
-                listener: "gpii.test.nexus.assertStatusCode",
+                listener: "fluid.test.nexus.assertStatusCode",
                 args: ["{constructComponentRequest}", 200]
             },
             {
-                func: "gpii.test.nexus.assertComponentModel",
+                func: "fluid.test.nexus.assertComponentModel",
                 args: [
                     "Model is as expected",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath",
-                    gpii.tests.nexus.constructComponent.componentOptions1.model
+                    fluid.tests.nexus.constructComponent.componentOptions1.model
                 ]
             },
             // Construct component two
             {
-                func: "gpii.test.nexus.assertNotContainsComponent",
+                func: "fluid.test.nexus.assertNotContainsComponent",
                 args: [
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath",
                     "{tests}.options.testComponentName2"
                 ]
             },
             {
                 func: "{constructComponentRequest2}.send",
-                args: [gpii.tests.nexus.constructComponent.componentOptions2]
+                args: [fluid.tests.nexus.constructComponent.componentOptions2]
             },
             {
                 event: "{constructComponentRequest2}.events.onComplete",
-                listener: "gpii.test.nexus.assertStatusCode",
+                listener: "fluid.test.nexus.assertStatusCode",
                 args: ["{constructComponentRequest2}", 200]
             },
             {
-                func: "gpii.test.nexus.assertComponentModel",
+                func: "fluid.test.nexus.assertComponentModel",
                 args: [
                     "Model is as expected",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath2",
-                    gpii.tests.nexus.constructComponent.componentOptions2.model
+                    fluid.tests.nexus.constructComponent.componentOptions2.model
                 ]
             },
             {
-                func: "gpii.test.nexus.assertContainsComponent",
+                func: "fluid.test.nexus.assertContainsComponent",
                 args: [
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath",
                     "{tests}.options.testComponentName2"
                 ]
@@ -142,33 +141,33 @@ gpii.tests.nexus.constructComponent.testDefs = [
             },
             {
                 event: "{destroyComponentRequest2}.events.onComplete",
-                listener: "gpii.test.nexus.assertStatusCode",
+                listener: "fluid.test.nexus.assertStatusCode",
                 args: ["{destroyComponentRequest2}", 200]
             },
             {
-                func: "gpii.test.nexus.assertNoComponentAtPath",
+                func: "fluid.test.nexus.assertNoComponentAtPath",
                 args: [
                     "Component has been destroyed",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath2"
                 ]
             },
             {
-                func: "gpii.test.nexus.assertNotContainsComponent",
+                func: "fluid.test.nexus.assertNotContainsComponent",
                 args: [
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath",
                     "{tests}.options.testComponentName2"
                 ]
             },
             // Destroy component one
             {
-                func: "gpii.test.nexus.assertComponentModel",
+                func: "fluid.test.nexus.assertComponentModel",
                 args: [
                     "Model is as expected",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath",
-                    gpii.tests.nexus.constructComponent.componentOptions1.model
+                    fluid.tests.nexus.constructComponent.componentOptions1.model
                 ]
             },
             {
@@ -176,14 +175,14 @@ gpii.tests.nexus.constructComponent.testDefs = [
             },
             {
                 event: "{destroyComponentRequest}.events.onComplete",
-                listener: "gpii.test.nexus.assertStatusCode",
+                listener: "fluid.test.nexus.assertStatusCode",
                 args: ["{destroyComponentRequest}", 200]
             },
             {
-                func: "gpii.test.nexus.assertNoComponentAtPath",
+                func: "fluid.test.nexus.assertNoComponentAtPath",
                 args: [
                     "Component has been destroyed",
-                    "{gpii.tests.nexus.componentRoot}",
+                    "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath"
                 ]
             }
@@ -191,4 +190,4 @@ gpii.tests.nexus.constructComponent.testDefs = [
     }
 ];
 
-kettle.test.bootstrapServer(gpii.tests.nexus.constructComponent.testDefs);
+kettle.test.bootstrapServer(fluid.tests.nexus.constructComponent.testDefs);
