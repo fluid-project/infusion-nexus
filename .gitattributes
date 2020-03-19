@@ -1,0 +1,2 @@
+# force linebreaks to be in the Unix style
+*.js   text eol=lf
