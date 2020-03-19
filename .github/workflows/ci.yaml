@@ -30,6 +30,6 @@ jobs:
                   echo NPM:
                   npm --version
             - name: Lint
-              run: Grunt lint
+              run: grunt lint
             - name: Test
               run: node tests/all-tests.js
