@@ -23,15 +23,15 @@ jobs:
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v1
               with:
-                  fetch-depth: 1
+                  node-version: ${{ matrix.node-version }}
             - name: Versions
               run: |
                   echo Node:
                   node --version
                   echo NPM:
                   npm --version
-            - name: NPM install (ci)
-              run: npm ci
+            - name: NPM install
+              run: npm install
             - name: Lint
               run: npx grunt lint
             - name: Test
