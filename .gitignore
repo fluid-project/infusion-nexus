@@ -37,3 +37,6 @@ node_modules
 
 # Ansible files
 /provisioning/playbook.retry
+
+# package lock file
+package-lock.json
