@@ -29,6 +29,8 @@ jobs:
                   node --version
                   echo NPM:
                   npm --version
+            - name: NPM install (ci)
+              run: npm ci
             - name: Lint
               run: npx grunt lint
             - name: Test
