@@ -30,4 +30,4 @@ jobs:
             - name: Lint
               run: npx grunt lint
             - name: Test
-              run: node tests/all-tests.js
+              run: npm test
