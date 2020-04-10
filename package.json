@@ -9,13 +9,13 @@
     },
     "dependencies": {
         "infusion": "3.0.0-dev.20200214T151835Z.ab768289a.FLUID-6145",
-        "kettle": "1.12.0-dev.20191220T164344Z.f1fef17.FLUID-6145"
+        "kettle": "1.12.0"
     },
     "devDependencies": {
         "eslint-config-fluid": "1.4.0",
         "fluid-grunt-eslint": "18.1.2",
-        "grunt": "1.0.4",
-        "grunt-jsonlint": "2.1.1",
+        "grunt": "1.1.0",
+        "grunt-jsonlint": "2.1.2",
         "node-jqunit": "1.1.8"
     }
 }
