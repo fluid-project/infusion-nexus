@@ -13,7 +13,7 @@ https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.tx
 "use strict";
 
 var fluid = require("infusion");
-require("./nexusUtils");
+require("./nexusUtils.js");
 
 fluid.defaults("fluid.nexus", {
     gradeNames: ["kettle.app"],
