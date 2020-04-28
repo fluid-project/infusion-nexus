@@ -12,8 +12,9 @@ https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.tx
 
 "use strict";
 
-var fluid = require("infusion");
+var kettle = require("kettle");
 
-fluid.module.register("infusion-nexus", __dirname, require);
-require("./src/Nexus.js");
-require("./src/NexusUtils.js");
+kettle.config.loadConfig({
+    configName: kettle.config.getConfigName("fluid.nexus.config"),
+    configPath: kettle.config.getConfigPath("%infusion-nexus/configs")
+});

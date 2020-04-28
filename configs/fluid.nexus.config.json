@@ -16,5 +16,6 @@
                 }
             }
         }
-    }
+    },
+    "require": "../nexusModule.js"
 }

@@ -15,9 +15,9 @@ https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.tx
 var fluid = require("infusion"),
     jqUnit = fluid.require("node-jqunit");
 
-require("../index.js");
+require("../src/nexusGrades.js");
 
-jqUnit.module("NexusUtils Tests");
+jqUnit.module("nexusUtils Tests");
 
 fluid.defaults("fluid.tests.nexus.nexusUtils.parent", {
     gradeNames: ["fluid.component", "fluid.resolveRoot"],

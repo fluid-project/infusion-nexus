@@ -12,11 +12,7 @@ https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.tx
 
 "use strict";
 
-var kettle = require("kettle");
+var fluid = require("infusion");
 
-require("./index.js");
-
-kettle.config.loadConfig({
-    configName: kettle.config.getConfigName("fluid.nexus.config"),
-    configPath: kettle.config.getConfigPath("%infusion-nexus/configs")
-});
+fluid.module.register("infusion-nexus", __dirname, require);
+require("./src/nexusGrades.js");
