@@ -15,7 +15,7 @@ https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.tx
 var fluid = require("infusion"),
     kettle = require("kettle");
 
-require("../nexusModule.js");
+require("../index.js");
 require("../src/test/nexusTestUtils.js");
 
 kettle.loadTestingSupport();

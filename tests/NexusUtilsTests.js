@@ -15,7 +15,7 @@ https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.tx
 var fluid = require("infusion"),
     jqUnit = fluid.require("node-jqunit");
 
-require("../src/nexusGrades.js");
+require("../index.js");
 
 jqUnit.module("nexusUtils Tests");
 
