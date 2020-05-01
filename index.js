@@ -15,5 +15,4 @@ https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.tx
 var fluid = require("infusion");
 
 fluid.module.register("infusion-nexus", __dirname, require);
-require("./src/Nexus.js");
-require("./src/NexusUtils.js");
+require("./src/nexusGrades.js");

@@ -17,7 +17,7 @@ var fluid = require("infusion"),
 
 require("../index.js");
 
-jqUnit.module("NexusUtils Tests");
+jqUnit.module("nexusUtils Tests");
 
 fluid.defaults("fluid.tests.nexus.nexusUtils.parent", {
     gradeNames: ["fluid.component", "fluid.resolveRoot"],

@@ -5,7 +5,8 @@
     "license": "BSD-3-Clause",
     "repository": "git@github.com:fluid-project/nexus.git",
     "scripts": {
-        "test": "node tests/all-tests.js"
+        "test": "node tests/all-tests.js",
+        "serve": "node nexusServer.js"
     },
     "dependencies": {
         "infusion": "3.0.0-dev.20200214T151835Z.ab768289a.FLUID-6145",

@@ -16,7 +16,7 @@ var fluid = require("infusion"),
     kettle = require("kettle");
 
 require("../index.js");
-require("../src/test/NexusTestUtils.js");
+require("../src/test/nexusTestUtils.js");
 
 kettle.loadTestingSupport();
 

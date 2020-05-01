@@ -14,8 +14,6 @@ https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.tx
 
 var kettle = require("kettle");
 
-require("./index.js");
-
 kettle.config.loadConfig({
     configName: kettle.config.getConfigName("fluid.nexus.config"),
     configPath: kettle.config.getConfigPath("%infusion-nexus/configs")
