@@ -33,9 +33,14 @@ fluid.defaults("fluid.nexus", {
             method: "put",
             type: "fluid.nexus.writeDefaults.handler"
         },
+        readComponent: {
+            route: "/components/:path",
+            method: "get",
+            type: "fluid.nexus.readComponent.handler"
+        },
         constructComponent: {
             route: "/components/:path",
-            method: "post",
+            method: "put",
             type: "fluid.nexus.constructComponent.handler"
         },
         destroyComponent: {
@@ -85,6 +90,35 @@ fluid.defaults("fluid.nexus.writeDefaults.handler", {
 fluid.nexus.writeDefaults.handleRequest = function (gradeName, request) {
     fluid.defaults(gradeName, request.req.body);
     request.events.onSuccess.fire();
+};
+
+fluid.defaults("fluid.nexus.readComponent.handler", {
+    gradeNames: ["kettle.request.http"],
+    invokers: {
+        handleRequest: {
+            funcName: "fluid.nexus.readComponent.handleRequest",
+            args: ["{request}.req.params.path", "{request}"]
+        }
+    }
+});
+
+fluid.nexus.readComponent.handleRequest = function (path, request) {
+    // looks like I need to determine if the path is to a component or not
+    // what gets us away from components?
+    //   events
+    //   model
+    //   options
+    //   
+    var component = fluid.componentForPath(path);
+    var value = fluid.getForComponent(component, "model.thing.thing");
+    if (value) {
+        request.events.onSuccess.fire(value);
+    } else {
+        request.events.onError.fire({
+            message: "Component or value not found",
+            statusCode: 404
+        });
+    }
 };
 
 fluid.defaults("fluid.nexus.constructComponent.handler", {

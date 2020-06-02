@@ -112,7 +112,7 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
             options: {
                 path: "/components/%path",
                 port: "{configuration}.options.serverPort",
-                method: "POST",
+                method: "PUT",
                 termMap: {
                     path: "{tests}.options.testComponentPath"
                 }
@@ -123,7 +123,7 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
             options: {
                 path: "/components/%path",
                 port: "{configuration}.options.serverPort",
-                method: "POST",
+                method: "PUT",
                 termMap: {
                     path: "{tests}.options.testComponentPath2"
                 }
