@@ -97,25 +97,28 @@ fluid.defaults("fluid.nexus.readComponent.handler", {
     invokers: {
         handleRequest: {
             funcName: "fluid.nexus.readComponent.handleRequest",
-            args: ["{request}.req.params.path", "{request}"]
+            args: ["{request}.req.params.path", "{request}", "{fluid.nexus}.nexusComponentRoot"]
         }
     }
 });
 
-fluid.nexus.readComponent.handleRequest = function (path, request) {
-    // looks like I need to determine if the path is to a component or not
-    // what gets us away from components?
-    //   events
-    //   model
-    //   options
-    //   
-    var component = fluid.componentForPath(path);
-    var value = fluid.getForComponent(component, "model.thing.thing");
-    if (value) {
-        request.events.onSuccess.fire(value);
+// TODO: this API endpoint should really supply the potentia and model of a component,
+//       i.e. serialized material that could be used to reconstruct the component in its current state.
+//       This is not straightforward to provide under the current version of Infusion.
+/**
+ * Retrieve a serialized version of a component's "shell" at a path, consisting of its construction status, typeName, model, and id.
+ * @param {String} path the path to the component, can also be given as an array.
+ * @param {Object} request the kettle.request.http component that will mediate the response.
+ * @param {Object} nexusComponentRoot the component with grade nexusComponetRoot, which path is relative to.
+ */
+fluid.nexus.readComponent.handleRequest = function (path, request, nexusComponentRoot) {
+    var component = fluid.nexus.componentForPathInContainer(nexusComponentRoot, path);
+    if (component) {
+        var componentShell = fluid.filterKeys(component, ["id", "lifecycleStatus", "model", "typeName"]);
+        request.events.onSuccess.fire(JSON.stringify(componentShell));
     } else {
         request.events.onError.fire({
-            message: "Component or value not found",
+            message: "Component not found",
             statusCode: 404
         });
     }

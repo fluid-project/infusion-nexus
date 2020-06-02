@@ -45,7 +45,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
     {
         name: "Construct and Destroy Components",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 17,
+        expect: 21,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -81,6 +81,17 @@ fluid.tests.nexus.constructComponent.testDefs = [
                     "{tests}.options.testComponentPath2"
                 ]
             },
+            // Attempt to read component one
+            {
+                func: "{readComponentRequest1}.send",
+                args: []
+            },
+            // Expect 404 resource not found
+            {
+                event: "{readComponentRequest1}.events.onComplete",
+                listener: "fluid.test.nexus.assertStatusCode",
+                args: ["{readComponentRequest1}", 404]
+            },
             // Construct component one
             {
                 func: "{constructComponentRequest}.send",
@@ -99,6 +110,22 @@ fluid.tests.nexus.constructComponent.testDefs = [
                     "{tests}.options.testComponentPath",
                     fluid.tests.nexus.constructComponent.componentOptions1.model
                 ]
+            },
+            // Attempt to read component one
+            {
+                func: "{readComponentRequest2}.send",
+                args: []
+            },
+            // expect the response to contain model data, gradeNames, subcomponents
+            {
+                event: "{readComponentRequest2}.events.onComplete",
+                listener: "fluid.test.nexus.assertKeyValues",
+                args: [{
+                    typeName: "fluid.modelComponent",
+                    model: {
+                        "some.model\\path": "one"
+                    }
+                }, "{arguments}.0"]
             },
             // Construct component two
             {
@@ -177,6 +204,17 @@ fluid.tests.nexus.constructComponent.testDefs = [
                 event: "{destroyComponentRequest}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
                 args: ["{destroyComponentRequest}", 200]
+            },
+            // Attempt to read component one
+            {
+                func: "{readComponentRequest3}.send",
+                args: []
+            },
+            // Expect 404 resource not found
+            {
+                event: "{readComponentRequest3}.events.onComplete",
+                listener: "fluid.test.nexus.assertStatusCode",
+                args: ["{readComponentRequest3}", 404]
             },
             {
                 func: "fluid.test.nexus.assertNoComponentAtPath",

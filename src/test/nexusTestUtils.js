@@ -52,102 +52,165 @@ fluid.test.nexus.assertContainsComponent = function (componentRoot, parentPath, 
     jqUnit.assertValue(parentPath + " component contains " + childName, parent[childName]);
 };
 
+/**
+ * Assert that the object toTest contains a set of keys with given values.
+ * Can also be understood as "assert that the object expected is a subset of the object toTest".
+ * @param {Object} expected the expected keys and values.
+ * @param {Object} actual the object to test.
+ */
+fluid.test.nexus.assertKeyValues = function (expected, actual) {
+    for (var key in expected) {
+        var value = expected[key];
+        jqUnit.assertDeepEq(value, actual[key]);
+    }
+};
+
+fluid.defaults("fluid.test.nexus.readDefaultsRequest", {
+    gradeNames: ["kettle.test.request.http"],
+    path: "/defaults/%gradeName",
+    port: "{configuration}.options.serverPort",
+    method: "GET",
+    termMap: {
+        gradeName: "fill in construction options"
+    }
+});
+
+fluid.defaults("fluid.test.nexus.writeDefaultsRequest", {
+    gradeNames: ["kettle.test.request.http"],
+    path: "/defaults/%gradeName",
+    port: "{configuration}.options.serverPort",
+    method: "PUT",
+    termMap: {
+        gradeName: "fill in construction options"
+    }
+});
+
+fluid.defaults("fluid.test.nexus.readComponentRequest", {
+    gradeNames: ["kettle.test.request.http"],
+    path: "/components/%path",
+    port: "{configuration}.options.serverPort",
+    method: "GET",
+    termMap: {
+        path: "fill in construction options"
+    }
+});
+
+fluid.defaults("fluid.test.nexus.constructComponentRequest", {
+    gradeNames: ["kettle.test.request.http"],
+    path: "/components/%path",
+    port: "{configuration}.options.serverPort",
+    method: "PUT",
+    termMap: {
+        path: "fill in construction options"
+    }
+});
+
+fluid.defaults("fluid.test.nexus.destroyComponentRequest", {
+    gradeNames: ["kettle.test.request.http"],
+    path: "/components/%path",
+    port: "{configuration}.options.serverPort",
+    method: "DELETE",
+    termMap: {
+        path: "fill in construction options"
+    }
+});
+
 fluid.defaults("fluid.test.nexus.testCaseHolder", {
     gradeNames: "kettle.test.testCaseHolder",
     components: {
         readDefaultsRequest: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.readDefaultsRequest",
             options: {
-                path: "/defaults/%gradeName",
-                port: "{configuration}.options.serverPort",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
         },
         readDefaultsSecondTimeRequest: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.readDefaultsRequest",
             options: {
-                path: "/defaults/%gradeName",
-                port: "{configuration}.options.serverPort",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
         },
         readDefaultsThirdTimeRequest: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.readDefaultsRequest",
             options: {
-                path: "/defaults/%gradeName",
-                port: "{configuration}.options.serverPort",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
         },
         writeDefaultsRequest: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.writeDefaultsRequest",
             options: {
-                path: "/defaults/%gradeName",
-                port: "{configuration}.options.serverPort",
-                method: "PUT",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
         },
         writeDefaultsAgainRequest: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.writeDefaultsRequest",
             options: {
-                path: "/defaults/%gradeName",
-                port: "{configuration}.options.serverPort",
-                method: "PUT",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
         },
         constructComponentRequest: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.constructComponentRequest",
             options: {
-                path: "/components/%path",
-                port: "{configuration}.options.serverPort",
-                method: "PUT",
                 termMap: {
                     path: "{tests}.options.testComponentPath"
                 }
             }
         },
         constructComponentRequest2: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.constructComponentRequest",
             options: {
-                path: "/components/%path",
-                port: "{configuration}.options.serverPort",
-                method: "PUT",
                 termMap: {
                     path: "{tests}.options.testComponentPath2"
                 }
             }
         },
         destroyComponentRequest: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.destroyComponentRequest",
             options: {
-                path: "/components/%path",
-                port: "{configuration}.options.serverPort",
-                method: "DELETE",
                 termMap: {
                     path: "{tests}.options.testComponentPath"
                 }
             }
         },
         destroyComponentRequest2: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.destroyComponentRequest",
             options: {
-                path: "/components/%path",
-                port: "{configuration}.options.serverPort",
-                method: "DELETE",
                 termMap: {
                     path: "{tests}.options.testComponentPath2"
+                }
+            }
+        },
+        readComponentRequest1: {
+            type: "fluid.test.nexus.readComponentRequest",
+            options: {
+                termMap: {
+                    path: "{tests}.options.testComponentPath"
+                }
+            }
+        },
+        readComponentRequest2: {
+            type: "fluid.test.nexus.readComponentRequest",
+            options: {
+                termMap: {
+                    path: "{tests}.options.testComponentPath"
+                }
+            }
+        },
+        readComponentRequest3: {
+            type: "fluid.test.nexus.readComponentRequest",
+            options: {
+                termMap: {
+                    path: "{tests}.options.testComponentPath"
                 }
             }
         }
