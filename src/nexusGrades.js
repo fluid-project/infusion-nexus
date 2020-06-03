@@ -102,7 +102,7 @@ fluid.defaults("fluid.nexus.readComponent.handler", {
     }
 });
 
-// TODO: currently, we imagine this API endpoint exists mainly for testing. 
+// TODO: currently, we imagine this API endpoint exists mainly for testing.
 //       In the future, the goal is to respond with the potentia and model of a component,
 //       i.e. serialized material that could be used to reconstruct the component in its current state.
 //       This will require some additional documentation and writeups of example use cases.

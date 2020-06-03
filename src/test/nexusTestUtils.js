@@ -54,6 +54,7 @@ fluid.test.nexus.assertContainsComponent = function (componentRoot, parentPath, 
 
 /**
  * Wrapper for jqUnit.assertLeftHand that parses the value to test.
+ * @param {String} message description of what is being asserted.
  * @param {Object} expected the expected keys and values.
  * @param {Object} actual the object to test.
  */
@@ -75,31 +76,31 @@ fluid.defaults("fluid.test.nexus.request.http", {
 fluid.defaults("fluid.test.nexus.readDefaultsRequest", {
     gradeNames: ["fluid.test.nexus.request.http"],
     path: "/defaults/%gradeName",
-    method: "GET",
+    method: "GET"
 });
 
 fluid.defaults("fluid.test.nexus.writeDefaultsRequest", {
     gradeNames: ["fluid.test.nexus.request.http"],
     path: "/defaults/%gradeName",
-    method: "PUT",
+    method: "PUT"
 });
 
 fluid.defaults("fluid.test.nexus.readComponentRequest", {
     gradeNames: ["fluid.test.nexus.request.http"],
     path: "/components/%componentPath",
-    method: "GET",
+    method: "GET"
 });
 
 fluid.defaults("fluid.test.nexus.constructComponentRequest", {
     gradeNames: ["fluid.test.nexus.request.http"],
     path: "/components/%componentPath",
-    method: "PUT",
+    method: "PUT"
 });
 
 fluid.defaults("fluid.test.nexus.destroyComponentRequest", {
     gradeNames: ["fluid.test.nexus.request.http"],
     path: "/components/%componentPath",
-    method: "DELETE",
+    method: "DELETE"
 });
 
 fluid.defaults("fluid.test.nexus.testCaseHolder", {

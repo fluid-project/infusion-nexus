@@ -127,7 +127,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
                         model: {
                             "some.model\\path": "one"
                         }
-                    }, 
+                    },
                     "{arguments}.0"
                 ]
             },
