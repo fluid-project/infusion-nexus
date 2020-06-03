@@ -39,14 +39,14 @@ fluid.tests.nexus.readDefaults.testDefs = [
         testGradeName: "fluid.tests.nexus.readDefaults.testGrade",
         sequence: [
             {
-                func: "{readDefaultsRequest}.send"
+                func: "{readDefaultsRequest1}.send"
             },
             {
-                event: "{readDefaultsRequest}.events.onComplete",
+                event: "{readDefaultsRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{arguments}.0",
-                    "{readDefaultsRequest}",
+                    "{readDefaultsRequest1}",
                     {
                         gradeNames: ["fluid.component", "fluid.tests.nexus.readDefaults.testGrade"],
                         model: {
@@ -68,16 +68,16 @@ fluid.tests.nexus.readDefaults.testDefs = [
         testGradeName: "fluid.tests.nexus.nonExistingGrade",
         sequence: [
             {
-                func: "{readDefaultsRequest}.send"
+                func: "{readDefaultsRequest1}.send"
             },
             {
-                event: "{readDefaultsRequest}.events.onComplete",
+                event: "{readDefaultsRequest1}.events.onComplete",
                 listener: "kettle.test.assertErrorResponse",
                 args: [{
                     message: "Read Defaults for non-existing grade returns 404",
                     errorTexts: "Grade not found",
                     string: "{arguments}.0",
-                    request: "{readDefaultsRequest}",
+                    request: "{readDefaultsRequest1}",
                     statusCode: 404
                 }]
             }

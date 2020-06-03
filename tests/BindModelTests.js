@@ -48,6 +48,8 @@ fluid.defaults("fluid.tests.nexus.bindModel.wsClient", {
     }
 });
 
+// TODO: FLUID-6504: test establishing a bind model before a component exists at a particular path
+
 // TODO: Test with multiple connected WebSocket clients
 
 // Note that these tests verify steps by peeking into the Nexus internal
@@ -84,13 +86,13 @@ fluid.tests.nexus.bindModel.testDefs = [
                 ]
             },
             {
-                func: "{constructComponentRequest}.send",
+                func: "{constructComponentRequest1}.send",
                 args: [fluid.tests.nexus.bindModel.componentOptions]
             },
             {
-                event: "{constructComponentRequest}.events.onComplete",
+                event: "{constructComponentRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{constructComponentRequest}", 200]
+                args: ["{constructComponentRequest1}", 200]
             },
             {
                 func: "fluid.tests.nexus.bindModel.registerModelListenerForPath",

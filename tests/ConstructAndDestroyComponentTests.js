@@ -45,7 +45,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
     {
         name: "Construct and Destroy Components",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 21,
+        expect: 20,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -94,13 +94,13 @@ fluid.tests.nexus.constructComponent.testDefs = [
             },
             // Construct component one
             {
-                func: "{constructComponentRequest}.send",
+                func: "{constructComponentRequest1}.send",
                 args: [fluid.tests.nexus.constructComponent.componentOptions1]
             },
             {
-                event: "{constructComponentRequest}.events.onComplete",
+                event: "{constructComponentRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{constructComponentRequest}", 200]
+                args: ["{constructComponentRequest1}", 200]
             },
             {
                 func: "fluid.test.nexus.assertComponentModel",
@@ -119,13 +119,17 @@ fluid.tests.nexus.constructComponent.testDefs = [
             // expect the response to contain model data, gradeNames, subcomponents
             {
                 event: "{readComponentRequest2}.events.onComplete",
-                listener: "fluid.test.nexus.assertKeyValues",
-                args: [{
-                    typeName: "fluid.modelComponent",
-                    model: {
-                        "some.model\\path": "one"
-                    }
-                }, "{arguments}.0"]
+                listener: "fluid.test.nexus.assertLeftHand",
+                args: [
+                    "Component shell contains typeName and model data",
+                    {
+                        typeName: "fluid.modelComponent",
+                        model: {
+                            "some.model\\path": "one"
+                        }
+                    }, 
+                    "{arguments}.0"
+                ]
             },
             // Construct component two
             {
@@ -198,12 +202,12 @@ fluid.tests.nexus.constructComponent.testDefs = [
                 ]
             },
             {
-                func: "{destroyComponentRequest}.send"
+                func: "{destroyComponentRequest1}.send"
             },
             {
-                event: "{destroyComponentRequest}.events.onComplete",
+                event: "{destroyComponentRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{destroyComponentRequest}", 200]
+                args: ["{destroyComponentRequest1}", 200]
             },
             // Attempt to read component one
             {

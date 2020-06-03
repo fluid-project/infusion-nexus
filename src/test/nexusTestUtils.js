@@ -53,72 +53,59 @@ fluid.test.nexus.assertContainsComponent = function (componentRoot, parentPath, 
 };
 
 /**
- * Assert that the object toTest contains a set of keys with given values.
- * Can also be understood as "assert that the object expected is a subset of the object toTest".
+ * Wrapper for jqUnit.assertLeftHand that parses the value to test.
  * @param {Object} expected the expected keys and values.
  * @param {Object} actual the object to test.
  */
-fluid.test.nexus.assertKeyValues = function (expected, actual) {
-    for (var key in expected) {
-        var value = expected[key];
-        jqUnit.assertDeepEq(value, actual[key]);
-    }
+fluid.test.nexus.assertLeftHand = function (message, expected, actual) {
+    jqUnit.assertLeftHand(message, expected, JSON.parse(actual));
 };
 
-fluid.defaults("fluid.test.nexus.readDefaultsRequest", {
+// all test request grades communicate with a port defined by the test configuration,
+// and a path parameterized by either a gradeName or componentPath set in a termMap.
+fluid.defaults("fluid.test.nexus.request.http", {
     gradeNames: ["kettle.test.request.http"],
-    path: "/defaults/%gradeName",
     port: "{configuration}.options.serverPort",
-    method: "GET",
     termMap: {
-        gradeName: "fill in construction options"
+        gradeName: "fill in construction options",
+        componentPath: "fill in construction options"
     }
+});
+
+fluid.defaults("fluid.test.nexus.readDefaultsRequest", {
+    gradeNames: ["fluid.test.nexus.request.http"],
+    path: "/defaults/%gradeName",
+    method: "GET",
 });
 
 fluid.defaults("fluid.test.nexus.writeDefaultsRequest", {
-    gradeNames: ["kettle.test.request.http"],
+    gradeNames: ["fluid.test.nexus.request.http"],
     path: "/defaults/%gradeName",
-    port: "{configuration}.options.serverPort",
     method: "PUT",
-    termMap: {
-        gradeName: "fill in construction options"
-    }
 });
 
 fluid.defaults("fluid.test.nexus.readComponentRequest", {
-    gradeNames: ["kettle.test.request.http"],
-    path: "/components/%path",
-    port: "{configuration}.options.serverPort",
+    gradeNames: ["fluid.test.nexus.request.http"],
+    path: "/components/%componentPath",
     method: "GET",
-    termMap: {
-        path: "fill in construction options"
-    }
 });
 
 fluid.defaults("fluid.test.nexus.constructComponentRequest", {
-    gradeNames: ["kettle.test.request.http"],
-    path: "/components/%path",
-    port: "{configuration}.options.serverPort",
+    gradeNames: ["fluid.test.nexus.request.http"],
+    path: "/components/%componentPath",
     method: "PUT",
-    termMap: {
-        path: "fill in construction options"
-    }
 });
 
 fluid.defaults("fluid.test.nexus.destroyComponentRequest", {
-    gradeNames: ["kettle.test.request.http"],
-    path: "/components/%path",
-    port: "{configuration}.options.serverPort",
+    gradeNames: ["fluid.test.nexus.request.http"],
+    path: "/components/%componentPath",
     method: "DELETE",
-    termMap: {
-        path: "fill in construction options"
-    }
 });
 
 fluid.defaults("fluid.test.nexus.testCaseHolder", {
     gradeNames: "kettle.test.testCaseHolder",
     components: {
-        readDefaultsRequest: {
+        readDefaultsRequest1: {
             type: "fluid.test.nexus.readDefaultsRequest",
             options: {
                 termMap: {
@@ -126,7 +113,7 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
                 }
             }
         },
-        readDefaultsSecondTimeRequest: {
+        readDefaultsRequest2: {
             type: "fluid.test.nexus.readDefaultsRequest",
             options: {
                 termMap: {
@@ -134,7 +121,7 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
                 }
             }
         },
-        readDefaultsThirdTimeRequest: {
+        readDefaultsRequest3: {
             type: "fluid.test.nexus.readDefaultsRequest",
             options: {
                 termMap: {
@@ -142,7 +129,7 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
                 }
             }
         },
-        writeDefaultsRequest: {
+        writeDefaultsRequest1: {
             type: "fluid.test.nexus.writeDefaultsRequest",
             options: {
                 termMap: {
@@ -150,7 +137,7 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
                 }
             }
         },
-        writeDefaultsAgainRequest: {
+        writeDefaultsRequest2: {
             type: "fluid.test.nexus.writeDefaultsRequest",
             options: {
                 termMap: {
@@ -158,11 +145,11 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
                 }
             }
         },
-        constructComponentRequest: {
+        constructComponentRequest1: {
             type: "fluid.test.nexus.constructComponentRequest",
             options: {
                 termMap: {
-                    path: "{tests}.options.testComponentPath"
+                    componentPath: "{tests}.options.testComponentPath"
                 }
             }
         },
@@ -170,15 +157,15 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
             type: "fluid.test.nexus.constructComponentRequest",
             options: {
                 termMap: {
-                    path: "{tests}.options.testComponentPath2"
+                    componentPath: "{tests}.options.testComponentPath2"
                 }
             }
         },
-        destroyComponentRequest: {
+        destroyComponentRequest1: {
             type: "fluid.test.nexus.destroyComponentRequest",
             options: {
                 termMap: {
-                    path: "{tests}.options.testComponentPath"
+                    componentPath: "{tests}.options.testComponentPath"
                 }
             }
         },
@@ -186,7 +173,7 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
             type: "fluid.test.nexus.destroyComponentRequest",
             options: {
                 termMap: {
-                    path: "{tests}.options.testComponentPath2"
+                    componentPath: "{tests}.options.testComponentPath2"
                 }
             }
         },
@@ -194,7 +181,7 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
             type: "fluid.test.nexus.readComponentRequest",
             options: {
                 termMap: {
-                    path: "{tests}.options.testComponentPath"
+                    componentPath: "{tests}.options.testComponentPath"
                 }
             }
         },
@@ -202,7 +189,7 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
             type: "fluid.test.nexus.readComponentRequest",
             options: {
                 termMap: {
-                    path: "{tests}.options.testComponentPath"
+                    componentPath: "{tests}.options.testComponentPath"
                 }
             }
         },
@@ -210,7 +197,7 @@ fluid.defaults("fluid.test.nexus.testCaseHolder", {
             type: "fluid.test.nexus.readComponentRequest",
             options: {
                 termMap: {
-                    path: "{tests}.options.testComponentPath"
+                    componentPath: "{tests}.options.testComponentPath"
                 }
             }
         }
