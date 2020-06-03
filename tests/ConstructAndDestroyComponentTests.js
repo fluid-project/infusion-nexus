@@ -45,7 +45,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
     {
         name: "Construct and Destroy Components",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 20,
+        expect: 22,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -119,16 +119,16 @@ fluid.tests.nexus.constructComponent.testDefs = [
             // expect the response to contain model data, gradeNames, subcomponents
             {
                 event: "{readComponentRequest2}.events.onComplete",
-                listener: "fluid.test.nexus.assertLeftHand",
+                listener: "fluid.test.nexus.verifyReadComponentResponse",
                 args: [
-                    "Component shell contains typeName and model data",
+                    "{arguments}.0",
+                    "{readComponentRequest2}",
                     {
                         typeName: "fluid.modelComponent",
                         model: {
                             "some.model\\path": "one"
                         }
-                    },
-                    "{arguments}.0"
+                    }
                 ]
             },
             // Construct component two

@@ -32,6 +32,23 @@ fluid.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedG
     jqUnit.assertLeftHand("Response has expected grade specification", expectedGradeSpec, responseGradeSpec);
 };
 
+
+/**
+ * Verify that a response to the component reading endpoint is well-formed and has the expected content.
+ * @param {String} body the body of the HTTP response.
+ * @param {kettle.request.http} request the component representing the HTTP response.
+ * @param {Object} expectedComponentMaterial the expected content of the response body.
+ */
+fluid.test.nexus.verifyReadComponentResponse = function (body, request, expectedComponentMaterial) {
+    var responseComponentMaterial = JSON.parse(body);
+    var response = request.nativeResponse;
+    jqUnit.assertEquals("Response has status code 200", 200, response.statusCode);
+    jqUnit.assertTrue("Response has JSON content-type",
+                      response.headers["content-type"].indexOf("application/json") === 0);
+    jqUnit.assertLeftHand("Response has expected component material", expectedComponentMaterial,
+    responseComponentMaterial);
+};
+
 fluid.test.nexus.assertNoComponentAtPath = function (message, componentRoot, path) {
     jqUnit.assertFalse(message, fluid.nexus.containsComponent(componentRoot, path));
 };
@@ -50,16 +67,6 @@ fluid.test.nexus.assertNotContainsComponent = function (componentRoot, parentPat
 fluid.test.nexus.assertContainsComponent = function (componentRoot, parentPath, childName) {
     var parent = fluid.nexus.componentForPathInContainer(componentRoot, parentPath);
     jqUnit.assertValue(parentPath + " component contains " + childName, parent[childName]);
-};
-
-/**
- * Wrapper for jqUnit.assertLeftHand that parses the value to test.
- * @param {String} message description of what is being asserted.
- * @param {Object} expected the expected keys and values.
- * @param {Object} actual the object to test.
- */
-fluid.test.nexus.assertLeftHand = function (message, expected, actual) {
-    jqUnit.assertLeftHand(message, expected, JSON.parse(actual));
 };
 
 // all test request grades communicate with a port defined by the test configuration,
