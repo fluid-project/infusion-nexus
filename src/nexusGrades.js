@@ -102,20 +102,22 @@ fluid.defaults("fluid.nexus.readComponent.handler", {
     }
 });
 
-// TODO: this API endpoint should really supply the potentia and model of a component,
+// TODO: currently, we imagine this API endpoint exists mainly for testing. 
+//       In the future, the goal is to respond with the potentia and model of a component,
 //       i.e. serialized material that could be used to reconstruct the component in its current state.
-//       This is not straightforward to provide under the current version of Infusion.
+//       This will require some additional documentation and writeups of example use cases.
+//       The ongoing design of the Nexus API is discussed at https://wiki.fluidproject.org/display/fluid/Nexus+API+revisions
 /**
  * Retrieve a serialized version of a component's "shell" at a path, consisting of its construction status, typeName, model, and id.
  * @param {String} path the path to the component, can also be given as an array.
- * @param {Object} request the kettle.request.http component that will mediate the response.
- * @param {Object} nexusComponentRoot the component with grade nexusComponetRoot, which path is relative to.
+ * @param {kettle.request.http} request the request component that will mediate the response.
+ * @param {fluid.component} nexusComponentRoot the component with grade nexusComponentRoot, which path is relative to.
  */
 fluid.nexus.readComponent.handleRequest = function (path, request, nexusComponentRoot) {
     var component = fluid.nexus.componentForPathInContainer(nexusComponentRoot, path);
     if (component) {
         var componentShell = fluid.filterKeys(component, ["id", "lifecycleStatus", "model", "typeName"]);
-        request.events.onSuccess.fire(JSON.stringify(componentShell));
+        request.events.onSuccess.fire(componentShell);
     } else {
         request.events.onError.fire({
             message: "Component not found",
