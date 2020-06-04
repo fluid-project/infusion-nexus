@@ -74,37 +74,37 @@ fluid.tests.nexus.writeDefaults.testDefs = [
         testGradeName: "fluid.tests.nexus.writeDefaults.newGradeRemote",
         sequence: [
             {
-                func: "{readDefaultsRequest}.send"
+                func: "{readDefaultsRequest1}.send"
             },
             {
-                event: "{readDefaultsRequest}.events.onComplete",
+                event: "{readDefaultsRequest1}.events.onComplete",
                 listener: "kettle.test.assertErrorResponse",
                 args: [{
                     message: "Read Defaults returns 404 as we haven't created the new grade yet",
                     errorTexts: "Grade not found",
                     string: "{arguments}.0",
-                    request: "{readDefaultsRequest}",
+                    request: "{readDefaultsRequest1}",
                     statusCode: 404
                 }]
             },
             {
-                func: "{writeDefaultsRequest}.send",
+                func: "{writeDefaultsRequest1}.send",
                 args: [fluid.tests.nexus.writeDefaults.newGradeOptions]
             },
             {
-                event: "{writeDefaultsRequest}.events.onComplete",
+                event: "{writeDefaultsRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsRequest}", 200]
+                args: ["{writeDefaultsRequest1}", 200]
             },
             {
-                func: "{readDefaultsSecondTimeRequest}.send"
+                func: "{readDefaultsRequest2}.send"
             },
             {
-                event: "{readDefaultsSecondTimeRequest}.events.onComplete",
+                event: "{readDefaultsRequest2}.events.onComplete",
                 listener: "fluid.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{arguments}.0",
-                    "{readDefaultsSecondTimeRequest}",
+                    "{readDefaultsRequest2}",
                     {
                         gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
                         model: {
@@ -114,23 +114,23 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                 ]
             },
             {
-                func: "{writeDefaultsAgainRequest}.send",
+                func: "{writeDefaultsRequest2}.send",
                 args: [fluid.tests.nexus.writeDefaults.updatedGradeOptions]
             },
             {
-                event: "{writeDefaultsAgainRequest}.events.onComplete",
+                event: "{writeDefaultsRequest2}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsAgainRequest}", 200]
+                args: ["{writeDefaultsRequest2}", 200]
             },
             {
-                func: "{readDefaultsThirdTimeRequest}.send"
+                func: "{readDefaultsRequest3}.send"
             },
             {
-                event: "{readDefaultsThirdTimeRequest}.events.onComplete",
+                event: "{readDefaultsRequest3}.events.onComplete",
                 listener: "fluid.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{arguments}.0",
-                    "{readDefaultsThirdTimeRequest}",
+                    "{readDefaultsRequest3}",
                     {
                         gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
                         model: {
@@ -156,7 +156,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                 listener: "fluid.identity"
             },
             {
-                func: "{writeDefaultsRequest}.send",
+                func: "{writeDefaultsRequest1}.send",
                 args: [
                     "{badlyFormedJson}.resources.corruptJSON.resourceText",
                     {
@@ -167,7 +167,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                 ]
             },
             {
-                event: "{writeDefaultsRequest}.events.onComplete",
+                event: "{writeDefaultsRequest1}.events.onComplete",
                 listener: "kettle.test.assertErrorResponse",
                 args: [{
                     message: "Write Defaults returns 400 for badly formed JSON",
@@ -180,7 +180,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                     // https://issues.fluid.net/browse/GPII-2080
                     errorTexts: "Unexpected end of",
                     string: "{arguments}.0",
-                    request: "{writeDefaultsRequest}",
+                    request: "{writeDefaultsRequest1}",
                     statusCode: 400
                 }]
             }
@@ -202,16 +202,16 @@ fluid.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 funcName: "fluid.tests.nexus.writeDefaults.sendBadlyFormedInvokerGradeOptions",
-                args: ["{writeDefaultsRequest}"]
+                args: ["{writeDefaultsRequest1}"]
             },
             {
-                event: "{writeDefaultsRequest}.events.onComplete",
+                event: "{writeDefaultsRequest1}.events.onComplete",
                 listener: "kettle.test.assertErrorResponse",
                 args: [{
                     message: "Write Defaults returns 500 for badly formed grade",
                     errorTexts: "Badly-formed compact invoker record without matching parentheses: bad(",
                     string: "{arguments}.0",
-                    request: "{writeDefaultsRequest}",
+                    request: "{writeDefaultsRequest1}",
                     statusCode: 500
                 }]
             },
@@ -231,19 +231,19 @@ fluid.tests.nexus.writeDefaults.testDefs = [
         testGradeName: "fluid.tests.nexus.writeDefaults.newGradeRemote",
         sequence: [
             {
-                func: "{writeDefaultsRequest}.send",
+                func: "{writeDefaultsRequest1}.send",
                 args: [fluid.tests.nexus.writeDefaults.newGradeOptions]
             },
             {
-                event: "{writeDefaultsRequest}.events.onComplete",
+                event: "{writeDefaultsRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsRequest}", 200]
+                args: ["{writeDefaultsRequest1}", 200]
             },
             {
-                func: "{readDefaultsRequest}.send"
+                func: "{readDefaultsRequest1}.send"
             },
             {
-                event: "{readDefaultsRequest}.events.onComplete",
+                event: "{readDefaultsRequest1}.events.onComplete",
                 listener: "fluid.tests.nexus.writeDefaults.rememberReadDefaultsResponse",
                 args: ["{arguments}.0", "{tests}"]
             },
@@ -251,7 +251,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                 funcName: "fluid.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{tests}.readDefaultsResponseBody",
-                    "{readDefaultsRequest}",
+                    "{readDefaultsRequest1}",
                     {
                         gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
                         model: {
@@ -261,23 +261,23 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                 ]
             },
             {
-                func: "{writeDefaultsAgainRequest}.send",
+                func: "{writeDefaultsRequest2}.send",
                 args: ["{tests}.readDefaultsResponseGradeSpec"]
             },
             {
-                event: "{writeDefaultsAgainRequest}.events.onComplete",
+                event: "{writeDefaultsRequest2}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsAgainRequest}", 200]
+                args: ["{writeDefaultsRequest2}", 200]
             },
             {
-                func: "{readDefaultsSecondTimeRequest}.send"
+                func: "{readDefaultsRequest2}.send"
             },
             {
-                event: "{readDefaultsSecondTimeRequest}.events.onComplete",
+                event: "{readDefaultsRequest2}.events.onComplete",
                 listener: "fluid.test.nexus.verifyReadDefaultsResponse",
                 args: [
                     "{arguments}.0",
-                    "{readDefaultsSecondTimeRequest}",
+                    "{readDefaultsRequest2}",
                     "{tests}.readDefaultsResponseGradeSpec"
                 ]
             }

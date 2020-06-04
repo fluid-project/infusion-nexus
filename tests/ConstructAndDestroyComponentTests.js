@@ -45,7 +45,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
     {
         name: "Construct and Destroy Components",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 17,
+        expect: 22,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -81,15 +81,26 @@ fluid.tests.nexus.constructComponent.testDefs = [
                     "{tests}.options.testComponentPath2"
                 ]
             },
+            // Attempt to read component one
+            {
+                func: "{readComponentRequest1}.send",
+                args: []
+            },
+            // Expect 404 resource not found
+            {
+                event: "{readComponentRequest1}.events.onComplete",
+                listener: "fluid.test.nexus.assertStatusCode",
+                args: ["{readComponentRequest1}", 404]
+            },
             // Construct component one
             {
-                func: "{constructComponentRequest}.send",
+                func: "{constructComponentRequest1}.send",
                 args: [fluid.tests.nexus.constructComponent.componentOptions1]
             },
             {
-                event: "{constructComponentRequest}.events.onComplete",
+                event: "{constructComponentRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{constructComponentRequest}", 200]
+                args: ["{constructComponentRequest1}", 200]
             },
             {
                 func: "fluid.test.nexus.assertComponentModel",
@@ -98,6 +109,26 @@ fluid.tests.nexus.constructComponent.testDefs = [
                     "{fluid.tests.nexus.componentRoot}",
                     "{tests}.options.testComponentPath",
                     fluid.tests.nexus.constructComponent.componentOptions1.model
+                ]
+            },
+            // Attempt to read component one
+            {
+                func: "{readComponentRequest2}.send",
+                args: []
+            },
+            // expect the response to contain model data, gradeNames, subcomponents
+            {
+                event: "{readComponentRequest2}.events.onComplete",
+                listener: "fluid.test.nexus.verifyReadComponentResponse",
+                args: [
+                    "{arguments}.0",
+                    "{readComponentRequest2}",
+                    {
+                        typeName: "fluid.modelComponent",
+                        model: {
+                            "some.model\\path": "one"
+                        }
+                    }
                 ]
             },
             // Construct component two
@@ -171,12 +202,23 @@ fluid.tests.nexus.constructComponent.testDefs = [
                 ]
             },
             {
-                func: "{destroyComponentRequest}.send"
+                func: "{destroyComponentRequest1}.send"
             },
             {
-                event: "{destroyComponentRequest}.events.onComplete",
+                event: "{destroyComponentRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{destroyComponentRequest}", 200]
+                args: ["{destroyComponentRequest1}", 200]
+            },
+            // Attempt to read component one
+            {
+                func: "{readComponentRequest3}.send",
+                args: []
+            },
+            // Expect 404 resource not found
+            {
+                event: "{readComponentRequest3}.events.onComplete",
+                listener: "fluid.test.nexus.assertStatusCode",
+                args: ["{readComponentRequest3}", 404]
             },
             {
                 func: "fluid.test.nexus.assertNoComponentAtPath",

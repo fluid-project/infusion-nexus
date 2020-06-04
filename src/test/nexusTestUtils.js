@@ -32,6 +32,23 @@ fluid.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedG
     jqUnit.assertLeftHand("Response has expected grade specification", expectedGradeSpec, responseGradeSpec);
 };
 
+
+/**
+ * Verify that a response to the component reading endpoint is well-formed and has the expected content.
+ * @param {String} body the body of the HTTP response.
+ * @param {kettle.request.http} request the component representing the HTTP response.
+ * @param {Object} expectedComponentMaterial the expected content of the response body.
+ */
+fluid.test.nexus.verifyReadComponentResponse = function (body, request, expectedComponentMaterial) {
+    var responseComponentMaterial = JSON.parse(body);
+    var response = request.nativeResponse;
+    jqUnit.assertEquals("Response has status code 200", 200, response.statusCode);
+    jqUnit.assertTrue("Response has JSON content-type",
+                      response.headers["content-type"].indexOf("application/json") === 0);
+    jqUnit.assertLeftHand("Response has expected component material", expectedComponentMaterial,
+    responseComponentMaterial);
+};
+
 fluid.test.nexus.assertNoComponentAtPath = function (message, componentRoot, path) {
     jqUnit.assertFalse(message, fluid.nexus.containsComponent(componentRoot, path));
 };
@@ -52,102 +69,143 @@ fluid.test.nexus.assertContainsComponent = function (componentRoot, parentPath, 
     jqUnit.assertValue(parentPath + " component contains " + childName, parent[childName]);
 };
 
+// all test request grades communicate with a port defined by the test configuration,
+// and a path parameterized by either a gradeName or componentPath set in a termMap.
+fluid.defaults("fluid.test.nexus.request.http", {
+    gradeNames: ["kettle.test.request.http"],
+    port: "{configuration}.options.serverPort",
+    termMap: {
+        gradeName: "fill in construction options",
+        componentPath: "fill in construction options"
+    }
+});
+
+fluid.defaults("fluid.test.nexus.readDefaultsRequest", {
+    gradeNames: ["fluid.test.nexus.request.http"],
+    path: "/defaults/%gradeName",
+    method: "GET"
+});
+
+fluid.defaults("fluid.test.nexus.writeDefaultsRequest", {
+    gradeNames: ["fluid.test.nexus.request.http"],
+    path: "/defaults/%gradeName",
+    method: "PUT"
+});
+
+fluid.defaults("fluid.test.nexus.readComponentRequest", {
+    gradeNames: ["fluid.test.nexus.request.http"],
+    path: "/components/%componentPath",
+    method: "GET"
+});
+
+fluid.defaults("fluid.test.nexus.constructComponentRequest", {
+    gradeNames: ["fluid.test.nexus.request.http"],
+    path: "/components/%componentPath",
+    method: "PUT"
+});
+
+fluid.defaults("fluid.test.nexus.destroyComponentRequest", {
+    gradeNames: ["fluid.test.nexus.request.http"],
+    path: "/components/%componentPath",
+    method: "DELETE"
+});
+
 fluid.defaults("fluid.test.nexus.testCaseHolder", {
     gradeNames: "kettle.test.testCaseHolder",
     components: {
-        readDefaultsRequest: {
-            type: "kettle.test.request.http",
+        readDefaultsRequest1: {
+            type: "fluid.test.nexus.readDefaultsRequest",
             options: {
-                path: "/defaults/%gradeName",
-                port: "{configuration}.options.serverPort",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
         },
-        readDefaultsSecondTimeRequest: {
-            type: "kettle.test.request.http",
+        readDefaultsRequest2: {
+            type: "fluid.test.nexus.readDefaultsRequest",
             options: {
-                path: "/defaults/%gradeName",
-                port: "{configuration}.options.serverPort",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
         },
-        readDefaultsThirdTimeRequest: {
-            type: "kettle.test.request.http",
+        readDefaultsRequest3: {
+            type: "fluid.test.nexus.readDefaultsRequest",
             options: {
-                path: "/defaults/%gradeName",
-                port: "{configuration}.options.serverPort",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
         },
-        writeDefaultsRequest: {
-            type: "kettle.test.request.http",
+        writeDefaultsRequest1: {
+            type: "fluid.test.nexus.writeDefaultsRequest",
             options: {
-                path: "/defaults/%gradeName",
-                port: "{configuration}.options.serverPort",
-                method: "PUT",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
         },
-        writeDefaultsAgainRequest: {
-            type: "kettle.test.request.http",
+        writeDefaultsRequest2: {
+            type: "fluid.test.nexus.writeDefaultsRequest",
             options: {
-                path: "/defaults/%gradeName",
-                port: "{configuration}.options.serverPort",
-                method: "PUT",
                 termMap: {
                     gradeName: "{tests}.options.testGradeName"
                 }
             }
         },
-        constructComponentRequest: {
-            type: "kettle.test.request.http",
+        constructComponentRequest1: {
+            type: "fluid.test.nexus.constructComponentRequest",
             options: {
-                path: "/components/%path",
-                port: "{configuration}.options.serverPort",
-                method: "POST",
                 termMap: {
-                    path: "{tests}.options.testComponentPath"
+                    componentPath: "{tests}.options.testComponentPath"
                 }
             }
         },
         constructComponentRequest2: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.constructComponentRequest",
             options: {
-                path: "/components/%path",
-                port: "{configuration}.options.serverPort",
-                method: "POST",
                 termMap: {
-                    path: "{tests}.options.testComponentPath2"
+                    componentPath: "{tests}.options.testComponentPath2"
                 }
             }
         },
-        destroyComponentRequest: {
-            type: "kettle.test.request.http",
+        destroyComponentRequest1: {
+            type: "fluid.test.nexus.destroyComponentRequest",
             options: {
-                path: "/components/%path",
-                port: "{configuration}.options.serverPort",
-                method: "DELETE",
                 termMap: {
-                    path: "{tests}.options.testComponentPath"
+                    componentPath: "{tests}.options.testComponentPath"
                 }
             }
         },
         destroyComponentRequest2: {
-            type: "kettle.test.request.http",
+            type: "fluid.test.nexus.destroyComponentRequest",
             options: {
-                path: "/components/%path",
-                port: "{configuration}.options.serverPort",
-                method: "DELETE",
                 termMap: {
-                    path: "{tests}.options.testComponentPath2"
+                    componentPath: "{tests}.options.testComponentPath2"
+                }
+            }
+        },
+        readComponentRequest1: {
+            type: "fluid.test.nexus.readComponentRequest",
+            options: {
+                termMap: {
+                    componentPath: "{tests}.options.testComponentPath"
+                }
+            }
+        },
+        readComponentRequest2: {
+            type: "fluid.test.nexus.readComponentRequest",
+            options: {
+                termMap: {
+                    componentPath: "{tests}.options.testComponentPath"
+                }
+            }
+        },
+        readComponentRequest3: {
+            type: "fluid.test.nexus.readComponentRequest",
+            options: {
+                termMap: {
+                    componentPath: "{tests}.options.testComponentPath"
                 }
             }
         }

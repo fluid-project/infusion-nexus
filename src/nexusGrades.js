@@ -33,9 +33,14 @@ fluid.defaults("fluid.nexus", {
             method: "put",
             type: "fluid.nexus.writeDefaults.handler"
         },
+        readComponent: {
+            route: "/components/:path",
+            method: "get",
+            type: "fluid.nexus.readComponent.handler"
+        },
         constructComponent: {
             route: "/components/:path",
-            method: "post",
+            method: "put",
             type: "fluid.nexus.constructComponent.handler"
         },
         destroyComponent: {
@@ -85,6 +90,40 @@ fluid.defaults("fluid.nexus.writeDefaults.handler", {
 fluid.nexus.writeDefaults.handleRequest = function (gradeName, request) {
     fluid.defaults(gradeName, request.req.body);
     request.events.onSuccess.fire();
+};
+
+fluid.defaults("fluid.nexus.readComponent.handler", {
+    gradeNames: ["kettle.request.http"],
+    invokers: {
+        handleRequest: {
+            funcName: "fluid.nexus.readComponent.handleRequest",
+            args: ["{request}.req.params.path", "{request}", "{fluid.nexus}.nexusComponentRoot"]
+        }
+    }
+});
+
+// TODO: currently, we imagine this API endpoint exists mainly for testing.
+//       In the future, the goal is to respond with the potentia and model of a component,
+//       i.e. serialized material that could be used to reconstruct the component in its current state.
+//       This will require some additional documentation and writeups of example use cases.
+//       The ongoing design of the Nexus API is discussed at https://wiki.fluidproject.org/display/fluid/Nexus+API+revisions
+/**
+ * Retrieve a serialized version of a component's "shell" at a path, consisting of its construction status, typeName, model, and id.
+ * @param {String} path the path to the component, can also be given as an array.
+ * @param {kettle.request.http} request the request component that will mediate the response.
+ * @param {fluid.component} nexusComponentRoot the component with grade nexusComponentRoot, which path is relative to.
+ */
+fluid.nexus.readComponent.handleRequest = function (path, request, nexusComponentRoot) {
+    var component = fluid.nexus.componentForPathInContainer(nexusComponentRoot, path);
+    if (component) {
+        var componentShell = fluid.filterKeys(component, ["id", "lifecycleStatus", "model", "typeName"]);
+        request.events.onSuccess.fire(componentShell);
+    } else {
+        request.events.onError.fire({
+            message: "Component not found",
+            statusCode: 404
+        });
+    }
 };
 
 fluid.defaults("fluid.nexus.constructComponent.handler", {

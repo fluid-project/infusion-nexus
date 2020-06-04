@@ -40,11 +40,11 @@ Prerequisites:
 In this example, we will construct a new component, register 2 model
 listeners, and send a model update.
 
-Start Nexus and make a POST request to construct a new component:
+Start Nexus and make a PUT request to construct a new component:
 
 ```
 $ vagrant up
-$ curl -H 'Content-Type: application/json' -d '{ "type": "fluid.modelComponent", "model": { "a": null } }' http://localhost:9081/components/example1
+$ curl -H 'Content-Type: application/json' -X PUT -d '{ "type": "fluid.modelComponent", "model": { "a": null } }' http://localhost:9081/components/example1
 ```
 
 Next we will make WebSocket Bind Model connections to the constructed component. Set up 2 connections by executing the following in 2 separate terminals:
