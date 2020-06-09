@@ -43,8 +43,8 @@ fluid.defaults("fluid.tests.nexus.bindModel.wsClient", {
     path: "/bindModel/%componentPath/%modelPath",
     port: "{configuration}.options.serverPort",
     termMap: {
-        componentPath: "{tests}.options.testComponentPath",
-        modelPath: "{tests}.options.testModelPath"
+        componentPath: "to be filled in construction options",
+        modelPath: "to be filled in construction options"
     }
 });
 
@@ -61,7 +61,7 @@ fluid.tests.nexus.bindModel.testDefs = [
     {
         name: "Bind Model",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 12,
+        expect: 13,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -69,8 +69,23 @@ fluid.tests.nexus.bindModel.testDefs = [
         testComponentPath: "nexusBindModelTestComponent",
         testModelPath: "model\\.path\\\\seg1.model\\.path\\\\seg2",
         components: {
-            client: {
-                type: "fluid.tests.nexus.bindModel.wsClient"
+            clientWithModelPath: {
+                type: "fluid.tests.nexus.bindModel.wsClient",
+                options: {
+                    termMap: {
+                        componentPath: "{tests}.options.testComponentPath",
+                        modelPath: "{tests}.options.testModelPath"
+                    }
+                }
+            },
+            clientWithoutModelPath: {
+                type: "fluid.tests.nexus.bindModel.wsClient",
+                options: {
+                    termMap: {
+                        componentPath: "{tests}.options.testComponentPath",
+                        modelPath: ""
+                    }
+                }
             }
         },
         events: {
@@ -104,14 +119,14 @@ fluid.tests.nexus.bindModel.testDefs = [
                 ]
             },
             {
-                func: "{client}.connect"
+                func: "{clientWithModelPath}.connect"
             },
             {
-                event: "{client}.events.onConnect",
+                event: "{clientWithModelPath}.events.onConnect",
                 listener: "fluid.identity"
             },
             {
-                event: "{client}.events.onReceiveMessage",
+                event: "{clientWithModelPath}.events.onReceiveMessage",
                 listener: "jqUnit.assertDeepEq",
                 args: [
                     "Received initial message with the state of the component's model",
@@ -121,9 +136,35 @@ fluid.tests.nexus.bindModel.testDefs = [
                     "{arguments}.0"
                 ]
             },
+            // connect and disconnect the client without a model path
+            {
+                func: "{clientWithoutModelPath}.connect"
+            },
+            {
+                event: "{clientWithoutModelPath}.events.onConnect",
+                listener: "fluid.identity"
+            },
+            {
+                event: "{clientWithoutModelPath}.events.onReceiveMessage",
+                listener: "jqUnit.assertDeepEq",
+                args: [
+                    "Received initial message with the state of the component's model",
+                    {
+                        "model.path\\seg1": {
+                            "model.path\\seg2": {
+                                "model.path\\seg3": "hello"
+                            }
+                        }
+                    },
+                    "{arguments}.0"
+                ]
+            },
+            {
+                func: "{clientWithoutModelPath}.disconnect"
+            },
             // Change at path with one segment
             {
-                func: "{client}.send",
+                func: "{clientWithModelPath}.send",
                 args: [
                     {
                         path: "model\\.path\\\\seg3a",
@@ -149,7 +190,7 @@ fluid.tests.nexus.bindModel.testDefs = [
                 ]
             },
             {
-                event: "{client}.events.onReceiveMessage",
+                event: "{clientWithModelPath}.events.onReceiveMessage",
                 listener: "jqUnit.assertDeepEq",
                 args: [
                     "Received change message",
@@ -162,7 +203,7 @@ fluid.tests.nexus.bindModel.testDefs = [
             },
             // Change at path with two segments
             {
-                func: "{client}.send",
+                func: "{clientWithModelPath}.send",
                 args: [
                     {
                         path: "model\\.path\\\\seg3b.model\\.path\\\\seg4",
@@ -191,7 +232,7 @@ fluid.tests.nexus.bindModel.testDefs = [
                 ]
             },
             {
-                event: "{client}.events.onReceiveMessage",
+                event: "{clientWithModelPath}.events.onReceiveMessage",
                 listener: "jqUnit.assertDeepEq",
                 args: [
                     "Received change message",
@@ -207,7 +248,7 @@ fluid.tests.nexus.bindModel.testDefs = [
             },
             // Change at path with no segments
             {
-                func: "{client}.send",
+                func: "{clientWithModelPath}.send",
                 args: [
                     {
                         path: "",
@@ -230,13 +271,13 @@ fluid.tests.nexus.bindModel.testDefs = [
                 ]
             },
             {
-                event: "{client}.events.onReceiveMessage",
+                event: "{clientWithModelPath}.events.onReceiveMessage",
                 listener: "jqUnit.assertEquals",
                 args: ["Received change message", "change at path with no segments", "{arguments}.0"]
             },
             // Disconnect
             {
-                func: "{client}.disconnect"
+                func: "{clientWithModelPath}.disconnect"
             }
         ]
     }
