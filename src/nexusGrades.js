@@ -48,8 +48,12 @@ fluid.defaults("fluid.nexus", {
             method: "delete",
             type: "fluid.nexus.destroyComponent.handler"
         },
-        bindModel: {
+        bindModelWithModelPath: {
             route: "/bindModel/:componentPath/:modelPath",
+            type: "fluid.nexus.bindModel.handler"
+        },
+        bindModelWithoutModelPath: {
+            route: "/bindModel/:componentPath",
             type: "fluid.nexus.bindModel.handler"
         }
     }
@@ -214,6 +218,8 @@ fluid.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, mode
     handler.componentHolder.targetComponent = fluid.nexus.componentForPathInContainer(componentRoot, componentPath);
     // TODO: Note that applier.modelchanged.addListener is different from https://wiki.fluidproject.org/display/fluid/Nexus+API
     //       Which says applier.addModelListener
+    // if the modelPath is undefined, the binding is to the entire model
+    modelPath = modelPath || "";
     handler.modelPathSegs = fluid.pathUtil.parseEL(modelPath);
     handler.targetModelChangeListenerId = fluid.allocateGuid();
     handler.componentHolder.targetComponent.applier.modelChanged.addListener(
