@@ -94,7 +94,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
             {
                 event: "{writeDefaultsRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsRequest1}", 200]
+                args: ["{writeDefaultsRequest1}", 201]
             },
             {
                 func: "{readDefaultsRequest2}.send"
@@ -120,7 +120,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
             {
                 event: "{writeDefaultsRequest2}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsRequest2}", 200]
+                args: ["{writeDefaultsRequest2}", 201]
             },
             {
                 func: "{readDefaultsRequest3}.send"
@@ -237,7 +237,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
             {
                 event: "{writeDefaultsRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsRequest1}", 200]
+                args: ["{writeDefaultsRequest1}", 201]
             },
             {
                 func: "{readDefaultsRequest1}.send"
@@ -267,7 +267,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
             {
                 event: "{writeDefaultsRequest2}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsRequest2}", 200]
+                args: ["{writeDefaultsRequest2}", 201]
             },
             {
                 func: "{readDefaultsRequest2}.send"

@@ -100,7 +100,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
             {
                 event: "{constructComponentRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{constructComponentRequest1}", 200]
+                args: ["{constructComponentRequest1}", 201]
             },
             {
                 func: "fluid.test.nexus.assertComponentModel",
@@ -147,7 +147,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
             {
                 event: "{constructComponentRequest2}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{constructComponentRequest2}", 200]
+                args: ["{constructComponentRequest2}", 201]
             },
             {
                 func: "fluid.test.nexus.assertComponentModel",
@@ -173,7 +173,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
             {
                 event: "{destroyComponentRequest2}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{destroyComponentRequest2}", 200]
+                args: ["{destroyComponentRequest2}", 204]
             },
             {
                 func: "fluid.test.nexus.assertNoComponentAtPath",
@@ -207,7 +207,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
             {
                 event: "{destroyComponentRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{destroyComponentRequest1}", 200]
+                args: ["{destroyComponentRequest1}", 204]
             },
             // Attempt to read component one
             {
