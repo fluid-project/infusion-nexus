@@ -93,7 +93,9 @@ fluid.defaults("fluid.nexus.writeDefaults.handler", {
 
 fluid.nexus.writeDefaults.handleRequest = function (gradeName, request) {
     fluid.defaults(gradeName, request.req.body);
-    request.events.onSuccess.fire();
+    request.events.onSuccess.fire(undefined, {
+        statusCode: 201
+    });
 };
 
 fluid.defaults("fluid.nexus.readComponent.handler", {
@@ -144,7 +146,9 @@ fluid.defaults("fluid.nexus.constructComponent.handler", {
 fluid.nexus.constructComponent.handleRequest = function (path, request, componentRoot) {
     var segs = fluid.pathUtil.parseEL(path);
     fluid.nexus.constructInContainer(componentRoot, segs, request.req.body);
-    request.events.onSuccess.fire();
+    request.events.onSuccess.fire(undefined, {
+        statusCode: 201
+    });
 };
 
 fluid.defaults("fluid.nexus.destroyComponent.handler", {
@@ -161,7 +165,9 @@ fluid.defaults("fluid.nexus.destroyComponent.handler", {
 fluid.nexus.destroyComponent.handleRequest = function (path, request, componentRoot) {
     var segs = fluid.pathUtil.parseEL(path);
     fluid.nexus.destroyInContainer(componentRoot, segs);
-    request.events.onSuccess.fire();
+    request.events.onSuccess.fire(undefined, {
+        statusCode: 204
+    });
 };
 
 fluid.defaults("fluid.nexus.bindModel.handler", {
