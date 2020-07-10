@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "infusion": "3.0.0-dev.20200214T151835Z.ab768289a.FLUID-6145",
-        "kettle": "1.12.0"
+        "kettle": "ptcher/kettle#KETTLE-86"
     },
     "devDependencies": {
         "eslint-config-fluid": "1.4.0",
