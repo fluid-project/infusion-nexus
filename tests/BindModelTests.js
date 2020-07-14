@@ -107,7 +107,7 @@ fluid.tests.nexus.bindModel.testDefs = [
             {
                 event: "{constructComponentRequest1}.events.onComplete",
                 listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{constructComponentRequest1}", 200]
+                args: ["{constructComponentRequest1}", 201]
             },
             {
                 func: "fluid.tests.nexus.bindModel.registerModelListenerForPath",
