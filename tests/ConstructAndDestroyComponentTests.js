@@ -10,10 +10,6 @@ https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.tx
 
 /* eslint-env node */
 
-// TODO: test that PUT responses *do not* have JSON headers
-//       in fact, anything with a non-extant response body should not have a content type
-// Current issue is that I need a workable way to specify that particular values are undefined
-
 "use strict";
 
 var fluid = require("infusion"),
