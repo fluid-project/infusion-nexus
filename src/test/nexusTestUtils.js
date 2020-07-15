@@ -43,10 +43,11 @@ fluid.test.nexus.assertHTTPResponse = function (body, request, expected) {
     if (expected.headers !== undefined) {
         for (var key in expected.headers) {
             var expectedValue = expected.headers[key];
+            var receivedValue = response.headers[key.toLowerCase()];
             if (expectedValue === fluid.NO_VALUE) {
-                jqUnit.assertUndefined("Response header " + key + " is undefined", response.headers[key.toLowerCase()]);
+                jqUnit.assertUndefined("Response header " + key + " is undefined", receivedValue);
             } else {
-                jqUnit.assertTrue("Response has header " + key + " with value containing " + expectedValue, response.headers[key.toLowerCase()].indexOf(expectedValue) !== -1);
+                jqUnit.assertTrue("Response has header " + key + " with value containing " + expectedValue, receivedValue.includes(expectedValue));
             }
         }
     }
