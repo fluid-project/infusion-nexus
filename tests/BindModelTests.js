@@ -61,7 +61,7 @@ fluid.tests.nexus.bindModel.testDefs = [
     {
         name: "Bind Model",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 13,
+        expect: 16,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -106,8 +106,15 @@ fluid.tests.nexus.bindModel.testDefs = [
             },
             {
                 event: "{constructComponentRequest1}.events.onComplete",
-                listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{constructComponentRequest1}", 201]
+                listener: "fluid.test.nexus.assertHTTPResponse",
+                args: ["{arguments}.0", "{constructComponentRequest1}", {
+                    statusCode: 201,
+                    headers: {
+                        "content-type": fluid.NO_VALUE,
+                        "content-length": 0
+                    },
+                    responseBody: fluid.NO_VALUE
+                }]
             },
             {
                 func: "fluid.tests.nexus.bindModel.registerModelListenerForPath",
