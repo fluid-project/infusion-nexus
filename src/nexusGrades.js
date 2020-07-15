@@ -214,6 +214,7 @@ fluid.defaults("fluid.nexus.bindModel.handler", {
     }
 });
 
+// TODO: do not crash when componentPath does not map to an existing component
 fluid.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, modelChangeListener, componentRoot) {
     handler.componentHolder.targetComponent = fluid.nexus.componentForPathInContainer(componentRoot, componentPath);
     // TODO: Note that applier.modelchanged.addListener is different from https://wiki.fluidproject.org/display/fluid/Nexus+API
@@ -238,6 +239,7 @@ fluid.nexus.bindModel.targetModelChangeListener = function (handler, value) {
     handler.sendMessage(value);
 };
 
+// TODO: the whole Nexus should not crash because it receives a bad WebSocket message.
 fluid.nexus.bindModel.receiveMessage = function (component, baseModelPathSegs, message) {
     var messagePathSegs = fluid.pathUtil.parseEL(message.path);
     var changePathSegs = baseModelPathSegs.concat(messagePathSegs);
