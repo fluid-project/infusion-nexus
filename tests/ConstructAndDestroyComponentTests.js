@@ -49,7 +49,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
     {
         name: "Construct and Destroy Components",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 34,
+        expect: 32,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -108,8 +108,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
                     statusCode: 201,
                     headers: {
                         "content-type": fluid.NO_VALUE,
-                        "content-length": 0,
-                        "content-location": "/components/nexusConstructTestsComponentOne"
+                        "content-length": 0
                     },
                     responseBody: fluid.NO_VALUE
                 }]
@@ -165,19 +164,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
                     statusCode: 201,
                     headers: {
                         "content-type": fluid.NO_VALUE,
-                        "content-length": 0,
-                        "content-location": {
-                            expander: {
-                                func: "fluid.stringTemplate",
-                                args: [
-                                    "%parent.%child",
-                                    {
-                                        parent: "{tests}.options.testComponentPath",
-                                        child: "{tests}.options.testComponentName2"
-                                    }
-                                ]
-                            }
-                        }
+                        "content-length": 0
                     },
                     responseBody: fluid.NO_VALUE
                 }]

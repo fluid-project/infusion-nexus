@@ -66,7 +66,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
     {
         name: "Write Defaults with good grade options and verify update to the grade",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 19,
+        expect: 17,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -98,8 +98,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                     statusCode: 201,
                     headers: {
                         "content-type": fluid.NO_VALUE,
-                        "content-length": 0,
-                        "content-location": "/defaults/fluid.tests.nexus.writeDefaults.newGradeRemote"
+                        "content-length": 0
                     },
                     responseBody: fluid.NO_VALUE
                 }]
@@ -138,8 +137,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                     statusCode: 201,
                     headers: {
                         "content-type": fluid.NO_VALUE,
-                        "content-length": 0,
-                        "content-location": "/defaults/fluid.tests.nexus.writeDefaults.newGradeRemote"
+                        "content-length": 0
                     },
                     responseBody: fluid.NO_VALUE
                 }]
@@ -251,7 +249,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
     {
         name: "Send a Read Defaults response back to Write Defaults and verify that the grade is stable",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 14,
+        expect: 12,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -269,8 +267,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                     statusCode: 201,
                     headers: {
                         "content-type": fluid.NO_VALUE,
-                        "content-length": 0,
-                        "content-location": "/defaults/fluid.tests.nexus.writeDefaults.newGradeRemote"
+                        "content-length": 0
                     },
                     responseBody: fluid.NO_VALUE
                 }]
@@ -311,8 +308,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                     statusCode: 201,
                     headers: {
                         "content-type": fluid.NO_VALUE,
-                        "content-length": 0,
-                        "content-location": "/defaults/fluid.tests.nexus.writeDefaults.newGradeRemote"
+                        "content-length": 0
                     },
                     responseBody: fluid.NO_VALUE
                 }]

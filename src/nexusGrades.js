@@ -94,10 +94,7 @@ fluid.defaults("fluid.nexus.writeDefaults.handler", {
 fluid.nexus.writeDefaults.handleRequest = function (gradeName, request) {
     fluid.defaults(gradeName, request.req.body);
     request.events.onSuccess.fire(undefined, {
-        statusCode: 201,
-        headers: {
-            "Content-Location": "/defaults/" + gradeName
-        }
+        statusCode: 201
     });
 };
 
@@ -150,10 +147,7 @@ fluid.nexus.constructComponent.handleRequest = function (path, request, componen
     var segs = fluid.pathUtil.parseEL(path);
     fluid.nexus.constructInContainer(componentRoot, segs, request.req.body);
     request.events.onSuccess.fire(undefined, {
-        statusCode: 201,
-        headers: {
-            "Content-Location": "/components/" + path
-        }
+        statusCode: 201
     });
 };
 
