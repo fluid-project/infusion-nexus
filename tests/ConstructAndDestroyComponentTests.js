@@ -45,7 +45,7 @@ fluid.tests.nexus.constructComponent.testDefs = [
     {
         name: "Construct and Destroy Components",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 22,
+        expect: 32,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -99,8 +99,15 @@ fluid.tests.nexus.constructComponent.testDefs = [
             },
             {
                 event: "{constructComponentRequest1}.events.onComplete",
-                listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{constructComponentRequest1}", 200]
+                listener: "fluid.test.nexus.assertHTTPResponse",
+                args: ["{arguments}.0", "{constructComponentRequest1}", {
+                    statusCode: 201,
+                    headers: {
+                        "content-type": fluid.NO_VALUE,
+                        "content-length": 0
+                    },
+                    responseBody: fluid.NO_VALUE
+                }]
             },
             {
                 func: "fluid.test.nexus.assertComponentModel",
@@ -119,17 +126,19 @@ fluid.tests.nexus.constructComponent.testDefs = [
             // expect the response to contain model data, gradeNames, subcomponents
             {
                 event: "{readComponentRequest2}.events.onComplete",
-                listener: "fluid.test.nexus.verifyReadComponentResponse",
-                args: [
-                    "{arguments}.0",
-                    "{readComponentRequest2}",
-                    {
+                listener: "fluid.test.nexus.assertHTTPResponse",
+                args: ["{arguments}.0", "{readComponentRequest2}", {
+                    statusCode: 200,
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    responseBody: {
                         typeName: "fluid.modelComponent",
                         model: {
                             "some.model\\path": "one"
                         }
                     }
-                ]
+                }]
             },
             // Construct component two
             {
@@ -146,8 +155,15 @@ fluid.tests.nexus.constructComponent.testDefs = [
             },
             {
                 event: "{constructComponentRequest2}.events.onComplete",
-                listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{constructComponentRequest2}", 200]
+                listener: "fluid.test.nexus.assertHTTPResponse",
+                args: ["{arguments}.0", "{constructComponentRequest2}", {
+                    statusCode: 201,
+                    headers: {
+                        "content-type": fluid.NO_VALUE,
+                        "content-length": 0
+                    },
+                    responseBody: fluid.NO_VALUE
+                }]
             },
             {
                 func: "fluid.test.nexus.assertComponentModel",
@@ -172,8 +188,14 @@ fluid.tests.nexus.constructComponent.testDefs = [
             },
             {
                 event: "{destroyComponentRequest2}.events.onComplete",
-                listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{destroyComponentRequest2}", 200]
+                listener: "fluid.test.nexus.assertHTTPResponse",
+                args: ["{arguments}.0", "{destroyComponentRequest2}", {
+                    statusCode: 204,
+                    headers: {
+                        "content-type": fluid.NO_VALUE
+                    },
+                    responseBody: fluid.NO_VALUE
+                }]
             },
             {
                 func: "fluid.test.nexus.assertNoComponentAtPath",
@@ -206,8 +228,14 @@ fluid.tests.nexus.constructComponent.testDefs = [
             },
             {
                 event: "{destroyComponentRequest1}.events.onComplete",
-                listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{destroyComponentRequest1}", 200]
+                listener: "fluid.test.nexus.assertHTTPResponse",
+                args: ["{arguments}.0", "{destroyComponentRequest1}", {
+                    statusCode: 204,
+                    headers: {
+                        "content-type": fluid.NO_VALUE
+                    },
+                    responseBody: fluid.NO_VALUE
+                }]
             },
             // Attempt to read component one
             {

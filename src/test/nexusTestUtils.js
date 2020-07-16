@@ -22,31 +22,35 @@ fluid.test.nexus.assertStatusCode = function (request, statusCode) {
     jqUnit.assertEquals("Response has status code " + statusCode, statusCode, response.statusCode);
 };
 
-fluid.test.nexus.verifyReadDefaultsResponse = function (body, request, expectedGradeSpec) {
-    // TODO: Switch over to the new assertion function of KETTLE-39
-    var responseGradeSpec = JSON.parse(body);
-    var response = request.nativeResponse;
-    jqUnit.assertEquals("Response has status code 200", 200, response.statusCode);
-    jqUnit.assertTrue("Response has JSON content-type",
-                      response.headers["content-type"].indexOf("application/json") === 0);
-    jqUnit.assertLeftHand("Response has expected grade specification", expectedGradeSpec, responseGradeSpec);
-};
-
-
 /**
- * Verify that a response to the component reading endpoint is well-formed and has the expected content.
+ * Verify HTTP response body and metadata specified as an object.
  * @param {String} body the body of the HTTP response.
  * @param {kettle.request.http} request the component representing the HTTP response.
- * @param {Object} expectedComponentMaterial the expected content of the response body.
+ * @param {Object} expected the expected content of the response body. Contains three optional keys, responseBody, statusCode, and headers. If responseBody is specified, we assert that the actual body is a subset of it. If statusCode is specified, we assert that the response status code is equal to it. For each key-value pair in headers, we assert that the response has a header entry whose value contains the specified value (e.g. the expected header {"content-type": "application/json"} will match the actual header {"content-type": "application/json; charset=UTF-8"}). responseBody and header values may be fluid.NO_VALUE to assert that they are undefined in the response.
  */
-fluid.test.nexus.verifyReadComponentResponse = function (body, request, expectedComponentMaterial) {
-    var responseComponentMaterial = JSON.parse(body);
+fluid.test.nexus.assertHTTPResponse = function (body, request, expected) {
     var response = request.nativeResponse;
-    jqUnit.assertEquals("Response has status code 200", 200, response.statusCode);
-    jqUnit.assertTrue("Response has JSON content-type",
-                      response.headers["content-type"].indexOf("application/json") === 0);
-    jqUnit.assertLeftHand("Response has expected component material", expectedComponentMaterial,
-    responseComponentMaterial);
+    if (expected.responseBody !== undefined) {
+        if (expected.responseBody === fluid.NO_VALUE) {
+            jqUnit.assertEquals("Response has no body", "", body);
+        } else {
+            jqUnit.assertLeftHand("Response body has expected value", expected.responseBody, JSON.parse(body));
+        }
+    }
+    if (expected.statusCode !== undefined) {
+        jqUnit.assertEquals("Response has status code " + expected.statusCode, expected.statusCode, response.statusCode);
+    }
+    if (expected.headers !== undefined) {
+        for (var key in expected.headers) {
+            var expectedValue = expected.headers[key];
+            var receivedValue = response.headers[key.toLowerCase()];
+            if (expectedValue === fluid.NO_VALUE) {
+                jqUnit.assertUndefined("Response header " + key + " is undefined", receivedValue);
+            } else {
+                jqUnit.assertTrue("Response has header " + key + " with value containing " + expectedValue, receivedValue.includes(expectedValue));
+            }
+        }
+    }
 };
 
 fluid.test.nexus.assertNoComponentAtPath = function (message, componentRoot, path) {

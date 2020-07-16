@@ -66,7 +66,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
     {
         name: "Write Defaults with good grade options and verify update to the grade",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 11,
+        expect: 17,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -93,22 +93,35 @@ fluid.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 event: "{writeDefaultsRequest1}.events.onComplete",
-                listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsRequest1}", 200]
+                listener: "fluid.test.nexus.assertHTTPResponse",
+                args: ["{arguments}.0", "{writeDefaultsRequest1}", {
+                    statusCode: 201,
+                    headers: {
+                        "content-type": fluid.NO_VALUE,
+                        "content-length": 0
+                    },
+                    responseBody: fluid.NO_VALUE
+                }]
             },
             {
                 func: "{readDefaultsRequest2}.send"
             },
             {
                 event: "{readDefaultsRequest2}.events.onComplete",
-                listener: "fluid.test.nexus.verifyReadDefaultsResponse",
+                listener: "fluid.test.nexus.assertHTTPResponse",
                 args: [
                     "{arguments}.0",
                     "{readDefaultsRequest2}",
                     {
-                        gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
-                        model: {
-                            name1: "hello world"
+                        statusCode: 200,
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        responseBody: {
+                            gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
+                            model: {
+                                name1: "hello world"
+                            }
                         }
                     }
                 ]
@@ -119,22 +132,35 @@ fluid.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 event: "{writeDefaultsRequest2}.events.onComplete",
-                listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsRequest2}", 200]
+                listener: "fluid.test.nexus.assertHTTPResponse",
+                args: ["{arguments}.0", "{writeDefaultsRequest2}", {
+                    statusCode: 201,
+                    headers: {
+                        "content-type": fluid.NO_VALUE,
+                        "content-length": 0
+                    },
+                    responseBody: fluid.NO_VALUE
+                }]
             },
             {
                 func: "{readDefaultsRequest3}.send"
             },
             {
                 event: "{readDefaultsRequest3}.events.onComplete",
-                listener: "fluid.test.nexus.verifyReadDefaultsResponse",
+                listener: "fluid.test.nexus.assertHTTPResponse",
                 args: [
                     "{arguments}.0",
                     "{readDefaultsRequest3}",
                     {
-                        gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
-                        model: {
-                            updatedGrade: true
+                        statusCode: 200,
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        responseBody: {
+                            gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
+                            model: {
+                                updatedGrade: true
+                            }
                         }
                     }
                 ]
@@ -223,7 +249,7 @@ fluid.tests.nexus.writeDefaults.testDefs = [
     {
         name: "Send a Read Defaults response back to Write Defaults and verify that the grade is stable",
         gradeNames: "fluid.test.nexus.testCaseHolder",
-        expect: 8,
+        expect: 12,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -236,8 +262,15 @@ fluid.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 event: "{writeDefaultsRequest1}.events.onComplete",
-                listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsRequest1}", 200]
+                listener: "fluid.test.nexus.assertHTTPResponse",
+                args: ["{arguments}.0", "{writeDefaultsRequest1}", {
+                    statusCode: 201,
+                    headers: {
+                        "content-type": fluid.NO_VALUE,
+                        "content-length": 0
+                    },
+                    responseBody: fluid.NO_VALUE
+                }]
             },
             {
                 func: "{readDefaultsRequest1}.send"
@@ -248,14 +281,18 @@ fluid.tests.nexus.writeDefaults.testDefs = [
                 args: ["{arguments}.0", "{tests}"]
             },
             {
-                funcName: "fluid.test.nexus.verifyReadDefaultsResponse",
+                funcName: "fluid.test.nexus.assertHTTPResponse",
                 args: [
                     "{tests}.readDefaultsResponseBody",
                     "{readDefaultsRequest1}",
                     {
-                        gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
-                        model: {
-                            name1: "hello world"
+                        statusCode: 200,
+                        "content-type": "application/json",
+                        responseBody: {
+                            gradeNames: ["fluid.component", "fluid.tests.nexus.writeDefaults.newGradeRemote"],
+                            model: {
+                                name1: "hello world"
+                            }
                         }
                     }
                 ]
@@ -266,19 +303,30 @@ fluid.tests.nexus.writeDefaults.testDefs = [
             },
             {
                 event: "{writeDefaultsRequest2}.events.onComplete",
-                listener: "fluid.test.nexus.assertStatusCode",
-                args: ["{writeDefaultsRequest2}", 200]
+                listener: "fluid.test.nexus.assertHTTPResponse",
+                args: ["{arguments}.0", "{writeDefaultsRequest2}", {
+                    statusCode: 201,
+                    headers: {
+                        "content-type": fluid.NO_VALUE,
+                        "content-length": 0
+                    },
+                    responseBody: fluid.NO_VALUE
+                }]
             },
             {
                 func: "{readDefaultsRequest2}.send"
             },
             {
                 event: "{readDefaultsRequest2}.events.onComplete",
-                listener: "fluid.test.nexus.verifyReadDefaultsResponse",
+                listener: "fluid.test.nexus.assertHTTPResponse",
                 args: [
                     "{arguments}.0",
                     "{readDefaultsRequest2}",
-                    "{tests}.readDefaultsResponseGradeSpec"
+                    {
+                        statusCode: 200,
+                        "content-type": "application/json",
+                        responseBody: "{tests}.readDefaultsResponseGradeSpec"
+                    }
                 ]
             }
         ]

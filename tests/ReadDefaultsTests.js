@@ -43,16 +43,23 @@ fluid.tests.nexus.readDefaults.testDefs = [
             },
             {
                 event: "{readDefaultsRequest1}.events.onComplete",
-                listener: "fluid.test.nexus.verifyReadDefaultsResponse",
+                listener: "fluid.test.nexus.assertHTTPResponse",
                 args: [
                     "{arguments}.0",
                     "{readDefaultsRequest1}",
                     {
-                        gradeNames: ["fluid.component", "fluid.tests.nexus.readDefaults.testGrade"],
-                        model: {
-                            name1: "hello world"
+                        statusCode: 200,
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        responseBody: {
+                            gradeNames: ["fluid.component", "fluid.tests.nexus.readDefaults.testGrade"],
+                            model: {
+                                name1: "hello world"
+                            }
                         }
                     }
+
                 ]
             }
         ]
