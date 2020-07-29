@@ -259,9 +259,8 @@ fluid.defaults("fluid.nexus.bindModel.handler", {
             ]
         },
         onDestroy: {
-            "this": "{that}.componentHolder.targetComponent.applier.modelChanged",
-            method: "removeListener",
-            args: ["{that}.targetModelChangeListenerId"]
+            funcName: "fluid.nexus.bindModel.removeListenerOnDestroy",
+            args: ["{that}"]
         }
     }
 });
@@ -299,4 +298,11 @@ fluid.nexus.bindModel.receiveMessage = function (component, baseModelPathSegs, m
             type: message.type
         }
     );
+};
+
+// TODO: explain why this is even here
+fluid.nexus.bindModel.removeListenerOnDestroy = function (that) {
+    if (that.componentHolder.targetComponent !== undefined) {
+        that.componentHolder.targetComponent.applier.modelChanged.removeListener(that.targetModelChangeListenerId);
+    }
 };
