@@ -305,7 +305,7 @@ fluid.tests.nexus.bindModel.testDefs = [
     {
         name: "Bind Model Error Handling",
         gradeNames: ["fluid.test.nexus.testCaseHolder", "fluid.tests.nexus.bindModel.badlyFormedJson"],
-        expect: 8,
+        expect: 14,
         config: {
             configName: "fluid.tests.nexus.config",
             configPath: "%infusion-nexus/tests/configs"
@@ -358,37 +358,37 @@ fluid.tests.nexus.bindModel.testDefs = [
                 ]
             },
             // Attempt to connect to the non-existing component without a model path
-            // {
-            //     func: "{failingClientWithoutModelPath}.connect"
-            // },
+            {
+                func: "{failingClientWithoutModelPath}.connect"
+            },
             // The request produces a 404
-            // {
-                // event: "{failingClientWithoutModelPath}.events.onError",
-                // listener: "kettle.test.assertErrorResponse",
-                // args: [{
-                    // message: "No model material at path nexusBindModelTestComponent",
-                    // errorTexts: "HTTP",
-                    // string: "{arguments}.0",
-                    // request: "{failingClientWithoutModelPath}",
-                    // statusCode: 404
-                // }]
-            // },
+            {
+                event: "{failingClientWithoutModelPath}.events.onError",
+                listener: "kettle.test.assertErrorResponse",
+                args: [{
+                    message: "No model material at path nexusBindModelTestComponent",
+                    errorTexts: "HTTP",
+                    string: "{arguments}.0",
+                    request: "{failingClientWithoutModelPath}",
+                    statusCode: 404
+                }]
+            },
             // Attempt to connect to the non-existing component with a model path
-            // {
-                // func: "{failingClientWithModelPath}.connect"
-            // },
+            {
+                func: "{failingClientWithModelPath}.connect"
+            },
             // The request produces a 404
-            // {
-                // event: "{failingClientWithModelPath}.events.onError",
-                // listener: "kettle.test.assertErrorResponse",
-                // args: [{
-                    // message: "No model material at path nexusBindModelTestComponent.model\\.path\\\\seg1.model\\.path\\\\seg2",
-                    // errorTexts: "HTTP",
-                    // string: "{arguments}.0",
-                    // request: "{failingClientWithModelPath}",
-                    // statusCode: 404
-                // }]
-            // },
+            {
+                event: "{failingClientWithModelPath}.events.onError",
+                listener: "kettle.test.assertErrorResponse",
+                args: [{
+                    message: "No model material at path nexusBindModelTestComponent.model\\.path\\\\seg1.model\\.path\\\\seg2",
+                    errorTexts: "HTTP",
+                    string: "{arguments}.0",
+                    request: "{failingClientWithModelPath}",
+                    statusCode: 404
+                }]
+            },
             // Construct a component at testComponentPath
             {
                 func: "{constructComponentRequest1}.send",
