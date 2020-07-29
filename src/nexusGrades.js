@@ -20,6 +20,9 @@ fluid.defaults("fluid.nexus", {
     components: {
         nexusComponentRoot: {
             type: "fluid.component"
+        },
+        bindModelTargetComponentBinder: {
+            type: "fluid.nexus.targetComponentBinder"
         }
     },
     requestHandlers: {
@@ -170,8 +173,54 @@ fluid.nexus.destroyComponent.handleRequest = function (path, request, componentR
     });
 };
 
+/**
+ * This middleware grade is handed control immediately prior to the bindModel handler.
+ * It tests that the model binding to-be-established refers to valid model material
+ * in the Nexus component tree, and terminates the HTTP handshake process with a 404
+ * if not.
+ */
+fluid.defaults("fluid.nexus.targetComponentBinder", {
+    gradeNames: ["kettle.middleware"],
+    invokers: {
+        "handle": {
+            funcName: "fluid.nexus.targetComponentBinder.handle",
+            args: ["{arguments}.0",
+                "{arguments}.0.req.params.componentPath",
+                "{arguments}.0.req.params.modelPath",
+                "{fluid.nexus}.nexusComponentRoot"]
+        }
+    }
+});
+
+fluid.nexus.targetComponentBinder.handle = function (that, componentPath, modelPath, componentRoot) {
+    var togo = fluid.promise();
+    that.componentHolder.targetComponent = fluid.nexus.componentForPathInContainer(componentRoot, componentPath);
+    // TODO: Note that applier.modelchanged.addListener is different from https://wiki.fluidproject.org/display/fluid/Nexus+API
+    //       Which says applier.addModelListener
+    // if the modelPath is undefined, the binding is to the entire model
+    modelPath = modelPath || "";
+    that.modelPathSegs = fluid.pathUtil.parseEL(modelPath);
+
+    // TODO: I should test that binding to non-extant model on an extant component is handled correctly, i.e. by writing that model material onto the component
+    if (that.componentHolder.targetComponent !== undefined) {
+        togo.resolve();
+    } else {
+        togo.reject({
+            isError: true,
+            statusCode: 404,
+            message: "No model material at path " + componentPath + modelPath ? "." + modelPath : ""
+        });
+    }
+    return togo;
+};
+
 fluid.defaults("fluid.nexus.bindModel.handler", {
-    gradeNames: ["kettle.request.ws"],
+    gradeNames: ["kettle.request.ws", "fluid.nexus.targetComponentBinder"],
+    requestMiddleware: {
+        "bindTargetComponent": {
+            middleware: "{fluid.nexus}.bindModelTargetComponentBinder"
+        }
+    },
     members: {
         // We store the targetComponent inside a container so that the
         // component is isolated from IoC references. This will not be
@@ -179,7 +228,7 @@ fluid.defaults("fluid.nexus.bindModel.handler", {
         // are completed.
         // See https://issues.fluidproject.org/browse/FLUID-4925
         componentHolder: {
-            targetComponent: null // Will be set at onBindWs
+            targetComponent: null // Will be set during our cunning middleware targetComponentBinder
         },
         modelPathSegs: null, // Will be set at onBindWs
         targetModelChangeListenerId: null // Will be set at onBindWs
@@ -198,10 +247,7 @@ fluid.defaults("fluid.nexus.bindModel.handler", {
             funcName: "fluid.nexus.bindModel.bindWs",
             args: [
                 "{that}",
-                "{request}.req.params.componentPath",
-                "{request}.req.params.modelPath",
-                "{that}.targetModelChangeListener",
-                "{fluid.nexus}.nexusComponentRoot"
+                "{that}.targetModelChangeListener"
             ]
         },
         onReceiveMessage: {
@@ -221,32 +267,29 @@ fluid.defaults("fluid.nexus.bindModel.handler", {
 });
 
 // TODO: do not crash when componentPath does not map to an existing component
-fluid.nexus.bindModel.bindWs = function (handler, componentPath, modelPath, modelChangeListener, componentRoot) {
-    handler.componentHolder.targetComponent = fluid.nexus.componentForPathInContainer(componentRoot, componentPath);
-    // TODO: Note that applier.modelchanged.addListener is different from https://wiki.fluidproject.org/display/fluid/Nexus+API
-    //       Which says applier.addModelListener
-    // if the modelPath is undefined, the binding is to the entire model
-    modelPath = modelPath || "";
-    handler.modelPathSegs = fluid.pathUtil.parseEL(modelPath);
-    handler.targetModelChangeListenerId = fluid.allocateGuid();
-    handler.componentHolder.targetComponent.applier.modelChanged.addListener(
+fluid.nexus.bindModel.bindWs = function (that, modelChangeListener) {
+    that.targetModelChangeListenerId = fluid.allocateGuid();
+    that.componentHolder.targetComponent.applier.modelChanged.addListener(
         {
-            segs: handler.modelPathSegs,
-            listenerId: handler.targetModelChangeListenerId
+            segs: that.modelPathSegs,
+            listenerId: that.targetModelChangeListenerId
         },
         modelChangeListener
     ); // TODO: namespace?
 
     // On connect, send a message with the state of the component's model at modelPath
-    handler.sendMessage(fluid.get(handler.componentHolder.targetComponent.model, handler.modelPathSegs));
+    that.sendMessage(fluid.get(that.componentHolder.targetComponent.model, that.modelPathSegs));
 };
 
-fluid.nexus.bindModel.targetModelChangeListener = function (handler, value) {
-    handler.sendMessage(value);
+fluid.nexus.bindModel.targetModelChangeListener = function (that, value) {
+    that.sendMessage(value);
 };
 
 // TODO: the whole Nexus should not crash because it receives a bad WebSocket message.
 fluid.nexus.bindModel.receiveMessage = function (component, baseModelPathSegs, message) {
+    if (message.path === undefined || message.value === undefined) {
+        return;
+    };
     var messagePathSegs = fluid.pathUtil.parseEL(message.path);
     var changePathSegs = baseModelPathSegs.concat(messagePathSegs);
     component.applier.fireChangeRequest(
