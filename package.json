@@ -9,7 +9,7 @@
         "serve": "node nexusServer.js"
     },
     "dependencies": {
-        "infusion": "3.0.0-dev.20200214T151835Z.ab768289a.FLUID-6145",
+        "infusion": "3.0.0-dev.20200728T104627Z.e6aa1a341.FLUID-6145",
         "kettle": "1.14.0"
     },
     "devDependencies": {
