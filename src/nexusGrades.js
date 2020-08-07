@@ -201,7 +201,7 @@ fluid.nexus.targetComponentBinder.handle = function (that, componentPath, modelP
     modelPath = modelPath || "";
     that.modelPathSegs = fluid.pathUtil.parseEL(modelPath);
 
-    // TODO: I should test that binding to non-extant model on an extant component is handled correctly, i.e. by writing that model material onto the component
+    // TODO: Test that binding to non-extant model on an extant component is handled correctly, i.e. by writing that model material onto the component
     if (that.componentHolder.targetComponent !== undefined) {
         togo.resolve();
     } else {
@@ -253,6 +253,7 @@ fluid.defaults("fluid.nexus.bindModel.handler", {
         onReceiveMessage: {
             funcName: "fluid.nexus.bindModel.receiveMessage",
             args: [
+                "{that}",
                 "{that}.componentHolder.targetComponent",
                 "{that}.modelPathSegs",
                 "{arguments}.1" // message
@@ -265,7 +266,6 @@ fluid.defaults("fluid.nexus.bindModel.handler", {
     }
 });
 
-// TODO: do not crash when componentPath does not map to an existing component
 fluid.nexus.bindModel.bindWs = function (that, modelChangeListener) {
     that.targetModelChangeListenerId = fluid.allocateGuid();
     that.componentHolder.targetComponent.applier.modelChanged.addListener(
@@ -277,21 +277,21 @@ fluid.nexus.bindModel.bindWs = function (that, modelChangeListener) {
     ); // TODO: namespace?
 
     // On connect, send a message with the state of the component's model at modelPath
-    that.sendMessage(fluid.get(that.componentHolder.targetComponent.model, that.modelPathSegs));
+    that.sendTypedMessage("initModel", fluid.get(that.componentHolder.targetComponent.model, that.modelPathSegs));
 };
 
 fluid.nexus.bindModel.targetModelChangeListener = function (that, value) {
-    that.sendMessage(value);
+    that.sendTypedMessage("modelChanged", value);
 };
 
-// TODO: the whole Nexus should not crash because it receives a bad WebSocket message.
-fluid.nexus.bindModel.receiveMessage = function (component, baseModelPathSegs, message) {
+fluid.nexus.bindModel.receiveMessage = function (that, targetComponent, baseModelPathSegs, message) {
     if (message.path === undefined || message.value === undefined) {
+        that.sendTypedMessage("error", fluid.get(targetComponent.model, baseModelPathSegs));
         return;
     };
     var messagePathSegs = fluid.pathUtil.parseEL(message.path);
     var changePathSegs = baseModelPathSegs.concat(messagePathSegs);
-    component.applier.fireChangeRequest(
+    targetComponent.applier.fireChangeRequest(
         {
             segs: changePathSegs,
             value: message.value,
@@ -300,7 +300,10 @@ fluid.nexus.bindModel.receiveMessage = function (component, baseModelPathSegs, m
     );
 };
 
-// TODO: explain why this is even here
+// This guarded listener destruction is needed because the bindModel websocket component
+// may be destroyed early if ta 404 response is emitted during the HTTTP setup,
+// in which case the listener to be removed has not been mounted yet.
+// FIXME: I think this should be a Kettle issue
 fluid.nexus.bindModel.removeListenerOnDestroy = function (that) {
     if (that.componentHolder.targetComponent !== undefined) {
         that.componentHolder.targetComponent.applier.modelChanged.removeListener(that.targetModelChangeListenerId);
