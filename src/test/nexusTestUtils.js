@@ -114,6 +114,16 @@ fluid.defaults("fluid.test.nexus.destroyComponentRequest", {
     method: "DELETE"
 });
 
+fluid.defaults("fluid.tests.nexus.bindModel.wsClient", {
+    gradeNames: "kettle.test.request.ws",
+    path: "/bindModel/%componentPath/%modelPath",
+    port: "{configuration}.options.serverPort",
+    termMap: {
+        componentPath: "to be filled in construction options",
+        modelPath: "to be filled in construction options"
+    }
+});
+
 fluid.defaults("fluid.test.nexus.testCaseHolder", {
     gradeNames: "kettle.test.testCaseHolder",
     components: {

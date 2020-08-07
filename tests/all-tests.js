@@ -15,7 +15,8 @@ https://raw.githubusercontent.com/fluid-project/infusion-nexus/master/LICENSE.tx
 var fluid = require("infusion");
 
 var tests = [
-    "./BindModelTests.js",
+    "./BindModelHappyPathTests.js",
+    "./BindModelErrorHandlingTests.js",
     "./ConstructAndDestroyComponentTests.js",
     "./NexusUtilsTests.js",
     "./ReadDefaultsTests.js",
