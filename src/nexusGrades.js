@@ -300,10 +300,9 @@ fluid.nexus.bindModel.receiveMessage = function (that, targetComponent, baseMode
     );
 };
 
-// This guarded listener destruction is needed because the bindModel websocket component
-// may be destroyed early if ta 404 response is emitted during the HTTTP setup,
+// This guarded listener destruction is needed because the bindModel WebSocket component
+// may be destroyed early if a 404 response is emitted during the HTTTP setup phase,
 // in which case the listener to be removed has not been mounted yet.
-// FIXME: I think this should be a Kettle issue
 fluid.nexus.bindModel.removeListenerOnDestroy = function (that) {
     if (that.componentHolder.targetComponent !== undefined) {
         that.componentHolder.targetComponent.applier.modelChanged.removeListener(that.targetModelChangeListenerId);
