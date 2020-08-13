@@ -20,7 +20,7 @@ require("../src/test/nexusTestUtils.js");
 
 kettle.loadTestingSupport();
 
-fluid.registerNamespace("fluid.tests.nexus.bindModel");
+fluid.registerNamespace("fluid.tests.nexus.bindModel.happyPath");
 
 fluid.tests.nexus.bindModel.componentOptions = {
     type: "fluid.modelComponent",
@@ -38,18 +38,6 @@ fluid.tests.nexus.bindModel.registerModelListenerForPath = function (componentRo
     component.applier.modelChanged.addListener(modelPath, event.fire);
 };
 
-fluid.defaults("fluid.tests.nexus.bindModel.wsClient", {
-    gradeNames: "kettle.test.request.ws",
-    path: "/bindModel/%componentPath/%modelPath",
-    port: "{configuration}.options.serverPort",
-    termMap: {
-        componentPath: "to be filled in construction options",
-        modelPath: "to be filled in construction options"
-    }
-});
-
-// TODO: FLUID-6504: test establishing a bind model before a component exists at a particular path
-
 // TODO: Test with multiple connected WebSocket clients
 
 // Note that these tests verify steps by peeking into the Nexus internal
@@ -57,9 +45,9 @@ fluid.defaults("fluid.tests.nexus.bindModel.wsClient", {
 // giving it the grades "fluid.tests.nexus.componentRoot" and
 // "fluid.resolveRoot" in the test Kettle app config.
 
-fluid.tests.nexus.bindModel.testDefs = [
+fluid.tests.nexus.bindModel.happyPath.testDefs = [
     {
-        name: "Bind Model",
+        name: "Bind Model Happy Path",
         gradeNames: "fluid.test.nexus.testCaseHolder",
         expect: 16,
         config: {
@@ -138,7 +126,10 @@ fluid.tests.nexus.bindModel.testDefs = [
                 args: [
                     "Received initial message with the state of the component's model",
                     {
-                        "model.path\\seg3": "hello"
+                        type: "initModel",
+                        payload: {
+                            "model.path\\seg3": "hello"
+                        }
                     },
                     "{arguments}.0"
                 ]
@@ -157,9 +148,12 @@ fluid.tests.nexus.bindModel.testDefs = [
                 args: [
                     "Received initial message with the state of the component's model",
                     {
-                        "model.path\\seg1": {
-                            "model.path\\seg2": {
-                                "model.path\\seg3": "hello"
+                        type: "initModel",
+                        payload: {
+                            "model.path\\seg1": {
+                                "model.path\\seg2": {
+                                    "model.path\\seg3": "hello"
+                                }
                             }
                         }
                     },
@@ -202,8 +196,11 @@ fluid.tests.nexus.bindModel.testDefs = [
                 args: [
                     "Received change message",
                     {
-                        "model.path\\seg3": "hello",
-                        "model.path\\seg3a": "change at path with one segment"
+                        type: "modelChanged",
+                        payload: {
+                            "model.path\\seg3": "hello",
+                            "model.path\\seg3a": "change at path with one segment"
+                        }
                     },
                     "{arguments}.0"
                 ]
@@ -244,10 +241,13 @@ fluid.tests.nexus.bindModel.testDefs = [
                 args: [
                     "Received change message",
                     {
-                        "model.path\\seg3": "hello",
-                        "model.path\\seg3a": "change at path with one segment",
-                        "model.path\\seg3b": {
-                            "model.path\\seg4": "change at path with two segments"
+                        type: "modelChanged",
+                        payload: {
+                            "model.path\\seg3": "hello",
+                            "model.path\\seg3a": "change at path with one segment",
+                            "model.path\\seg3b": {
+                                "model.path\\seg4": "change at path with two segments"
+                            }
                         }
                     },
                     "{arguments}.0"
@@ -279,8 +279,15 @@ fluid.tests.nexus.bindModel.testDefs = [
             },
             {
                 event: "{clientWithModelPath}.events.onReceiveMessage",
-                listener: "jqUnit.assertEquals",
-                args: ["Received change message", "change at path with no segments", "{arguments}.0"]
+                listener: "jqUnit.assertDeepEq",
+                args: [
+                    "Received change message",
+                    {
+                        type: "modelChanged",
+                        payload: "change at path with no segments"
+                    },
+                    "{arguments}.0"
+                ]
             },
             // Disconnect
             {
@@ -290,4 +297,4 @@ fluid.tests.nexus.bindModel.testDefs = [
     }
 ];
 
-kettle.test.bootstrapServer(fluid.tests.nexus.bindModel.testDefs);
+kettle.test.bootstrapServer(fluid.tests.nexus.bindModel.happyPath.testDefs);

@@ -79,7 +79,6 @@ fluid.tests.nexus.nexusUtils.verifyNewComponent = function (container, newCompon
     jqUnit.assertTrue("The new component has the expected grade",
         fluid.componentHasGrade(fluid.nexus.componentForPathInContainer(container, newComponentName),
             "fluid.tests.nexus.nexusUtils.newComponent"));
-    jqUnit.start();
 };
 
 fluid.tests.nexus.testConstructInContainer = function (container, newComponentName) {
@@ -149,7 +148,7 @@ jqUnit.test("containsComponent", function () {
         fluid.nexus.containsComponent(parent.container, "componentA.nonExistingComponent"));
 });
 
-jqUnit.asyncTest("constructInContainer top level component", function () {
+jqUnit.test("constructInContainer top level component", function () {
     jqUnit.expect(3);
 
     var parent = fluid.tests.nexus.nexusUtils.parent();
@@ -157,7 +156,7 @@ jqUnit.asyncTest("constructInContainer top level component", function () {
     fluid.tests.nexus.testConstructInContainer(parent.container, "newComponent");
 });
 
-jqUnit.asyncTest("constructInContainer second level component", function () {
+jqUnit.test("constructInContainer second level component", function () {
     jqUnit.expect(3);
 
     var parent = fluid.tests.nexus.nexusUtils.parent();
@@ -165,12 +164,15 @@ jqUnit.asyncTest("constructInContainer second level component", function () {
     fluid.tests.nexus.testConstructInContainer(parent.container, "componentA.newComponent");
 });
 
-jqUnit.asyncTest("destroyInContainer top level component", function () {
-    jqUnit.expect(1);
+jqUnit.test("destroyInContainer top level component", function () {
+    jqUnit.expect(2);
 
     var parent = fluid.tests.nexus.nexusUtils.parent({
         listeners: {
-            onComponentBDestroyed: "jqUnit.start"
+            onComponentBDestroyed: {
+                funcName: "jqUnit.assert",
+                args: ["Component B gets destroyed"]
+            }
         }
     });
 
@@ -178,12 +180,15 @@ jqUnit.asyncTest("destroyInContainer top level component", function () {
     fluid.nexus.destroyInContainer(parent.container, "componentB");
 });
 
-jqUnit.asyncTest("destroyInContainer second level component", function () {
-    jqUnit.expect(1);
+jqUnit.test("destroyInContainer second level component", function () {
+    jqUnit.expect(2);
 
     var parent = fluid.tests.nexus.nexusUtils.parent({
         listeners: {
-            onComponentA1Destroyed: "jqUnit.start"
+            onComponentA1Destroyed: {
+                funcName: "jqUnit.assert",
+                args: ["Component A1 gets destroyed"]
+            }
         }
     });
 
