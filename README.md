@@ -30,7 +30,6 @@ Once you have Docker installed, run the following commands to build a Docker ima
 
 * Build the image: `docker build -t nexus .`
 * Run the container: `docker run --name nexus -p 9081:9081 nexus`
-```
 
 The Nexus will be reachable on [localhost:9081](http://localhost:9081)
 
