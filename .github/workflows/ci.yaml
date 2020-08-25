@@ -1,33 +1,57 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-    build:
-        name: Test
-        runs-on: ${{ matrix.os }}
-        strategy:
-            matrix: 
-              os: [ubuntu-18.04, windows-latest, macos-latest]
-              node-version: [10.x, 12.x]
-        env:
-            CI: true
-        steps:
-            - run: git config --global core.autocrlf false
-            - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
-            - name: Versions
-              run: |
-                  echo Node:
-                  node --version
-                  echo NPM:
-                  npm --version
-            - name: NPM install
-              run: npm install
-            - name: Lint
-              run: npx grunt lint
-            - name: Test
-              run: npm test
+  tests:
+    runs-on: ${{ matrix.os }}
+
+    timeout-minutes: 5
+
+    strategy:
+      matrix: 
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [10.x, 12.x]
+
+    env:
+      CI: true
+
+    steps:
+    - name: Prepare git
+      run: git config --global core.autocrlf false
+
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Get npm cache directory
+      id: npm-cache
+      run: |
+        echo "::set-output name=dir::$(npm config get cache)"
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ steps.npm-cache.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install Node.js dependencies
+      run: npm install
+
+    - name: Code linter
+      run: npx grunt lint
+
+    - name: Tests
+      run: npm test

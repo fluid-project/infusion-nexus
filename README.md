@@ -21,6 +21,22 @@ configuration is provided for running Nexus.
 For more information on the use of Vagrant, please see:
 https://github.com/GPII/qi-development-environments
 
+Running Nexus in a Docker container
+-----------------------------------
+
+You can also run the Nexus in a [Docker](https://docs.docker.com/get-docker) container.
+
+Once you have Docker installed, run the following commands to build a Docker image and start a container:
+
+* Build the image: `docker build -t nexus .`
+* Run the container: `docker run --name nexus -p 9081:9081 nexus`
+
+The Nexus will be reachable on [localhost:9081](http://localhost:9081)
+
+* To stop and remove the container: `docker rm -f nexus`
+
+If you make change to the code, repeat the steps to build the image and start a new container.
+
 Running the tests in a VM
 -------------------------
 
@@ -28,6 +44,14 @@ To run the Nexus tests in a VM:
 
 - Ensure that the VM is running (`vagrant up`); then
 - `grunt tests`
+
+Running the tests in a Docker container
+---------------------------------------
+
+To run the Nexus tests in a Docker container:
+
+- Ensure you have built the Docker image (`docker build -t nexus .`); then
+- `docker run --rm -ti nexus npm run test`
 
 Trying it out
 -------------
