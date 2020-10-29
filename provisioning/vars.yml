@@ -1,5 +1,5 @@
 ---
-# Please refer to https://github.com/idi-ops/ansible-nodejs/blob/master/defaults/main.yml
+# Please refer to https://github.com/idi-ops/ansible-nodejs/blob/main/defaults/main.yml
 # for additional documentation related to these variables
 
 # A hyphenated string representing the application's name.
