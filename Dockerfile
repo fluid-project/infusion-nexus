@@ -1,4 +1,4 @@
-FROM node:12.18.3-alpine
+FROM node:16.16.0-alpine
 
 # Switch to regular user
 USER node
